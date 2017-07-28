@@ -1,50 +1,8 @@
 # Nous Core Project
-Pre beta version, only for review.
-
-Nous platform
-
+Pre beta version, only for review. 
 
 ## Getting Started
 
-## Deployed contracts truffle
-
-
-truffle migrate
-
-DougEnabled. Once the doug address is set, don't allow it to be set again, except by the
-doug contract itself.
-
-
-
-```diff    
-function setInstance(contactName, shortName) {contactName.deployed().then(inst => global[shortName] = inst);}
-setInstance(Doug, 'doug')
-setInstance(DougEnabled, 'dougenabled')
-setInstance(ActionManager, 'actionmanager')
-setInstance(ActionManagerEnabled, 'actionmanagerenabled')
-setInstance(Validee, 'validee')
-setInstance(ActionDB, 'actiondb')
-
-setInstance(Tests, 'tests');
-
-doug.addContract('actionmanager', actionmanager.address)
-doug.addContract('actionmanagerenabled', actionmanagerenabled.address)
-doug.addContract('validee', validee.address)
-
-
-doug.addContract('actiondb', actiondb.address)
-doug.addContract('tests', tests.address)
-
-
-doug.contractsTest('actionmanagerenabled')
-doug.contractsTest('actionmanager')
-doug.contractsTest('validee')
-doug.contractsTest('actiondb')
-doug.contractsTest('tests')
-
-doug.addContract('tests', tests.address)
-tests.getAddressDoug()
-```
 
 ### Prerequisites
 
@@ -64,17 +22,53 @@ truffle migrate
 And 
 
 ```
-until console
+truffle console
 ```
 
 Only development version
+
+## Deployed contracts truffle
+
+DougEnabled. Once the doug address is set, don't allow it to be set again, except by the
+doug contract itself.
+
+
+
+```diff    
+function setInstance(contactName, shortName) {contactName.deployed().then(inst => global[shortName] = inst);}
+setInstance(Doug, 'doug')
+setInstance(DougEnabled, 'dougenabled')
+setInstance(ActionManager, 'actionmanager')
+setInstance(ActionManagerEnabled, 'actionmanagerenabled')
+setInstance(Validee, 'validee')
+setInstance(ActionDB, 'actiondb')
+-------------------------------------------------------------------------------------------------------------
+setInstance(Tests, 'tests');
+-------------------------------------------------------------------------------------------------------------
+doug.addContract('actionmanager', actionmanager.address)
+doug.addContract('actionmanagerenabled', actionmanagerenabled.address)
+doug.addContract('validee', validee.address)
+-------------------------------------------------------------------------------------------------------------
+doug.addContract('actiondb', actiondb.address)
+doug.addContract('tests', tests.address)
+-------------------------------------------------------------------------------------------------------------
+doug.contractsTest('actionmanagerenabled')
+doug.contractsTest('actionmanager')
+doug.contractsTest('validee')
+doug.contractsTest('actiondb')
+doug.contractsTest('tests')
+-------------------------------------------------------------------------------------------------------------
+doug.addContract('tests', tests.address)
+tests.getAddressDoug()
+```
+
 
 ## Running the tests
 
 Tests in development 
 
 ## Deployment
-
+Only development version.
 
 
 ## Built With
@@ -91,14 +85,9 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Anatoly Ostrovsky** - *Initial work* - [PurpleBooth](https://github.com/tevva)
-* **Valeriy Manchenko** - *Initial work* - [PurpleBooth](https://github.com/visa10)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
 ## License
 
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
-
-
-Source Dougs realization []
