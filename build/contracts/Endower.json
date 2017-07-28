@@ -1,0 +1,56 @@
+{
+  "contract_name": "Endower",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "addr",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "endow",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    }
+  ],
+  "unlinked_binary": "0x60606040523415600b57fe5b5b60858061001a6000396000f300606060405263ffffffff60e060020a600035041663ef3bec3d81146020575bfe5b3415602757fe5b603c600160a060020a03600435166024356050565b604080519115158252519081900360200190f35b60005b929150505600a165627a7a72305820aac497258a396a6f088427b7d20b487eccda855368442bd845b4029c66e1ef2d0029",
+  "networks": {
+    "1": {
+      "events": {},
+      "links": {},
+      "address": "0x075b409d14c64739a33d09c7de68c795ec9443b5",
+      "updated_at": 1501168052468
+    },
+    "1501152362355": {
+      "events": {},
+      "links": {},
+      "address": "0xcf8925de0df47940111cdfc74efd5cffd6bb60e6",
+      "updated_at": 1501163117048
+    },
+    "1501163954345": {
+      "events": {},
+      "links": {},
+      "address": "0x689d78ca773f7f1cf790a7b9c0a3536830b6528f",
+      "updated_at": 1501164017643
+    },
+    "1501232501889": {
+      "events": {},
+      "links": {},
+      "address": "0x411ddb12310fff907bd9726bd26ff52d96ee6432",
+      "updated_at": 1501260952138
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1501260952138
+}

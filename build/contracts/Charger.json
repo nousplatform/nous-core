@@ -1,0 +1,56 @@
+{
+  "contract_name": "Charger",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "addr",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "charge",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    }
+  ],
+  "unlinked_binary": "0x60606040523415600b57fe5b5b60858061001a6000396000f300606060405263ffffffff60e060020a600035041663a3ffa9cd81146020575bfe5b3415602757fe5b603c600160a060020a03600435166024356050565b604080519115158252519081900360200190f35b60005b929150505600a165627a7a72305820e23baa872bcf6700907962b978808fa0c281e41f36c38d3c842fe9a08bd69a220029",
+  "networks": {
+    "1": {
+      "events": {},
+      "links": {},
+      "address": "0x99c1a479c22e5d3f13afa0a742374778f35fc1ae",
+      "updated_at": 1501168052468
+    },
+    "1501152362355": {
+      "events": {},
+      "links": {},
+      "address": "0x606db8e25093560b1ff3ae54f6a7041bb51a11d7",
+      "updated_at": 1501163117048
+    },
+    "1501163954345": {
+      "events": {},
+      "links": {},
+      "address": "0xfecb01e26f86157abfd78799d76416efb245fe89",
+      "updated_at": 1501164017643
+    },
+    "1501232501889": {
+      "events": {},
+      "links": {},
+      "address": "0x9db5d7948a69e8525984ed273c891f783ea024ef",
+      "updated_at": 1501260952138
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1501260952138
+}

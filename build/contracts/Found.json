@@ -1,0 +1,91 @@
+{
+  "contract_name": "Found",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "balance",
+          "type": "int32"
+        },
+        {
+          "name": "indexWallet",
+          "type": "uint256"
+        },
+        {
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "createSnapShot",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "key",
+          "type": "bytes32"
+        },
+        {
+          "name": "value",
+          "type": "bytes32"
+        }
+      ],
+      "name": "setBasicData",
+      "outputs": [],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "arg",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getBasicData",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "addressOwner",
+          "type": "address"
+        },
+        {
+          "name": "nameFound",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "addressManager",
+          "type": "address"
+        }
+      ],
+      "name": "LogAddManager",
+      "type": "event"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000c57fe5b6040516040806101898339810160405280516020909101515b60028054600160a060020a03808516600160a060020a03199283161790925560038054339093169290911691909117905560008190555b50505b61011b8061006e6000396000f300606060405263ffffffff60e060020a6000350416633ae9cdb481146034578063b22bad6c14604f578063b507e567146064575bfe5b3415603b57fe5b604d60043560030b6024356044356086565b005b3415605657fe5b604d60043560243560a8565b005b3415606b57fe5b607460043560da565b60408051918252519081900360200190f35b60035433600160a060020a0390811691161460a15760006000fd5b5b5b505050565b60025433600160a060020a0390811691161460c35760006000fd5b60008281526001602052604090208190555b5b5050565b6000818152600160205260409020545b9190505600a165627a7a72305820612674bdb961dea0ae129ac38c092c8a150026643509f6d6c56e599576398e500029",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1501260947576
+}

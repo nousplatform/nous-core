@@ -91,8 +91,8 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Anatoly Ostrovsky** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-* **Valeriy Manchenko** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Anatoly Ostrovsky** - *Initial work* - [PurpleBooth](https://github.com/tevva)
+* **Valeriy Manchenko** - *Initial work* - [PurpleBooth](https://github.com/visa10)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 

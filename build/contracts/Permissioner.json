@@ -1,0 +1,52 @@
+{
+  "contract_name": "Permissioner",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "perms",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    }
+  ],
+  "unlinked_binary": "0x60606040523415600b57fe5b5b60838061001a6000396000f300606060405263ffffffff60e060020a600035041663b409ea4e81146020575bfe5b3415602757fe5b6039600160a060020a0360043516604f565b6040805160ff9092168252519081900360200190f35b60005b9190505600a165627a7a7230582029d9ab7ea9883f4c3e9f86fc415260d4785fa78e90e41be49641a4f6908009620029",
+  "networks": {
+    "1": {
+      "events": {},
+      "links": {},
+      "address": "0x98b51a57d66f809632bcf91386e70de9fc58285e",
+      "updated_at": 1501168052469
+    },
+    "1501152362355": {
+      "events": {},
+      "links": {},
+      "address": "0xa2c26a0456803653e50ac12f257e00a73848e3ec",
+      "updated_at": 1501163117048
+    },
+    "1501163954345": {
+      "events": {},
+      "links": {},
+      "address": "0x9907fc7296aaea93bfd717d4f12dc47ced2f13eb",
+      "updated_at": 1501164017643
+    },
+    "1501232501889": {
+      "events": {},
+      "links": {},
+      "address": "0x92d39fa894d8077c866ea7e981cf9f21e2b4a969",
+      "updated_at": 1501260952139
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1501260952139
+}
