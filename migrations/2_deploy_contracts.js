@@ -13,6 +13,9 @@ var ActionDB = artifacts.require("./ActionDB.sol");
 var ContractProvider = artifacts.require("./ContractProvider.sol");
 var ActionDbase = artifacts.require("./ActionDbase.sol");
 
+//actions
+var ActionRemoveAction = artifacts.require("./ActionRemoveAction.sol");
+
 module.exports = function(deployer) {
 
     deployer.deploy([Doug, ActionManager]);
@@ -25,4 +28,7 @@ module.exports = function(deployer) {
 
     //interfaces
     deployer.deploy([ContractProvider, ActionDbase]);
+
+    //actions
+    deployer.deploy([ActionRemoveAction]);
 };
