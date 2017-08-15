@@ -16,12 +16,7 @@ contract DougEnabled {
     // Makes it so that Doug is the only contract that may kill it.
     function remove(){
         if(msg.sender == DOUG){
-            selfdestruct(DOUG);
+            suicide(DOUG);
         }
     }
-
-    function getAddressDoug() constant returns (address){
-        return DOUG;
-     }
-
 }

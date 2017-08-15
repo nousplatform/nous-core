@@ -1,18 +1,32 @@
 pragma solidity ^0.4.4;
 
+import "../security/DougEnabled.sol";
 import "../security/ActionManagerEnabled.sol";
 import "../actions/mainactions.sol";
 
-contract ActionDB is ActionManagerEnabled{
+contract ActionDB is ActionManagerEnabled {
 
     // This is where we keep all the actions.
     mapping (bytes32 => address) public actions;
 
+    function testGetAddress(bytes32 name) constant returns (address){
+        //return DOUG;
+        //address actionDb = ContractProvider(DOUG).contracts("actiondb");
+        return actions[name];
+    }
+
+    function testValidateDoug() constant returns (address){
+        return DOUG;
+    }
+
+
     // To make sure we have an add action action, we need to auto generate
     // it as soon as we got the DOUG address.
-    // TODO
     function setDougAddress(address dougAddr) returns (bool result) {
-        super.setDougAddress(dougAddr);
+
+        if (!super.setDougAddress(dougAddr)){
+            return false;
+        }
 
         var addaction = new ActionAddAction();
         // If this fails, then something is wrong with the add action contract.

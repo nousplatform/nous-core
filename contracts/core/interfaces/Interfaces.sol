@@ -19,3 +19,7 @@ contract Charger {
 contract Endower {
   function endow(address addr, uint amount) returns (bool) {}
 }
+
+contract ActionDbase {
+	function setDougAddress(address dougAddr) returns (bool result) {}
+}

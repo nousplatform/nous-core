@@ -18,10 +18,3 @@ contract Validee is DougEnabled {
         return false;
     }
 }
-
-contract Tests2 is DougEnabled {
-
-    function getAddressDoug() constant returns (address){
-        return DOUG;
-    }
-}

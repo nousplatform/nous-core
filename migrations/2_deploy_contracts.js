@@ -13,12 +13,13 @@ var ActionSetActionPermission = artifacts.require("./ActionSetActionPermission.s
 //var ActionEndow = artifacts.require("./ActionEndow.sol");
 
 //interfaces
-//var interfaces = artifacts.require("./interfaces/interfaces.sol");
+//var interfaces = artifacts.require("./interfaces/Interfaces.sol");
 var Charger = artifacts.require("./Charger.sol");
 var ContractProvider = artifacts.require("./ContractProvider.sol");
 var Endower = artifacts.require("./Endower.sol");
 var Permissioner = artifacts.require("./Permissioner.sol");
 var Validator = artifacts.require("./Validator.sol");
+var ActionDbase = artifacts.require("./ActionDbase.sol");
 
 //models
 var ActionDB = artifacts.require("./ActionDB.sol");
@@ -46,7 +47,7 @@ module.exports = function(deployer) {
         ActionRemoveContract, ActionSetUserPermission, ActionSetActionPermission
     ]);
     //interfaces
-    deployer.deploy([Charger, ContractProvider, Endower, Permissioner, Validator]);
+    deployer.deploy([Charger, ContractProvider, Endower, Permissioner, Validator, ActionDbase]);
     //models
     deployer.deploy([ActionDB, DougDB]);
     //security
