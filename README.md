@@ -27,18 +27,18 @@ truffle console
 
 Only development version
 
-## Deployed contracts truffle
+## Deployed and test contracts in truffle
 
 DougEnabled. Once the doug address is set, don't allow it to be set again, except by the
 doug contract itself.
 
-
-
+1. Add instance for contracts
 ```diff    
 function setInstance(contactName, shortName) {contactName.deployed().then(inst => global[shortName] = inst);}
 setInstance(Doug, 'doug')
 setInstance(DougEnabled, 'dougenabled')
 setInstance(ActionManager, 'actionmanager')
+
 
 doug.addContract('actionmanager', actionmanager.address)
 actionmanager.test()
@@ -59,6 +59,55 @@ actiondb.testValidateDoug()
 
 
 
+setInstance(ActionManagerEnabled, 'actionmanagerenabled')
+setInstance(Validee, 'validee')
+=======
+setInstance(ActionDB, 'actiondb')
+setInstance(ActionManagerEnabled, 'actionmanagerenabled')
+setInstance(Validee, 'validee')
+setInstance(ActionRemoveAction, 'removeactions')
+```
+2. Add contract action manager and check addresses.
+```
+doug.addContract('actionmanager', actionmanager.address)
+
+actionmanager.test() 
+doug.address
+
+actionmanager.address
+doug.contractsTest('actionmanager')
+```
+3. Activate actionDB, add address to doug and add crate and add first action ActionAddAction 
+```
+doug.setActionDB(actiondb.address)
+
+// test add actiondb
+doug.contractsTest('actiondb').then(res => res == actiondb.address)
+//test in doug addrees
+actiondb.testValidateDoug().then(res => res == doug.address.replace("'", ''))
+// test add action
+actiondb.testGetAction('addaction')
+```
+#####5. Now need add action for add contracts
+```
+
+```
+4. Now need add action for add contracts
+```
+
+```
+Test 
+
+```
+var dougaddress = doug.address.replace("'", '')
+
+// test add action
+var actiondbaddress = actiondb.address
+doug.contractsTest('actiondb').then(res => res == actiondbaddress)
+
+```
+
+```
 setInstance(ActionManagerEnabled, 'actionmanagerenabled')
 setInstance(Validee, 'validee')
 

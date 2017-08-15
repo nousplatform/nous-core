@@ -1,30 +1,17 @@
-const DougEnabled           = artifacts.require( "./core/security/DougEnabled.sol");
-const ActionManagerEnabled  = artifacts.require( "./core/security/ActionManagerEnabled.sol");
-const Validee               = artifacts.require( "./core/security/Validee.sol");
 
-const Tests                 = artifacts.require( "./core/tests/Tests.sol");
+const Doug = artifacts.require("./core/Doug.sol");
+const DougEnabled = artifacts.require("./core/security/DougEnabled.sol");
+const ActionManager = artifacts.require("./core/ActionManager.sol");
+const ActionDB = artifacts.require("./core/models/ActionDB.sol");
 
-const ActionDB              = artifacts.require( "./core/models/ActionDB.sol");
-
-const Doug                  = artifacts.require( "./core/Doug.sol");
-
-const ActionManager         = artifacts.require( "./core/ActionManager.sol");
+//const ActionManagerEnabled  = artifacts.require( "./core/security/ActionManagerEnabled.sol");
+//const Validee               = artifacts.require( "./core/security/Validee.sol");
 
 
-contract("Doug", function(accounts){
+contract("Doug", function (accounts) {
 
-    it("it must work", function() {
+    it("it must work", function () {
 
-        let doug;
-
-        const contracts = {};
-
-
-        /**
-         * for deployed contract and save it in contracts
-         * @param contract
-         */
-        const deployedAndWriteInAddressBook = contract =>
         contract.deployed().then(deployedContract => {
 
 

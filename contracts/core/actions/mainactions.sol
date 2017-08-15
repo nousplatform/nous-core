@@ -1,14 +1,17 @@
 pragma solidity ^0.4.4;
 
-import "../security/ActionManagerEnabled.sol";
-import "../security/Validee.sol";
-import "../interfaces/ContractProvider.sol";
-import "../interfaces/Charger.sol";
-import "../interfaces/Endower.sol";
-import "../models/ActionDB.sol";
-import "../ActionManager.sol";
 import "../Doug.sol";
+import "../security/ActionManagerEnabled.sol";
 import "../Permissions.sol";
+import "../security/Validee.sol";
+
+import "../models/ActionDB.sol";
+
+//import "../interfaces/ContractProvider.sol";
+//import "../interfaces/Charger.sol";
+//import "../interfaces/Endower.sol";
+
+//import "../ActionManager.sol";
 
 
 contract Action is ActionManagerEnabled, Validee {
@@ -64,7 +67,7 @@ contract ActionRemoveAction is Action {
 // Lock actions. Makes it impossible to run actions for everyone but the owner.
 // It is good to unlock the actions manager while replacing parts of the system
 // for example.
-contract ActionLockActions is Action {
+/*contract ActionLockActions is Action {
 
     function execute() returns (bool) {
         if(!isActionManager()){
@@ -78,10 +81,10 @@ contract ActionLockActions is Action {
         return ActionManager(am).lock();
     }
 
-}
+}*/
 
 // Unlock actions. Makes it possible for everyone to run actions.
-contract ActionUnlockActions is Action {
+/*contract ActionUnlockActions is Action {
 
     function execute() returns (bool) {
         if(!isActionManager()){
@@ -95,10 +98,10 @@ contract ActionUnlockActions is Action {
         return ActionManager(am).unlock();
     }
 
-}
+}*/
 
 // Add contract.
-contract ActionAddContract is Action {
+/*contract ActionAddContract is Action {
 
     function execute(bytes32 name, address addr) returns (bool) {
         if(!isActionManager()){
@@ -108,10 +111,10 @@ contract ActionAddContract is Action {
         return d.addContract(name,addr);
     }
 
-}
+}*/
 
 // Remove contract.
-contract ActionRemoveContract is Action {
+/*contract ActionRemoveContract is Action {
 
     function execute(bytes32 name) returns (bool) {
         if(!isActionManager()){
@@ -120,7 +123,7 @@ contract ActionRemoveContract is Action {
         Doug d = Doug(DOUG);
         return d.removeContract(name);
     }
-}
+}*/
 
 // The charge action.
 /*contract ActionCharge is Action {
@@ -157,7 +160,7 @@ contract ActionRemoveContract is Action {
 }*/
 
 // The set user permission action.
-contract ActionSetUserPermission is Action {
+/*contract ActionSetUserPermission is Action {
 
     function execute(address addr, uint8 perm) returns (bool) {
         if(!isActionManager()){
@@ -170,10 +173,10 @@ contract ActionSetUserPermission is Action {
         }
         return Permissions(perms).setPermission(addr,perm);
     }
-}
+}*/
 
 // The set action permission. This is the permission level required to run the action.
-contract ActionSetActionPermission is Action {
+/*contract ActionSetActionPermission is Action {
 
     function execute(bytes32 name, uint8 perm) returns (bool) {
         if(!isActionManager()){
@@ -188,10 +191,4 @@ contract ActionSetActionPermission is Action {
         Action(action).setPermission(perm);
     }
 
-}
-
-contract Test is Action {
-    function execute(bytes32 name) constant returns (bool){
-        return true;
-    }
-}
+}*/
