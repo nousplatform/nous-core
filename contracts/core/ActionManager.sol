@@ -7,59 +7,37 @@ import "./Permissions.sol";
 
 contract ActionManager is DougEnabled {
 
-	struct ActionLogEntry {
-		address caller;
-		bytes32 action;
-		uint blockNumber;
-		bool success;
-	}
+	address activeAction;
+  	address actionAddress = 0x0;
+  	address actionDb = 0x0;
 
 	uint8 permToLock = 255; // Current max.
 	bool locked;
-
-	bool LOGGING = true;
-
-	// This is where we keep the "active action".
-	// TODO need to keep track of uses of (STOP) as that may cause activeAction
-	// to remain set and opens up for abuse. (STOP) is used as a temporary array
-	// out-of bounds exception for example (or is planned to), which means be
-	// careful. Does it revert the tx entirely now, or does it come with some sort
-	// of recovery mechanism? Otherwise it is still super dangerous and should never
-	// ever be used. Ever.
-	address activeAction;
-
-	// Adding a logger here, and not in a separate contract. This is wrong.
-	// Will replace with array once that's confirmed to work with structs etc.
-	uint public nextEntry = 0;
-	mapping(uint => ActionLogEntry) public logEntries;
 
 	function ActionManager(){
 		permToLock = 255;
 	}
 
-	/*function test() constant returns (address) {
-		return DOUG;
-	}*/
-
-
-	function execute(bytes32 actionName, bytes data) returns (bool) {
-		address actionDb = ContractProvider(DOUG).contracts("actiondb");
-
-		if (actionDb == 0x0){
-			_log(actionName, false);
-			return false;
+	modifier check_actionDb(bytes32 actionName){
+		actionDb = ContractProvider(DOUG).contracts("actiondb");
+		if(actionDb == 0x0){
+			Logs(DOUG).save_log(actionName, false);
+			throw;
 		}
+		_;
+	}
 
-		address action_address = ActionDB(actionDb).actions(actionName);
+  	modifier checkAction(bytes32 actionName){
+  		actionAddress = ActionDb(actionDb).actions(actionName);
+  		if(actionAddress == 0x0){
+  			Logs(DOUG).save_log(actionName, false);
+  			throw;
+  		}
+  		_;
+  	}
 
-		// If no action with the given name exists - cancel.
-		if (action_address == 0x0){
-			_log(actionName,false);
-			return false;
-		}
-
-		// Permissions stuff
-		address pAddr = ContractProvider(DOUG).contracts("perms");
+  	modifier permissions(){
+  		address pAddr = ContractProvider(DOUG).contracts("perms");
 		// Only check permissions if there is a permissions contract.
 		if(pAddr != 0x0){
 			Permissions p = Permissions(pAddr);
@@ -70,52 +48,54 @@ contract ActionManager is DougEnabled {
 			// Now we check that the action manager isn't locked down. In that case, special
 			// permissions is needed.
 			if(locked && perm < permToLock){
-					_log(actionName, false);
-					return false;
+				Logs(DOUG).save_log(actionName, false);
+				throw;
 			}
 
 			// Now we check the permission that is required to execute the action.
-			uint8 permReq = Action(action_address).permission();
+			uint8 permReq = Action(actn).permission();
 
 			// Very simple system.
 			if (perm < permReq){
-					_log(actionName,false);
-					return false;
+				Logs(DOUG).save_log(actionName, false);
+				throw;
 			}
-
 		}
+		_;
+  	}
 
-		// Set this as the currently active action.
-		activeAction = action_address;
-		// TODO keep up with return values from generic calls.
-
-		// Just assume it succeeds for now (important for logger).
-		action_address.call(data);
-
-		// Now clear it.
+  	function ActionAddAction(bytes32 actionName, bytes32 name, address addr) check_actionDb (actionName)
+	checkAction(actionName) permissions() returns (bool) {
+		activeAction = actionAddress;
+		bool memory res = ActionAddAction(actionAddress).execute(name, addr);
 		activeAction = 0x0;
-		_log(actionName, true);
-		return true;
+		return res;
 	}
+
+	/*function lock() returns (bool) {
+		if(msg.sender != activeAction){
+			return false;
+		}
+		if(locked){
+			return false;
+		}
+		locked = true;
+	}
+
+	function unlock() returns (bool) {
+		if(msg.sender != activeAction){
+			return false;
+		}
+		if(!locked){
+			return false;
+		}
+		locked = false;
+	}*/
 
 	// Validate can be called by a contract like the bank to check if the
 	// contract calling it has permissions to do so.
 	function validate(address addr) constant returns (bool) {
 		return addr == activeAction;
-	}
-
-	function _log(bytes32 actionName, bool success) internal {
-		// TODO check if this is really necessary in an internal function.
-
-		if(!LOGGING || msg.sender != address(this)){
-			return;
-		}
-
-		ActionLogEntry le = logEntries[nextEntry++];
-		le.caller = msg.sender;
-		le.action = actionName;
-		le.success = success;
-		le.blockNumber = block.number;
 	}
 
 }

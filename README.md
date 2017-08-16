@@ -38,6 +38,30 @@ function setInstance(contactName, shortName) {contactName.deployed().then(inst =
 setInstance(Doug, 'doug')
 setInstance(DougEnabled, 'dougenabled')
 setInstance(ActionManager, 'actionmanager')
+
+
+doug.addContract('actionmanager', actionmanager.address)
+actionmanager.test()
+actionmanager.address
+doug.contractsTest('actionmanager')
+
+setInstance(ActionDB, 'actiondb')
+//
+doug.setActionDB(actiondb.address)
+//
+doug.contractsTest('actiondb')
+actiondb.address
+actiondb.testValidateDoug()
+//
+//
+//
+
+
+
+
+setInstance(ActionManagerEnabled, 'actionmanagerenabled')
+setInstance(Validee, 'validee')
+=======
 setInstance(ActionDB, 'actiondb')
 setInstance(ActionManagerEnabled, 'actionmanagerenabled')
 setInstance(Validee, 'validee')

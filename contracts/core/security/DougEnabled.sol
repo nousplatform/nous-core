@@ -13,6 +13,7 @@ contract DougEnabled {
 		return true;
 	}
 
+
 	// Makes it so that Doug is the only contract that may kill it.
 	function remove(){
 		if(msg.sender == DOUG){
@@ -20,3 +21,4 @@ contract DougEnabled {
 		}
 	}
 }
+

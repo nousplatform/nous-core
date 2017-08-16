@@ -18,7 +18,7 @@ contract DougDB {
 	}
 
 	// Add a new contract. This will overwrite an existing contract. 'internal' modifier means
-  // it has to be called by an implementing class.
+  	// it has to be called by an implementing class.
 	function _addElement(bytes32 name, address addr) internal returns (bool result) {
 
  		if(isElement(name)) {

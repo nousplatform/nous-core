@@ -1,5 +1,6 @@
 pragma solidity ^0.4.4;
 
+import "../security/DougEnabled.sol";
 import "../security/ActionManagerEnabled.sol";
 import "../security/DougEnabled.sol";
 import "../actions/mainactions.sol";
