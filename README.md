@@ -42,6 +42,8 @@ setInstance(ActionDB, 'actiondb')
 setInstance(ActionManagerEnabled, 'actionmanagerenabled')
 setInstance(Validee, 'validee')
 setInstance(ActionRemoveAction, 'removeactions')
+
+
 ```
 2. Add contract action manager and check addresses.
 ```
@@ -64,17 +66,36 @@ actiondb.testValidateDoug().then(res => res == doug.address.replace("'", ''))
 // test add action
 actiondb.testGetAction('addaction')
 ```
-#####5. Now need add action for add contracts
+#####5. Permissions add to doug
 ```
+setInstance(Permissions, 'permissions')
+
+doug.addContract('perms', permissions.address)
+//test
+doug.contractsTest('perms').then(res => res == permissions.address)
+```
+4. Validate
+```
+setInstance(Validee, 'validee')
+doug.addContract('validee', validee.address)
+doug.contractsTest('validee').then(res => res == validee.address)
+```
+Add actions from action manager
 
 ```
-4. Now need add action for add contracts
-```
+setInstance(ActionRemoveAction, 'removeaction')
+actionmanager.execute('addaction', ['removeaction', removeaction.address])
 
-```
-Test 
 
-```
+setInstance(TestAction, 'testaction')
+actionmanager.testCall(testaction.address, web3.sha3("execute()").substr(0,10))
+
+actiondb.testGetAction('removeaction')
+
+actionmanager.testexecute('addaction', ['test'])
+
+
+
 var dougaddress = doug.address.replace("'", '')
 
 // test add action

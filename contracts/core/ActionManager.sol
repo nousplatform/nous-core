@@ -37,9 +37,10 @@ contract ActionManager is DougEnabled {
 		permToLock = 255;
 	}
 
-	function test() constant returns (address) {
+	/*function test() constant returns (address) {
 		return DOUG;
-	}
+	}*/
+
 
 	function execute(bytes32 actionName, bytes data) returns (bool) {
 		address actionDb = ContractProvider(DOUG).contracts("actiondb");

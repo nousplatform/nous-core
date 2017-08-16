@@ -2,6 +2,7 @@ pragma solidity ^0.4.4;
 
 import "./security/Validee.sol";
 
+// User permissions
 // The Permissions contract
 contract Permissions is Validee {
 

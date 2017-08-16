@@ -13,7 +13,7 @@ import "../models/ActionDB.sol";
 
 //import "../ActionManager.sol";
 
-
+// Action Permissions
 contract Action is ActionManagerEnabled, Validee {
   // Note auto accessor.
   uint8 public permission;
@@ -24,6 +24,15 @@ contract Action is ActionManagerEnabled, Validee {
     }
     permission = permVal;
   }
+}
+
+contract TestAction is Action {
+	function execute(bytes32 name) returns (bool) {
+		/*if (name == '1')
+			return false;*/
+
+		return true;
+	}
 }
 
 // Add action. NOTE: Overwrites currently added actions with the same name.

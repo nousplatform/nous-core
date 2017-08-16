@@ -27,9 +27,9 @@ contract DougDB {
 
 		Element elem = list[name];
 		elem.contractName = name;
-    elem.contractAddress = addr;
-    elem.index = elementIndex.push(name)-1;
-    return true;
+		elem.contractAddress = addr;
+		elem.index = elementIndex.push(name)-1;
+		return true;
 	}
 
 	// Remove a contract from Doug (we could also selfdestruct the contract if we want to).
