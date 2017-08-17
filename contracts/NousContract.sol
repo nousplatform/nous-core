@@ -1,16 +1,13 @@
 pragma solidity ^0.4.4;
 
-import "./found/Found.sol";
-import "./core/Doug.sol";
+import "./fund/Fund.sol";
 
-contract NousContract {
+contract NousCreator {
 
     address private owner;    // the Creator of the contract
-    //address[] founds;
-    address Doug;
+    address[] funds;
 
-
-    function NousContract(){
+    function NousCreator(){
         owner = msg.sender;
     }
 
@@ -19,23 +16,21 @@ contract NousContract {
         _;
     }
 
-    // TODO create new Doug
-    function setDougAddress(){
-
+    function createNewfund(bytes32 name ) onlyOwner() returns (address foundAddress){
+        funds.push(address(new Fund(msg.sender, name)));
+        return funds[funds.length-1];
     }
 
-    /*function createNewFound(bytes32 _name ) onlyOwner() constant returns (Found foundAddress){
-        founds.push(address(new Found(_addressOwner, _name)));
-        return founds[founds.length-1];
-    }*/
-
-    function addFound( address addressOwner, bytes32 name ) onlyOwner() returns (bool){
-        address found_address = address(new Found(addressOwner, name));
-        return true;
+    function getContract() constant returns (address[]){
+    	address[] memory alladdr = new address[](funds.length);
+    	for (uint8 i = 0; i < funds.length; i++){
+    		alladdr[i] = funds[i];
+		}
+		return alladdr;
     }
 
     /*function createAndEndowD(uint arg, uint amount) {
         // Send ether along with the creation
-        D newD = (new Found).value(amount)(arg);
+        D newD = (new fund).value(amount)(arg);
     }*/
 }

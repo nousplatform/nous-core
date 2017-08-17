@@ -32,130 +32,19 @@ Only development version
 DougEnabled. Once the doug address is set, don't allow it to be set again, except by the
 doug contract itself.
 
-1. Add instance for contracts
+1. Create new fond from Nous Contract
 ```diff    
+
 function setInstance(contactName, shortName) {contactName.deployed().then(inst => global[shortName] = inst);}
-setInstance(Doug, 'doug')
-setInstance(DougEnabled, 'dougenabled')
-setInstance(ActionManager, 'actionmanager')
+setInstance(NousCreator, 'nousCreater')
+nousCreater.createNewfund('test')
 
+setInstance(NousCreator, 'nousCreater')
+nousCreater.getContract()
 
-doug.addContract('actionmanager', actionmanager.address)
-actionmanager.test()
-actionmanager.address
-doug.contractsTest('actionmanager')
+var fund = Fund.at('0xce2b1632b47326354ff6e18589fc3e769e67b1a6')
+fund.createComponents()
 
-setInstance(ActionDB, 'actiondb')
-//
-doug.setActionDB(actiondb.address)
-//
-doug.contractsTest('actiondb')
-actiondb.address
-actiondb.testValidateDoug()
-//
-//
-//
-
-
-
-
-setInstance(ActionManagerEnabled, 'actionmanagerenabled')
-setInstance(Validee, 'validee')
-=======
-setInstance(ActionDB, 'actiondb')
-setInstance(ActionManagerEnabled, 'actionmanagerenabled')
-setInstance(Validee, 'validee')
-setInstance(ActionRemoveAction, 'removeactions')
-
-
-```
-2. Add contract action manager and check addresses.
-```
-doug.addContract('actionmanager', actionmanager.address)
-
-actionmanager.test() 
-doug.address
-
-actionmanager.address
-doug.contractsTest('actionmanager')
-```
-3. Activate actionDB, add address to doug and add crate and add first action ActionAddAction 
-```
-doug.setActionDB(actiondb.address)
-
-// test add actiondb
-doug.contractsTest('actiondb').then(res => res == actiondb.address)
-//test in doug addrees
-actiondb.testValidateDoug().then(res => res == doug.address.replace("'", ''))
-// test add action
-actiondb.testGetAction('addaction')
-```
-#####5. Permissions add to doug
-```
-setInstance(Permissions, 'permissions')
-
-doug.addContract('perms', permissions.address)
-//test
-doug.contractsTest('perms').then(res => res == permissions.address)
-```
-4. Validate
-```
-setInstance(Validee, 'validee')
-doug.addContract('validee', validee.address)
-doug.contractsTest('validee').then(res => res == validee.address)
-```
-Add actions from action manager
-
-```
-setInstance(ActionRemoveAction, 'removeaction')
-actionmanager.execute('addaction', ['removeaction', removeaction.address])
-
-
-setInstance(TestAction, 'testaction')
-actionmanager.testCall(testaction.address, web3.sha3("execute()").substr(0,10))
-
-actiondb.testGetAction('removeaction')
-
-actionmanager.testexecute('addaction', ['test'])
-
-
-
-var dougaddress = doug.address.replace("'", '')
-
-// test add action
-var actiondbaddress = actiondb.address
-doug.contractsTest('actiondb').then(res => res == actiondbaddress)
-
-```
-
-```
-setInstance(ActionManagerEnabled, 'actionmanagerenabled')
-setInstance(Validee, 'validee')
-
-
-//
-actiondb.setDougAddress(doug.address)
-doug.addContract('actionmanager', actionmanager.address)
--------------------------------------------------------------------------------------------------------------
-setInstance(Tests, 'tests');
--------------------------------------------------------------------------------------------------------------
-
-doug.addContract('actionmanagerenabled', actionmanagerenabled.address)
-doug.addContract('validee', validee.address)
--------------------------------------------------------------------------------------------------------------
-actiondb.setDougAddress(doug.add)
-
-//doug.addContract('actiondb', actiondb.address)
-doug.addContract('tests', tests.address)
--------------------------------------------------------------------------------------------------------------
-doug.contractsTest('actionmanagerenabled')
-doug.contractsTest('actionmanager')
-doug.contractsTest('validee')
-doug.contractsTest('actiondb')
-doug.contractsTest('tests')
--------------------------------------------------------------------------------------------------------------
-doug.addContract('tests', tests.address)
-tests.getAddressDoug()
 ```
 
 

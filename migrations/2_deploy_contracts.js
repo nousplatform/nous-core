@@ -1,39 +1,42 @@
-var Doug = artifacts.require("./Doug.sol");
-var ActionManager = artifacts.require("./ActionManager.sol");
+//componenets
+var Managers = artifacts.require("./Managers.sol");
 var Permissions = artifacts.require("./Permissions.sol");
+
+//interfaces
+var ContractProvider = artifacts.require("./ContractProvider.sol");
+
+//models
+var ManagerDb = artifacts.require("./ManagerDb.sol");
+var PermissionsDb = artifacts.require("./PermissionsDb.sol");
 
 //security
 var DougEnabled = artifacts.require("./DougEnabled.sol");
-var ActionManagerEnabled = artifacts.require("./ActionManagerEnabled.sol");
-var Validee = artifacts.require("./Validee.sol");
+var FundManagerEnabled = artifacts.require("./FundManagerEnabled.sol");
 
-//models
-var DougDB = artifacts.require("./DougDB.sol");
-var ActionDB = artifacts.require("./ActionDB.sol");
+var Fund = artifacts.require("./Fund.sol");
+var FundManager = artifacts.require("./FundManager.sol");
 
-//interfaces
-var ActionDbase = artifacts.require("./ActionDbase.sol");
-var ContractProvider = artifacts.require("./ContractProvider.sol");
-var Permissioner = artifacts.require("./Permissioner.sol");
-var Validator = artifacts.require("./Validator.sol");
 
-//actions
-var ActionRemoveAction = artifacts.require("./ActionRemoveAction.sol");
-var TestAction = artifacts.require("./TestAction.sol");
+var NousCreator = artifacts.require("./NousCreator.sol");
+
 
 module.exports = function(deployer) {
 
-    deployer.deploy([Doug, ActionManager, Permissions]);
+  //componenets
+  //deployer.deploy([Managers, Permissions]);
 
-    //security
-    deployer.deploy([DougEnabled, ActionManagerEnabled, Validee, Permissioner]);
+  //interfaces
+  //deployer.deploy([ContractProvider]);
 
-    //models
-    deployer.deploy([DougDB, ActionDB]);
+  //models
+  //deployer.deploy([ManagerDb, PermissionsDb]);
 
-    //interfaces
-    deployer.deploy([ContractProvider, ActionDbase, Validator]);
+  //security
+  //deployer.deploy([DougEnabled, FundManagerEnabled]);
 
-    //actions
-    deployer.deploy([ActionRemoveAction, TestAction]);
+  //deployer.deploy([Fund, FundManager]);
+
+
+    deployer.deploy([NousCreator]);
+
 };
