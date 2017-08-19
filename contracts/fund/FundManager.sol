@@ -60,6 +60,16 @@ contract FundManager is DougEnabled {
 		return success;
 	}
 
+	// or 2, 3 Manager and Owner
+	function addWallet(){
+
+	}
+
+	// only 4 Nous platform
+	function confirmedWallet(){
+
+	}
+
 
 	// Set the permissions for a given address.
 	function setPermission(address addr, uint8 permLvl) returns (bool res) {

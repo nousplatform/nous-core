@@ -25,7 +25,7 @@ contract WalletsDB {
         bytes32 type_wallet,
         address walletAddress
     )
-        //orOwnerManager()
+
     {
         wallets[walletAddress].type_wallet = type_wallet;
         wallets[walletAddress].confirmed = false;
