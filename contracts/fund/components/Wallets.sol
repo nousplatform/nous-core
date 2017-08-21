@@ -10,12 +10,7 @@ contract Wallets is FundManagerEnabled {
         super.setDougAddress(msg.sender);
     }
 
-    function addWallet(
-        address walletAddress,
-        bytes32 firstName,
-        bytes32 lastName,
-        bytes32 email
-    ) returns (bool){
+    function addWallet(bytes32 type_wallet, address walletAddress) returns (bool){
         if (!isFundManager()){
             return false;
         }
@@ -24,7 +19,7 @@ contract Wallets is FundManagerEnabled {
         if ( walletsdb == 0x0 ) {
             return false;
         }
-        return  WalletsDb(walletsdb).insertWallet(walletAddress, firstName, lastName, email);
+        return  WalletsDb(walletsdb).insertWallet(type_wallet, walletAddress);
     }
 
     function confirmWallet(address walletAddress) returns (bool){

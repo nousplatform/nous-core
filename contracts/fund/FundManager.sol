@@ -28,8 +28,8 @@ contract FundManager is DougEnabled {
 
 		setDougAddress(msg.sender);
 
-		setPermission(nous, 4);
-		setPermission(owner, 3);
+		setPermission(nousaddress, 4); // nous platform
+		setPermission(foundOwner, 3); // owner
 		setPermission(msg.sender, 3); // FUND - contract (DOUG)
     }
 
@@ -87,7 +87,7 @@ contract FundManager is DougEnabled {
 	/**
 	* Add wallet
 	*/
-	function addWallet( bytes32 type_wallet, address walletAddress ){
+	function addWallet( bytes32 type_wallet, address walletAddress ) returns (bool){
 		if (!checkPermission("owner") && !checkPermission("manager")) {
 			return false;
 		}
@@ -107,7 +107,7 @@ contract FundManager is DougEnabled {
 	/**
 	* Confirmed Wallet
 	* confirm address wallets
-	* @param (address) walletAddress
+	* param address walletAddress
 	*/
 	function confirmedWallet(address walletAddress) returns (bool) {
 		if (!checkPermission("nous")){

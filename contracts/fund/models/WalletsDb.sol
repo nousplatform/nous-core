@@ -40,9 +40,7 @@ contract WalletsDb is DougEnabled {
         return walletsIndex[wallets[walletAddress].index] == walletAddress;
     }
 
-    function addWallet(
-        bytes32 type_wallet,
-        address walletAddress)
+    function insertWallet(bytes32 type_wallet, address walletAddress) returns (bool)
     {
         if (!isFromWallet() || !isWallet(walletAddress)) return false;
 
@@ -58,7 +56,7 @@ contract WalletsDb is DougEnabled {
         return true;
     }
 
-    function confirmWallet(address walletAddress){
+    function confirmWallet(address walletAddress) returns (bool){
         if (!isFromWallet() || !isWallet(walletAddress)) return false;
         wallets[walletAddress].confirmed = true;
 
