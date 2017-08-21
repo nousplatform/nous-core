@@ -2,6 +2,8 @@ pragma solidity ^0.4.4;
 
 import "./security/DougEnabled.sol";
 import "./FundManager.sol";
+import "./components/Permissions.sol";
+import "./models/PermissionsDb.sol";
 import "./security/FundManagerEnabled.sol";
 
 // The Doug contract.
@@ -32,21 +34,30 @@ contract Fund {
 
     function createComponents() onlyOwner() {
     	//ToDo поставить проверку
-
+		//permission
     	address addrPermissions = address(new Permissions());
 		addContract('perms', addrPermissions);
 
 		address addrPermissionsDB = address(new PermissionsDb());
 		addContract('permsdb', addrPermissionsDB);
 
+		// fund manager
 		address addrFundManager = address(new FundManager(owner, nous));
 		contracts['fundManager'] = addrFundManager;
 
+		//manager db
     	address addrManagers = address(new Managers());
 		contracts['managers'] = addrManagers;
 
 		address addrManagerDb = address(new ManagerDb());
 		contracts['managerdb'] = addrManagerDb;
+
+		//wallets
+		address addrWallets = address(new Wallets());
+		contracts['wallets'] = addrWallets;
+
+		address addrWalletsDb = address(new WalletsDb());
+		contracts['walletsdb'] = addrWalletsDb;
     }
 
 

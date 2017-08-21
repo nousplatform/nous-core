@@ -6,10 +6,18 @@ import "../interfaces/ContractProvider.sol";
 // Permissions database
 contract PermissionsDb is DougEnabled {
 
-    mapping (address => uint8) public perms;
+    mapping (address => uint8) perms;
+
+    mapping(bytes32 => uint8) rolePermission;
 
     function PermissionsDb() {
 		setDougAddress(msg.sender);
+
+		// set default permission
+		rolePermission['nous'] = 4;
+		rolePermission['owner'] = 3;
+		rolePermission['manager'] = 2;
+		rolePermission['investor'] = 1;
 	}
 
     // Set the permissions of an account.
@@ -24,6 +32,14 @@ contract PermissionsDb is DougEnabled {
         } else {
             return false;
         }
+    }
+
+    function getRolePerm(bytes32 role) returns (uint8) {
+    	return rolePermission[role];
+    }
+
+    function getUserPerm(address addr) returns (uint8) {
+    	return perms[addr];
     }
 
 }
