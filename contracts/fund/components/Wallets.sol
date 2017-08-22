@@ -33,4 +33,19 @@ contract Wallets is FundManagerEnabled {
         }
         return  WalletsDb(walletsdb).confirmWallet(walletAddress);
     }
+
+    function createSnapshot(address walletAddress, uint32 balance) returns (bool){
+		if (!isFundManager()){
+			return false;
+		}
+
+		address walletsdb = ContractProvider(DOUG).contracts("walletsdb");
+		if ( walletsdb == 0x0 ) {
+			return false;
+		}
+
+		return  WalletsDb(walletsdb).addSnapshot(walletAddress, balance);
+    }
+
+
 }

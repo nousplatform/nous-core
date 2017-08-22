@@ -108,6 +108,7 @@ contract FundManager is DougEnabled {
 	* Confirmed Wallet
 	* confirm address wallets
 	* param address walletAddress
+	* can do only Nous platform
 	*/
 	function confirmedWallet(address walletAddress) returns (bool) {
 		if (!checkPermission("nous")){
@@ -121,6 +122,25 @@ contract FundManager is DougEnabled {
 		}
 
 		if (!Wallets(wallets).confirmWallet(walletAddress)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	// Create snapshot can do only Nous platform
+	function createSnapshot(address walletAddress, uint32 balance) returns (bool){
+		if (!checkPermission("nous")){
+			return false;
+		}
+
+		address wallets = ContractProvider(DOUG).contracts("wallets");
+
+		if (wallets == 0x0){
+			return false;
+		}
+
+		if (!Wallets(wallets).createSnapshot(walletAddress, balance)) {
 			return false;
 		}
 
