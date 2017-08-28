@@ -10,6 +10,7 @@ pragma solidity ^0.4.4;
 import "./interfaces/ContractProvider.sol";
 import "./security/DougEnabled.sol";
 import "./models/PermissionsDb.sol";
+//import "./models/ManagerDb.sol";
 import "./components/Permissions.sol";
 import "./components/Managers.sol";
 import "./components/Wallets.sol";
@@ -18,19 +19,35 @@ import "./components/Wallets.sol";
 contract FundManager is DougEnabled {
 
     // We still want an owner.
-    //address owner;
-    //address nous;
+    address owner;
+    address nous;
+    address fund;
 
     // Constructor
-    function FundManager(address foundOwner, address nousaddress){
-		//owner = foundOwner;
-		//nous = nousaddress;
+    function FundManager(address foundOwner, address nousaddress) {
+		owner = foundOwner;
+		nous = nousaddress;
+		fund = msg.sender;
 
 		setDougAddress(msg.sender);
 
-		setPermission(nousaddress, 4); // nous platform
-		setPermission(foundOwner, 3); // owner
-		setPermission(msg.sender, 3); // FUND - contract (DOUG)
+		//return true;
+
+//		setPermission(nousaddress, 4); // nous platform
+//		setPermission(foundOwner, 3); // owner
+//		setPermission(msg.sender, 3); // FUND - contract (DOUG)
+    }
+
+    function constructSetPermission(){
+
+    	if (msg.sender == fund ){
+			address perms = ContractProvider(DOUG).contracts("perms");
+			if ( perms != 0x0 ) {
+				Permissions(perms).setPermission(nous, 4);
+				Permissions(perms).setPermission(fund, 3);
+				Permissions(perms).setPermission(owner, 3);
+			}
+    	}
     }
 
     function checkPermission(bytes32 role) returns (bool) {
@@ -65,6 +82,31 @@ contract FundManager is DougEnabled {
 
 		return true;
 	}
+
+	/*function getAllManagers() constant returns (bytes32[] memory names, address[] memory addrs){
+		if (!checkPermission("owner")){
+			//return false;
+		}
+
+		address managersDb = ContractProvider(DOUG).contracts("managerdb");
+		if (managersDb == 0x0){
+
+		}
+
+		var length = ManagerDb(managersDb).getManagersLength();
+
+		names = new bytes32[](length);
+		addrs = new address[](length);
+
+		for (uint i = 0; i <= length; i++){
+			var (name, addr) = ManagerDb(managersDb).getManager(i);
+			names[i] = name;
+            addrs[i] = addr;
+		}
+
+		return (names, addrs);
+
+	}*/
 
 	function delManager(address managerAddr) returns (bool) {
 		if (!checkPermission("owner")){
@@ -159,6 +201,15 @@ contract FundManager is DougEnabled {
 		}
 
 		return Permissions(perms).setPermission(addr, permLvl);
+	}
+
+	function getRole(bytes32 role) constant returns (uint8, uint8){
+		address permsdb = ContractProvider(DOUG).contracts("permsdb");
+		if ( permsdb != 0x0 ){
+			PermissionsDb permComp = PermissionsDb(permsdb);
+			return (permComp.getUserPerm(msg.sender), permComp.getRolePerm(role));
+		}
+		return (0, 0);
 	}
 
 

@@ -10,6 +10,10 @@ contract Managers is FundManagerEnabled {
 		super.setDougAddress(msg.sender);
 	}
 
+	function getDoug() constant returns (address){
+		return DOUG;
+	}
+
     function addManager(
     	address managerAddress,
 		bytes32 firstName,
@@ -24,7 +28,7 @@ contract Managers is FundManagerEnabled {
 		if ( managerdb == 0x0 ) {
 			return false;
 		}
-		return  ManagerDb(managerdb).insertManager(managerAddress, firstName, lastName, email);
+		return ManagerDb(managerdb).insertManager(managerAddress, firstName, lastName, email);
     }
 
     function delManager(address managerAddress) returns (bool){

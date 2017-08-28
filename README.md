@@ -37,13 +37,25 @@ doug contract itself.
 
 function setInstance(contactName, shortName) {contactName.deployed().then(inst => global[shortName] = inst);}
 setInstance(NousCreator, 'nousCreater')
-nousCreater.createNewfund('test')
 
-setInstance(NousCreator, 'nousCreater')
-nousCreater.getContract()
-
-var fund = Fund.at('0xce2b1632b47326354ff6e18589fc3e769e67b1a6')
+nousCreater.createNewFund('test')
+nousCreater.getContract().then( res => fund = Fund.at(res[0]))
 fund.createComponents()
+////fund.createSecondComponents()
+
+fund.getContracts('perms')
+fund.getContracts('walletsdb')
+
+fund.getContracts('fundManager').then(res => fundManager = FundManager.at(res))
+
+
+//add fund manager 
+ 
+fundManager.addManager(web3.eth.accounts[2], 'testFN', 'testLN', 'test@test')
+
+fund.getContracts('managerdb').then(res => managerDb = ManagerDb.at(res))
+managerDb.getAllManagers()
+managerDb.getManager(0)
 
 ```
 

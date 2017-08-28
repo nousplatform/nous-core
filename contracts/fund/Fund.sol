@@ -45,8 +45,10 @@ contract Fund {
 		address addrFundManager = address(new FundManager(owner, nous));
 		contracts['fundManager'] = addrFundManager;
 
+		FundManager(contracts['fundManager']).constructSetPermission();
+
 		//manager db
-    	address addrManagers = address(new Managers());
+		address addrManagers = address(new Managers());
 		contracts['managers'] = addrManagers;
 
 		address addrManagerDb = address(new ManagerDb());
@@ -58,6 +60,12 @@ contract Fund {
 
 		address addrWalletsDb = address(new WalletsDb());
 		contracts['walletsdb'] = addrWalletsDb;
+
+    }
+
+    function createSecondComponents() onlyOwner() {
+
+
     }
 
 
@@ -81,23 +89,5 @@ contract Fund {
         return true;
     }
 
-    function remove() onlyOwner {
-        address fm = contracts["fundmanager"];
-        address perms = contracts["perms"];
-        address permsdb = contracts["permsdb"];
-        address bank = contracts["bank"];
-        address bankdb = contracts["bankdb"];
-
-        // Remove everything.
-        if(fm != 0x0){ DougEnabled(fm).remove(); }
-        if(perms != 0x0){ DougEnabled(perms).remove(); }
-        if(permsdb != 0x0){ DougEnabled(permsdb).remove(); }
-        if(bank != 0x0){ DougEnabled(bank).remove(); }
-        if(bankdb != 0x0){ DougEnabled(bankdb).remove(); }
-
-        // Finally, remove doug. Doug will now have all the funds of the other contracts,
-        // and when suiciding it will all go to the owner.
-        selfdestruct(owner);
-    }
 
 }

@@ -12,8 +12,8 @@ contract ManagerDb is DougEnabled {
 		uint index;
 	}
 
-	mapping ( address => ManagerStruct ) private ManagerStructs;
-	address[] private managerIndex; // Managers
+	mapping ( address => ManagerStruct ) Managers;
+	address[] managerIndex; // Managers
 
 	function ManagerDb(){
 		setDougAddress(msg.sender);
@@ -36,7 +36,7 @@ contract ManagerDb is DougEnabled {
 		returns(bool isIndeed)
 	{
 		if (managerIndex.length == 0 ) return false;
-		return managerIndex[ManagerStructs[managerAddress].index] == managerAddress;
+		return managerIndex[Managers[managerAddress].index] == managerAddress;
 	}
 
 	function insertManager(
@@ -55,7 +55,7 @@ contract ManagerDb is DougEnabled {
 		newManager.email = email;
 		newManager.index = managerIndex.push(managerAddress)-1;
 
-		ManagerStructs[managerAddress] = newManager;
+		Managers[managerAddress] = newManager;
 		return true;
 	}
 
@@ -64,13 +64,42 @@ contract ManagerDb is DougEnabled {
 	{
 		if (!isFromManager() || !isManager(managerAddress)) return false;
 
-		uint rowToDelete = ManagerStructs[managerAddress].index; // index manager to de
+		uint rowToDelete = Managers[managerAddress].index; // index manager to de
 		address keyToMove = managerIndex[managerIndex.length-1];
 		managerIndex[rowToDelete] = keyToMove;
-		ManagerStructs[keyToMove].index = rowToDelete;
+		Managers[keyToMove].index = rowToDelete;
 		managerIndex.length--;
 
 		return true;
+	}
+
+	function getManagersLength() constant returns (uint){
+		return managerIndex.length;
+	}
+
+	function getManager(uint index) constant returns (bytes32, address){
+		ManagerStruct ms = Managers[managerIndex[index]];
+		return (ms.firstname, managerIndex[index]);
+	}
+
+	function getAllManagers() constant returns (bytes32[]) {
+		uint length = managerIndex.length;
+		if (managerIndex.length > 0){
+			bytes32[] memory firstname = new bytes32[](length);
+			//bytes32[] memory lastname = new bytes32[](managerIndex.length);
+			//bytes32[] memory email = new bytes32[](managerIndex.length);
+			//address[] memory addrs = new address[](managerIndex.length);
+			for (uint i = 0; i <= managerIndex.length; i++) {
+				ManagerStruct memory ms = Managers[managerIndex[i]];
+				firstname[i] = ms.firstname;
+				//lastname[i] = ms.lastname;
+				//email[i] = ms.email;
+				//addrs[i] = managerIndex[i];
+			}
+
+			return (firstname);
+		}
+		return (firstname);
 	}
 
 

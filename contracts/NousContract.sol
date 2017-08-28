@@ -16,7 +16,7 @@ contract NousCreator {
         _;
     }
 
-    function createNewfund(bytes32 name ) onlyOwner() returns (address foundAddress){
+    function createNewFund(bytes32 name ) onlyOwner() returns (address foundAddress){
         funds.push(address(new Fund(msg.sender, name)));
         return funds[funds.length-1];
     }

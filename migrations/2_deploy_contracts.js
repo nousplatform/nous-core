@@ -33,10 +33,10 @@ module.exports = function(deployer) {
 
   //security
   //deployer.deploy([DougEnabled, FundManagerEnabled]);
-
-  //deployer.deploy([Fund, FundManager]);
-
-
+    // deployer.deploy([Fund]);
+   // deployer.deploy([FundManager]);
+    //
+    //
     deployer.deploy([NousCreator]);
 
 };
