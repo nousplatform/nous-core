@@ -7,11 +7,14 @@ pragma solidity ^0.4.4;
 *
 */
 
-import "./interfaces/ContractProvider.sol";
+
 import "./security/DougEnabled.sol";
-import "./models/PermissionsDb.sol";
-//import "./models/ManagerDb.sol";
-import "./components/Permissions.sol";
+import "./interfaces/ContractProvider.sol";
+import "./interfaces/PermissionProvider.sol";
+
+//import "./models/PermissionsDb.sol";
+//import "./components/Permissions.sol";
+
 import "./components/Managers.sol";
 import "./components/Wallets.sol";
 
@@ -23,13 +26,17 @@ contract FundManager is DougEnabled {
     address nous;
     address fund;
 
-    // Constructor
-    function FundManager(address foundOwner, address nousaddress) {
-		owner = foundOwner;
-		nous = nousaddress;
-		fund = msg.sender;
+    function getDoug() constant returns (address){
+    	return DOUG;
+    }
 
-		setDougAddress(msg.sender);
+    // Constructor
+    function FundManager(/*address foundOwner, address nousaddress*/) {
+//		owner = foundOwner;
+//		nous = nousaddress;
+//		fund = msg.sender;
+
+		//setDougAddress(msg.sender);
 
 		//return true;
 
@@ -43,9 +50,9 @@ contract FundManager is DougEnabled {
     	if (msg.sender == fund ){
 			address perms = ContractProvider(DOUG).contracts("perms");
 			if ( perms != 0x0 ) {
-				Permissions(perms).setPermission(nous, 4);
-				Permissions(perms).setPermission(fund, 3);
-				Permissions(perms).setPermission(owner, 3);
+				PermissionProvider(perms).setPermission(nous, 4);
+				PermissionProvider(perms).setPermission(fund, 3);
+				PermissionProvider(perms).setPermission(owner, 3);
 			}
     	}
     }
@@ -54,7 +61,7 @@ contract FundManager is DougEnabled {
 
     	address permsdb = ContractProvider(DOUG).contracts("permsdb");
     	if ( permsdb != 0x0 ){
-    		PermissionsDb permComp = PermissionsDb(permsdb);
+    		PermissionProvider permComp = PermissionProvider(permsdb);
     		return permComp.getUserPerm(msg.sender) == permComp.getRolePerm(role);
     	}
     	return false;
@@ -200,13 +207,13 @@ contract FundManager is DougEnabled {
 			return false;
 		}
 
-		return Permissions(perms).setPermission(addr, permLvl);
+		return PermissionProvider(perms).setPermission(addr, permLvl);
 	}
 
 	function getRole(bytes32 role) constant returns (uint8, uint8){
 		address permsdb = ContractProvider(DOUG).contracts("permsdb");
 		if ( permsdb != 0x0 ){
-			PermissionsDb permComp = PermissionsDb(permsdb);
+			PermissionProvider permComp = PermissionProvider(permsdb);
 			return (permComp.getUserPerm(msg.sender), permComp.getRolePerm(role));
 		}
 		return (0, 0);

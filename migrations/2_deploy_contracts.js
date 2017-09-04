@@ -19,6 +19,8 @@ var FundManager = artifacts.require("./FundManager.sol");
 
 var NousCreator = artifacts.require("./NousCreator.sol");
 
+var NousToken = artifacts.require("./NousToken.sol");
+
 
 module.exports = function(deployer) {
 
@@ -33,10 +35,10 @@ module.exports = function(deployer) {
 
   //security
   //deployer.deploy([DougEnabled, FundManagerEnabled]);
-    // deployer.deploy([Fund]);
-   // deployer.deploy([FundManager]);
+    deployer.deploy([Fund]);
+    deployer.deploy([FundManager]);
     //
     //
-    deployer.deploy([NousCreator]);
+    deployer.deploy([NousCreator, NousToken]);
 
 };

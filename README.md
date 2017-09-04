@@ -35,26 +35,45 @@ doug contract itself.
 1. Create new fond from Nous Contract
 ```diff    
 
-function setInstance(contactName, shortName) {contactName.deployed().then(inst => global[shortName] = inst);}
-setInstance(NousCreator, 'nousCreater')
+function setInstance(contactName, shortName) {contactName.deployed().then(inst => global[shortName] = inst);} setInstance(NousCreator, 'nousCreater')
+setInstance(Fund, 'fund')
 
-nousCreater.createNewFund('test')
-nousCreater.getContract().then( res => fund = Fund.at(res[0]))
-fund.createComponents()
-////fund.createSecondComponents()
+setInstance(FundManager, 'fundmanager')
+setInstance(Permissions, 'permissions')
+setInstance(Wallets, 'wallets')
 
+
+
+fund.addContract('FundManager', fundmanager.address)
+fundmanager.getDoug()
+
+//взять клонированный сонтракт
+fund.getContracts('test').then(res=> FundManager.at(res).getDoug().then(console.log))
+
+
+
+
+
+//crate new fund and create components 
+nousCreater.createNewFund('test').then(()=> nousCreater.getContract().then( res => fund = Fund.at(res[0])).then(()=> fund.createComponents() ) )
+nousCreater.addContract('fundmanager', fundmanager.address)
+nousCreater.addContract('perms', fundmanager.address)
+nousCreater.getDefaultContracts()
+
+
+////validate some components 
 fund.getContracts('perms')
 fund.getContracts('walletsdb')
 
-fund.getContracts('fundManager').then(res => fundManager = FundManager.at(res))
+
+fund.getContracts('fundManager').then(res => fundManager = FundManager.at(res)).then(()=> fundManager.addManager(web3.eth.accounts[2], 'testFN', 'testLN', 'test@test'))
 
 
-//add fund manager 
- 
-fundManager.addManager(web3.eth.accounts[2], 'testFN', 'testLN', 'test@test')
-
+//add fund manager  
 fund.getContracts('managerdb').then(res => managerDb = ManagerDb.at(res))
 managerDb.getAllManagers()
+managerDb.getArrayData()
+
 managerDb.getManager(0)
 
 ```
