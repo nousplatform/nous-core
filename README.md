@@ -36,11 +36,40 @@ doug contract itself.
 ```diff    
 
 function setInstance(contactName, shortName) {contactName.deployed().then(inst => global[shortName] = inst);} setInstance(NousCreator, 'nousCreater')
-setInstance(Fund, 'fund')
+
+var arr = [FundManager, Permissions, Wallets, ManagerDb, PermissionsDb, WalletsDb ]
+//components
 
 setInstance(FundManager, 'fundmanager')
 setInstance(Permissions, 'permissions')
 setInstance(Wallets, 'wallets')
+
+//models
+setInstance(ManagerDb, 'managerdb')
+setInstance(PermissionsDb, 'permissionsdb')
+setInstance(WalletsDb, 'walletsdb')
+
+nousCreater.addContract('fundmanager', fundmanager.address)
+nousCreater.addContract('perms', permissions.address)
+nousCreater.addContract('permsdb', permissionsdb.address)
+
+nousCreater.addContract('wallets', wallets.address)
+nousCreater.addContract('managerdb', managerdb.address)
+nousCreater.addContract('walletsdb', walletsdb.address)
+nousCreater.getDefaultContracts()
+
+
+nousCreater.createNewFund('test').then(()=> nousCreater.getAllFund().then( res => fund = Fund.at(res[0])) )
+
+////validate some components 
+fund.getContracts('perms')
+fund.getContracts('walletsdb')
+
+
+fund.getContracts('fundmanager').then(res => FundManager.at(res).getDoug().then(console.log))
+
+
+
 
 
 
@@ -54,6 +83,7 @@ fund.getContracts('test').then(res=> FundManager.at(res).getDoug().then(console.
 
 
 
+
 //crate new fund and create components 
 nousCreater.createNewFund('test').then(()=> nousCreater.getContract().then( res => fund = Fund.at(res[0])).then(()=> fund.createComponents() ) )
 nousCreater.addContract('fundmanager', fundmanager.address)
@@ -61,15 +91,12 @@ nousCreater.addContract('perms', fundmanager.address)
 nousCreater.getDefaultContracts()
 
 
-////validate some components 
-fund.getContracts('perms')
-fund.getContracts('walletsdb')
 
 
 fund.getContracts('fundManager').then(res => fundManager = FundManager.at(res)).then(()=> fundManager.addManager(web3.eth.accounts[2], 'testFN', 'testLN', 'test@test'))
 
 
-//add fund manager  
+//add fund manager
 fund.getContracts('managerdb').then(res => managerDb = ManagerDb.at(res))
 managerDb.getAllManagers()
 managerDb.getArrayData()

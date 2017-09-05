@@ -36,7 +36,7 @@ contract FundManager is DougEnabled {
 //		nous = nousaddress;
 //		fund = msg.sender;
 
-		//setDougAddress(msg.sender);
+		setDougAddress(msg.sender);
 
 		//return true;
 
