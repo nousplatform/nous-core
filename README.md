@@ -74,35 +74,14 @@ fund.getContracts('walletsdb')
 fund.getContracts('managers')
 
 
-fund.getContracts('fundmanager').then(res => FundManager.at(res).getDoug().then(console.log))
+fund.getContracts('fundmanager').then(res => fundManager = FundManager.at(res).getDoug().then(console.log))
 fund.getContracts('perms').then(res => permissiontest = Permissions.at(res).validateDoug().then(console.log))
 fund.getContracts('managers').then(res => managerstest = Managers.at(res).validateDoug().then(console.log))
 fund.getContracts('wallets').then(res => walletstest = Wallets.at(res).validateDoug().then(console.log))
 fund.getContracts('managerdb').then(res => managerdbtest = ManagerDb.at(res).validateDoug().then(console.log))
 
 
-
-
-
-
-
-fund.addContract('FundManager', fundmanager.address)
-fundmanager.getDoug()
-
-//взять клонированный сонтракт
-fund.getContracts('test').then(res=> FundManager.at(res).getDoug().then(console.log))
-
-
-
-
-
-
-//crate new fund and create components 
-nousCreater.createNewFund('test').then(()=> nousCreater.getContract().then( res => fund = Fund.at(res[0])).then(()=> fund.createComponents() ) )
-nousCreater.addContract('fundmanager', fundmanager.address)
-nousCreater.addContract('perms', fundmanager.address)
-nousCreater.getDefaultContracts()
-
+//end
 
 
 
