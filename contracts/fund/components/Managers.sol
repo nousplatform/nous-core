@@ -7,11 +7,7 @@ import "../security/FundManagerEnabled.sol";
 contract Managers is FundManagerEnabled {
 
 	function Managers(){
-		super.setDougAddress(msg.sender);
-	}
-
-	function getDoug() constant returns (address){
-		return DOUG;
+		//super.setDougAddress(msg.sender);
 	}
 
     function addManager(

@@ -20,4 +20,8 @@ contract DougEnabled {
             selfdestruct(DOUG);
         }
     }
+
+    function validateDoug() constant returns (address){
+		return DOUG;
+	}
 }

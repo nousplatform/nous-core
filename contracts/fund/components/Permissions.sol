@@ -8,7 +8,7 @@ import "../models/PermissionsDb.sol";
 contract Permissions is FundManagerEnabled {
 
 	function Permissions() {
-		super.setDougAddress(msg.sender);
+		//super.setDougAddress(msg.sender);
 	}
 
     // Set the permissions of an account.

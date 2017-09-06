@@ -41,6 +41,7 @@ var arr = [FundManager, Permissions, Wallets, ManagerDb, PermissionsDb, WalletsD
 //components
 
 setInstance(FundManager, 'fundmanager')
+setInstance(Managers, 'managers')
 setInstance(Permissions, 'permissions')
 setInstance(Wallets, 'wallets')
 
@@ -52,21 +53,33 @@ setInstance(WalletsDb, 'walletsdb')
 nousCreater.addContract('fundmanager', fundmanager.address)
 nousCreater.addContract('perms', permissions.address)
 nousCreater.addContract('permsdb', permissionsdb.address)
+nousCreater.addContract('managers', managers.address)
 
 nousCreater.addContract('wallets', wallets.address)
 nousCreater.addContract('managerdb', managerdb.address)
 nousCreater.addContract('walletsdb', walletsdb.address)
+
+//validater 
 nousCreater.getDefaultContracts()
 
 
 nousCreater.createNewFund('test').then(()=> nousCreater.getAllFund().then( res => fund = Fund.at(res[0])) )
 
+//first addr
+nousCreater.getAllFund().then( res => fund = Fund.at(res[0]))
+
 ////validate some components 
 fund.getContracts('perms')
 fund.getContracts('walletsdb')
+fund.getContracts('managers')
 
 
 fund.getContracts('fundmanager').then(res => FundManager.at(res).getDoug().then(console.log))
+fund.getContracts('perms').then(res => permissiontest = Permissions.at(res).validateDoug().then(console.log))
+fund.getContracts('managers').then(res => managerstest = Managers.at(res).validateDoug().then(console.log))
+fund.getContracts('wallets').then(res => walletstest = Wallets.at(res).validateDoug().then(console.log))
+fund.getContracts('managerdb').then(res => managerdbtest = ManagerDb.at(res).validateDoug().then(console.log))
+
 
 
 

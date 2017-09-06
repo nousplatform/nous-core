@@ -92,7 +92,8 @@ contract Fund {
 			mstore(0x0, or (0x5880730000000000000000000000000000000000000000803b80938091923cF3 ,mul(cloneAddr,0x1000000000000000000)))
 			retval := create(0,0, 32)
 		}
-        contracts[name] = retval;
+		addContract(name, retval);
+
         return retval;
     }
 

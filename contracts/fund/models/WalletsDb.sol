@@ -25,7 +25,7 @@ contract WalletsDb is DougEnabled {
     address[] private walletsIndex;
 
     function WalletsDB(){
-        setDougAddress(msg.sender);
+        //setDougAddress(msg.sender);
     }
 
 	// validate did the request from wallets contract

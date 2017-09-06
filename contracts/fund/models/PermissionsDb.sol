@@ -11,7 +11,7 @@ contract PermissionsDb is DougEnabled {
     mapping(bytes32 => uint8) rolePermission;
 
     function PermissionsDb() {
-		setDougAddress(msg.sender);
+		//setDougAddress(msg.sender);
 
 		// set default permission
 		rolePermission['nous'] = 4;

@@ -7,7 +7,7 @@ import "../security/FundManagerEnabled.sol";
 contract Wallets is FundManagerEnabled {
 
     function Wallets(){
-        super.setDougAddress(msg.sender);
+        //super.setDougAddress(msg.sender);
     }
 
     function addWallet(bytes32 type_wallet, address walletAddress) returns (bool){

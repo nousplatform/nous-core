@@ -16,7 +16,7 @@ contract ManagerDb is DougEnabled {
 	address[] public managerIndex; // Managers
 
 	function ManagerDb(){
-		setDougAddress(msg.sender);
+		//setDougAddress(msg.sender);
 	}
 
 	function isFromManager() returns (bool){
