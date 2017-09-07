@@ -93,12 +93,11 @@ contract('All contracts', function (accounts) {
                 assert.notEqual( res, undefined );
                 fund = Fund.at(res[0]);
                 contracts.NousCreator.contract.getFundContracts(res[0]).then(res => { console.log("contracts", res); done();});
-                done();
             })
     })
 
 
-    it('validate some components', () =>{
+    it('validate some components', (done) =>{
         console.log("fund.address", fund.address);
 
         fund.getContracts('perms').then(console.log);
@@ -129,6 +128,7 @@ contract('All contracts', function (accounts) {
             checkContractInFund('wallets', Wallets),
             checkContractInFund('managerdb', ManagerDb)
         ])
+        .then(() => done())
 
     })
 
