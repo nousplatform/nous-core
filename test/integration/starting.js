@@ -18,7 +18,7 @@ const deployedAndWriteInAddressBook = contract =>
 
         const name = deployedContract.constructor.toJSON().contract_name;
 
-        console.log( deployedContract ? '+' : '-' );
+        //console.log( deployedContract ? '+' : '-', name);
 
         contracts[name] = {
             name,
@@ -79,57 +79,74 @@ contract('All contracts', function (accounts) {
 
     before(initAllContracts);
 
-    it('getting default contracts', () =>{
+    it('getting default contracts', done => {
 
         contracts.NousCreator.contract.getDefaultContracts()
-            .then(console.log)
+            .then( arrayOfDefaultContracts => {
+                assert.notEqual( arrayOfDefaultContracts.length, 0, 'array is empty' );
+                //console.log( arrayOfDefaultContracts )
+            })
+            .then( done )
     })
 
-    it('attempt to  create fund', (done) =>{
+    it('attempt to  create fund', done => {
 
         contracts.NousCreator.contract.createNewFund('test')
             .then(contracts.NousCreator.contract.getAllFund)
-            .then( res => {
-                assert.notEqual( res, undefined );
-                fund = Fund.at(res[0]);
-                contracts.NousCreator.contract.getFundContracts(res[0]).then(res => { console.log("contracts", res); done();});
+            .then( arrayOfContracts => {
+                //console.log(arrayOfContracts)
+                assert.notEqual( arrayOfContracts.length, 0, 'array is empty' );
+                fund = Fund.at(arrayOfContracts[0]);
+                done();
             })
     })
 
-
-    it('validate some components', (done) =>{
-        console.log("fund.address", fund.address);
-
-        fund.getContracts('perms').then(console.log);
+    it('validate fund', done => {
 
         const checkContractInFund = (nameOfContract, contract) =>
             fund.getContracts(nameOfContract)
                 .then( contractAddress => {
-                    console.log(contractAddress);
+                    //console.log(contractAddress);
                     return contractTest = contract.at(contractAddress).validateDoug()
                 } )
-                .then( res => { assert.notEqual( res, undefined, `problem with ${nameOfContract} in fund` ) } )
+                .then( res => assert.notEqual( res, '0x0000000000000000000000000000000000000000', `problem with ${nameOfContract} in fund` ) )
 
 
         Promise.all([
-            fund.getContracts('fundmanager')
-                .then( res => {
-                    console.log("res", res);
-                    FundManager.at(res).getDoug()})
-                .then( res => {
-                    console.log('fundmanager', res)
-                    //console.log('fund', fund)
-                    assert.notEqual( res, undefined, `problem with fundmanager in fund` )
+            fund.getContracts(contracts.FundManager.name)
+                .then( fundManagerAddress => FundManager.at(fundManagerAddress).getDoug() )
+                .then( dougAddress => {
+                    //console.log('fundmanager', fundManagerAddress)
+                    assert.notEqual( dougAddress, '0x0000000000000000000000000000000000000000', `problem with fundmanager in fund` )
                 } ),
 
-            fund.getContracts('perms').then(res => Permissions.at(res).validateDoug().then(console.log)),
-            checkContractInFund('perms', Permissions),
-            checkContractInFund('managers', Managers),
-            checkContractInFund('wallets', Wallets),
-            checkContractInFund('managerdb', ManagerDb)
+            checkContractInFund(contracts.Permissions.name, Permissions),
+            checkContractInFund(contracts.Managers.name, Managers),
+            checkContractInFund(contracts.Wallets.name, Wallets),
+            checkContractInFund(contracts.ManagerDb.name, ManagerDb)
         ])
         .then(() => done())
 
+    })
+
+    it('validate managerDB', done => {
+
+        fund.getContracts(contracts.FundManager.name)
+            .then( fundManagerAddress => {
+                FundManager.at(fundManagerAddress).addManager(accounts[2], 'testFN', 'testLN', 'test@test')
+                    .then(console.log)
+            })
+            .then( () => fund.getContracts(contracts.ManagerDb.name) )
+            .then( managerDbAddress => {
+                let managerDb = ManagerDb.at(managerDbAddress);
+
+                Promise.all([
+                    managerDb.getAllManagers().then( res => console.log('get all', res)),
+                    managerDb.getArrayData().then( res => console.log('getArrayData', res)),
+                    managerDb.getManager(0).then( res => console.log('getManager', res))
+                ])
+            })
+            .then(done)
     })
 
 
