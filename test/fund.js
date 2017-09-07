@@ -82,16 +82,16 @@ contract('All contracts', function (accounts) {
     it('getting default contracts', () =>{
 
         contracts.NousCreator.contract.getDefaultContracts()
-            .then( (res) => {
-                assert.notEqual(res, undefined)
-            })
+            .then(console.log)
     })
 
-    it('attempt to  create fond', (done) =>{
+    it('attempt to  create fund', (done) =>{
 
         contracts.NousCreator.contract.createNewFund('test')
             .then(contracts.NousCreator.contract.getAllFund)
             .then( res => {
+
+            console.log('funds', res)
                 assert.notEqual( res, undefined );
                 fund = Fund.at(res[0])
                 done()
@@ -105,17 +105,25 @@ contract('All contracts', function (accounts) {
             fund.getContracts(nameOfContract)
                 .then( contractAddress => {
                     console.log(contractAddress);
-                    return contractTest = FundManager.at(contractAddress).validateDoug()
+                    return contractTest = contract.at(contractAddress).validateDoug()
                 } )
                 .then( res => { assert.notEqual( res, undefined, `problem with ${nameOfContract} in fund` ) } )
 
 
         Promise.all([
-            checkContractInFund('fundmanager', FundManager),
+            fund.getContracts('fundmanager')
+                .then( res => FundManager.at(res).getDoug())
+                .then( res => {
+                    console.log('fundmanager', res)
+                    //console.log('fund', fund)
+                    assert.notEqual( res, undefined, `problem with fundmanager in fund` )
+                } ),
+
+            fund.getContracts('perms').then(res => Permissions.at(res).validateDoug().then(console.log)),
             checkContractInFund('perms', Permissions),
             checkContractInFund('managers', Managers),
             checkContractInFund('wallets', Wallets),
-            checkContractInFund('managerdb', ManagerDb),
+            checkContractInFund('managerdb', ManagerDb)
         ])
 
     })
