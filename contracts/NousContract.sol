@@ -109,7 +109,7 @@ contract NousCreator {
 
 	//add or edit default contracts
 	function addContract(bytes32 name, address addr) onlyOwner() {
-		if (defaultContracts[name] != 0x0) {
+		if (defaultContracts[name] == 0x0) {
 			contractsList.push(name);
 		}
 		defaultContracts[name] = addr;
