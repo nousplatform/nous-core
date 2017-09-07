@@ -6,9 +6,9 @@ import "../interfaces/ContractProvider.sol";
 // Permissions database
 contract PermissionsDb is DougEnabled {
 
-    mapping (address => uint8) perms;
+    mapping (address => uint8) public perms;
 
-    mapping(bytes32 => uint8) rolePermission;
+    mapping(bytes32 => uint8) public rolePermission;
 
     function PermissionsDb() {
 		//setDougAddress(msg.sender);

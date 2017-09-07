@@ -80,6 +80,8 @@ fund.getContracts('managers').then(res => managerstest = Managers.at(res).valida
 fund.getContracts('wallets').then(res => walletstest = Wallets.at(res).validateDoug().then(console.log))
 fund.getContracts('managerdb').then(res => managerdbtest = ManagerDb.at(res).validateDoug().then(console.log))
 
+fund.getContracts('permsdb').then(res => permsdb = PermissionsDb.at(res).validateDoug().then(console.log))
+
 
 //end
 
