@@ -37,8 +37,8 @@ contract NousCreator {
 		for (uint i = 0; i < contractsList.length; i++){
 			bytes32 name = contractsList[i];
 			address addr = defaultContracts[contractsList[i]];
-			//address newAddr = clone(addr);
-			fund.clone(name, addr);
+			address newComp = clone(addr);
+			fund.addContract(name, newComp);
 		}
     }
 
@@ -107,6 +107,7 @@ contract NousCreator {
 		return retval;
 	}
 
+	//add or edit default contracts
 	function addContract(bytes32 name, address addr) onlyOwner() {
 		if (defaultContracts[name] != 0x0) {
 			contractsList.push(name);
