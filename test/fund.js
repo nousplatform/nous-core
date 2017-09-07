@@ -90,16 +90,18 @@ contract('All contracts', function (accounts) {
         contracts.NousCreator.contract.createNewFund('test')
             .then(contracts.NousCreator.contract.getAllFund)
             .then( res => {
-
-            console.log('funds', res)
                 assert.notEqual( res, undefined );
-                fund = Fund.at(res[0])
-                done()
+                fund = Fund.at(res[0]);
+                contracts.NousCreator.contract.getFundContracts(res[0]).then(res => { console.log("contracts", res); done();});
+                done();
             })
     })
 
 
     it('validate some components', () =>{
+        console.log("fund.address", fund.address);
+
+        fund.getContracts('perms').then(console.log);
 
         const checkContractInFund = (nameOfContract, contract) =>
             fund.getContracts(nameOfContract)
@@ -112,7 +114,9 @@ contract('All contracts', function (accounts) {
 
         Promise.all([
             fund.getContracts('fundmanager')
-                .then( res => FundManager.at(res).getDoug())
+                .then( res => {
+                    console.log("res", res);
+                    FundManager.at(res).getDoug()})
                 .then( res => {
                     console.log('fundmanager', res)
                     //console.log('fund', fund)

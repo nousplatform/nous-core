@@ -72,6 +72,7 @@ nousCreater.getAllFund().then( res => fund = Fund.at(res[0]))
 fund.getContracts('perms')
 fund.getContracts('walletsdb')
 fund.getContracts('managers')
+fund.getContracts('fundmanager')
 
 
 fund.getContracts('fundmanager').then(res => fundManager = FundManager.at(res).getDoug().then(console.log))
