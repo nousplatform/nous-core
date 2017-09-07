@@ -82,9 +82,7 @@ contract('All contracts', function (accounts) {
     it('getting default contracts', () =>{
 
         contracts.NousCreator.contract.getDefaultContracts()
-            .then( (res) => {
-                assert.notEqual(res, undefined)
-            })
+            .then(console.log)
     })
 
     it('attempt to  create fund', (done) =>{
@@ -92,6 +90,8 @@ contract('All contracts', function (accounts) {
         contracts.NousCreator.contract.createNewFund('test')
             .then(contracts.NousCreator.contract.getAllFund)
             .then( res => {
+
+            console.log('funds', res)
                 assert.notEqual( res, undefined );
                 fund = Fund.at(res[0])
                 done()
@@ -112,10 +112,14 @@ contract('All contracts', function (accounts) {
 
         Promise.all([
             fund.getContracts('fundmanager')
-                .then(res => FundManager.at(res).getDoug())
-                .then( res => { assert.notEqual( res, undefined, `problem with fundmanager in fund` ) } ),
+                .then( res => FundManager.at(res).getDoug())
+                .then( res => {
+                    console.log('fundmanager', res)
+                    //console.log('fund', fund)
+                    assert.notEqual( res, undefined, `problem with fundmanager in fund` )
+                } ),
 
-            //checkContractInFund('fundmanager', FundManager),
+            fund.getContracts('perms').then(res => Permissions.at(res).validateDoug().then(console.log)),
             checkContractInFund('perms', Permissions),
             checkContractInFund('managers', Managers),
             checkContractInFund('wallets', Wallets),
