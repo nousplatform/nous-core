@@ -113,7 +113,6 @@ contract NousCreator {
 			contractsList.push(name);
 		}
 		defaultContracts[name] = addr;
-		contractsList.push(name);
 	}
 
 	function getDefaultContracts() constant returns (bytes32[], address[]){
