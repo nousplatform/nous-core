@@ -8,8 +8,8 @@ var ContractProvider = artifacts.require("./ContractProvider.sol");
 
 //models
 var ManagerDb = artifacts.require("./ManagerDb.sol");
-var PermissionsDb = artifacts.require("./PermissionsDb.sol");
-var WalletsDb = artifacts.require("./WalletsDb.sol");
+var PermissionDb = artifacts.require("./PermissionDb.sol");
+var WalletDb = artifacts.require("./WalletDb.sol");
 
 //security
 var DougEnabled = artifacts.require("./DougEnabled.sol");
@@ -33,7 +33,7 @@ module.exports = function(deployer) {
   //deployer.deploy([ContractProvider]);
 
   //models
-  deployer.deploy([ManagerDb, PermissionsDb, WalletsDb]);
+  deployer.deploy([ManagerDb, PermissionDb, WalletDb]);
 
   //security
   //deployer.deploy([DougEnabled, FundManagerEnabled]);

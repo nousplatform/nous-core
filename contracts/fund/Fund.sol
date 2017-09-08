@@ -37,8 +37,8 @@ contract Fund {
     	address addrPermissions = address(new Permissions());
 		addContract('perms', addrPermissions);
 
-		address addrPermissionsDB = address(new PermissionsDb());
-		addContract('permsdb', addrPermissionsDB);
+		address addrPermissionDb = address(new PermissionDb());
+		addContract('permsdb', addrPermissionDb);
 
 		// fund manager
 		address addrFundManager = address(new FundManager(owner, nous));
@@ -57,8 +57,8 @@ contract Fund {
 		address addrWallets = address(new Wallets());
 		contracts['wallets'] = addrWallets;
 
-		address addrWalletsDb = address(new WalletsDb());
-		contracts['walletsdb'] = addrWalletsDb;
+		address addrWalletDb = address(new WalletDb());
+		contracts['walletsdb'] = addrWalletDb;
 
     }*/
 

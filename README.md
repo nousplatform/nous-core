@@ -37,7 +37,7 @@ doug contract itself.
 
 function setInstance(contactName, shortName) {contactName.deployed().then(inst => global[shortName] = inst);} setInstance(NousCreator, 'nousCreater')
 
-var arr = [FundManager, Permissions, Wallets, ManagerDb, PermissionsDb, WalletsDb ]
+var arr = [FundManager, Permissions, Wallets, ManagerDb, PermissionDb, WalletDb ]
 //components
 
 setInstance(FundManager, 'fundmanager')
@@ -47,17 +47,19 @@ setInstance(Wallets, 'wallets')
 
 //models
 setInstance(ManagerDb, 'managerdb')
-setInstance(PermissionsDb, 'permissionsdb')
-setInstance(WalletsDb, 'walletsdb')
+setInstance(PermissionDb, 'permissiondb')
+setInstance(WalletDb, 'walletdb')
 
 nousCreater.addContract('fundmanager', fundmanager.address)
-nousCreater.addContract('perms', permissions.address)
-nousCreater.addContract('permsdb', permissionsdb.address)
+
+nousCreater.addContract('permissions', permissions.address)
+nousCreater.addContract('permissiondb', PermissionDb.address)
+
 nousCreater.addContract('managers', managers.address)
+nousCreater.addContract('managerdb', managerdb.address)
 
 nousCreater.addContract('wallets', wallets.address)
-nousCreater.addContract('managerdb', managerdb.address)
-nousCreater.addContract('walletsdb', walletsdb.address)
+nousCreater.addContract('walletdb', walletsdb.address)
 
 //validater 
 nousCreater.getDefaultContracts()
@@ -81,7 +83,7 @@ fund.getContracts('managers').then(res => managerstest = Managers.at(res).valida
 fund.getContracts('wallets').then(res => walletstest = Wallets.at(res).validateDoug().then(console.log))
 fund.getContracts('managerdb').then(res => managerdbtest = ManagerDb.at(res).validateDoug().then(console.log))
 
-fund.getContracts('permsdb').then(res => permsdb = PermissionsDb.at(res).validateDoug().then(console.log))
+fund.getContracts('permsdb').then(res => permsdb = PermissionDb.at(res).validateDoug().then(console.log))
 
 
 //end

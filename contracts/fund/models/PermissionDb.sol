@@ -4,13 +4,13 @@ import "../security/DougEnabled.sol";
 import "../interfaces/ContractProvider.sol";
 
 // Permissions database
-contract PermissionsDb is DougEnabled {
+contract PermissionDb is DougEnabled {
 
     mapping (address => uint8) public perms;
 
     mapping(bytes32 => uint8) public rolePermission;
 
-    function PermissionsDb() {
+    function PermissionDb() {
 		//setDougAddress(msg.sender);
 
 		// set default permission

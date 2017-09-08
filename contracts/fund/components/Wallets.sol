@@ -1,7 +1,7 @@
 pragma solidity ^0.4.4;
 
 import "../interfaces/ContractProvider.sol";
-import "../models/WalletsDb.sol";
+import "../models/WalletDb.sol";
 import "../security/FundManagerEnabled.sol";
 
 contract Wallets is FundManagerEnabled {
@@ -19,7 +19,7 @@ contract Wallets is FundManagerEnabled {
         if ( walletsdb == 0x0 ) {
             return false;
         }
-        return  WalletsDb(walletsdb).insertWallet(type_wallet, walletAddress);
+        return  WalletDb(walletsdb).insertWallet(type_wallet, walletAddress);
     }
 
     function confirmWallet(address walletAddress) returns (bool){
@@ -31,7 +31,7 @@ contract Wallets is FundManagerEnabled {
         if ( walletsdb == 0x0 ) {
             return false;
         }
-        return  WalletsDb(walletsdb).confirmWallet(walletAddress);
+        return  WalletDb(walletsdb).confirmWallet(walletAddress);
     }
 
     function createSnapshot(address walletAddress, uint32 balance) returns (bool){
@@ -44,7 +44,7 @@ contract Wallets is FundManagerEnabled {
 			return false;
 		}
 
-		return  WalletsDb(walletsdb).addSnapshot(walletAddress, balance);
+		return  WalletDb(walletsdb).addSnapshot(walletAddress, balance);
     }
 
 

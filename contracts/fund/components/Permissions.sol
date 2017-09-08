@@ -2,7 +2,7 @@ pragma solidity ^0.4.4;
 
 import "../security/FundManagerEnabled.sol";
 import "../interfaces/ContractProvider.sol";
-import "../models/PermissionsDb.sol";
+import "../models/PermissionDb.sol";
 
 // Permissions
 contract Permissions is FundManagerEnabled {
@@ -20,7 +20,7 @@ contract Permissions is FundManagerEnabled {
         if ( permdb == 0x0 ) {
             return false;
         }
-        return PermissionsDb(permdb).setPermission(addr, perm);
+        return PermissionDb(permdb).setPermission(addr, perm);
     }
 
 }

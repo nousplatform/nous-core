@@ -4,7 +4,7 @@ pragma solidity ^0.4.4;
 import "../security/DougEnabled.sol";
 import "../interfaces/ContractProvider.sol";
 
-contract WalletsDb is DougEnabled {
+contract WalletDb is DougEnabled {
 
     struct Snapshot {
         uint balance; // current balance

@@ -12,7 +12,7 @@ import "./security/DougEnabled.sol";
 import "./interfaces/ContractProvider.sol";
 import "./interfaces/PermissionProvider.sol";
 
-//import "./models/PermissionsDb.sol";
+//import "./models/PermissionDb.sol";
 //import "./components/Permissions.sol";
 
 import "./components/Managers.sol";
@@ -73,7 +73,7 @@ contract FundManager is DougEnabled {
 		bytes32 firstName,
 		bytes32 lastName,
 		bytes32 email
-	) returns (bool) {
+	) constant returns (bool) {
 		if (!checkPermission("owner")){
 			return false;
 		}
@@ -90,7 +90,7 @@ contract FundManager is DougEnabled {
 		return true;
 	}
 
-	/*function getAllManagers() constant returns (bytes32[] memory names, address[] memory addrs){
+	function getAllManagers() constant returns (bytes32[] memory names, address[] memory addrs){
 		if (!checkPermission("owner")){
 			//return false;
 		}
@@ -105,15 +105,14 @@ contract FundManager is DougEnabled {
 		names = new bytes32[](length);
 		addrs = new address[](length);
 
-		for (uint i = 0; i <= length; i++){
+		for (uint i = 0; i < length; i++){
 			var (name, addr) = ManagerDb(managersDb).getManager(i);
 			names[i] = name;
             addrs[i] = addr;
 		}
 
 		return (names, addrs);
-
-	}*/
+	}
 
 	function delManager(address managerAddr) returns (bool) {
 		if (!checkPermission("owner")){
