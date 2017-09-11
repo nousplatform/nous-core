@@ -1,6 +1,7 @@
 pragma solidity ^0.4.4;
 
 import "./security/DougEnabled.sol";
+import "./interfaces/Constructor.sol";
 
 // The Doug contract.
 contract Fund {
@@ -63,10 +64,13 @@ contract Fund {
     }*/
 
     // Add a new contract to Doug. This will overwrite an existing contract.
-    function addContract(bytes32 name, address addr)  returns (bool result) {
+    function addContract(bytes32 name, address addr) returns (bool result) {
     	if (msg.sender != nous || allowAddContract == false){
 			return false;
     	}
+
+    	//addr.call(bytes4(keccak256("constructor()"))); // конструктор срабатывает
+    	Constructor(addr).constructor(owner, nous);
 
         DougEnabled de = DougEnabled(addr);
         // Don't add the contract if this does not work.

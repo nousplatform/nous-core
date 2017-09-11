@@ -59,7 +59,7 @@ nousCreater.addContract('managers', managers.address)
 nousCreater.addContract('managerdb', managerdb.address)
 
 nousCreater.addContract('wallets', wallets.address)
-nousCreater.addContract('walletdb', walletsdb.address)
+nousCreater.addContract('walletdb', walletdb.address)
 
 //validater 
 nousCreater.getDefaultContracts()
@@ -71,11 +71,13 @@ nousCreater.createNewFund('test').then(()=> nousCreater.getAllFund().then( res =
 nousCreater.getAllFund().then( res => fund = Fund.at(res[0]))
 
 ////validate some components 
-fund.getContracts('perms')
-fund.getContracts('walletsdb')
+fund.getContracts('permissions')
+fund.getContracts('walletdb')
 fund.getContracts('managers')
 fund.getContracts('fundmanager')
 
+
+fund.getContracts('fundmanager').then(res => fundManager = FundManager.at(res).getTestVar().then(console.log))
 
 fund.getContracts('fundmanager').then(res => fundManager = FundManager.at(res).getDoug().then(console.log))
 fund.getContracts('perms').then(res => permissiontest = Permissions.at(res).validateDoug().then(console.log))

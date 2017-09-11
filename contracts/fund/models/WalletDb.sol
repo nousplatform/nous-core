@@ -3,6 +3,7 @@ pragma solidity ^0.4.4;
 
 import "../security/DougEnabled.sol";
 import "../interfaces/ContractProvider.sol";
+import "../interfaces/Constructor.sol";
 
 contract WalletDb is DougEnabled {
 

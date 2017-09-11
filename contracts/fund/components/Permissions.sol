@@ -3,9 +3,10 @@ pragma solidity ^0.4.4;
 import "../security/FundManagerEnabled.sol";
 import "../interfaces/ContractProvider.sol";
 import "../models/PermissionDb.sol";
+import "../interfaces/Constructor.sol";
 
 // Permissions
-contract Permissions is FundManagerEnabled {
+contract Permissions is FundManagerEnabled, Constructor {
 
 	function Permissions() {
 		//super.setDougAddress(msg.sender);

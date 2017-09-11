@@ -48,6 +48,7 @@ contract NousCreator {
 			address addr = defaultContracts[contractsList[i]];
 			address newComp = clone(addr);
 			bool res = fund.addContract(name, newComp);
+
 			if (res){
 				Funds[fundAddr].childFundContracts[name] = newComp;
 				Funds[fundAddr].indexChild.push(name);
@@ -115,7 +116,7 @@ contract NousCreator {
 		address retval;
 		assembly{
 			mstore(0x0, or (0x5880730000000000000000000000000000000000000000803b80938091923cF3 ,mul(a,0x1000000000000000000)))
-			retval := create(0,0, 32)
+			retval := create(0,0,32)
 		}
 		return retval;
 	}

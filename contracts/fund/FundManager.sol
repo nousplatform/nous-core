@@ -17,9 +17,11 @@ import "./interfaces/PermissionProvider.sol";
 
 import "./components/Managers.sol";
 import "./components/Wallets.sol";
+import "./interfaces/Constructor.sol";
+
 
 // The fund manager
-contract FundManager is DougEnabled {
+contract FundManager is DougEnabled, Constructor {
 
     // We still want an owner.
     address owner;
@@ -35,14 +37,26 @@ contract FundManager is DougEnabled {
 //		owner = foundOwner;
 //		nous = nousaddress;
 //		fund = msg.sender;
-
-		setDougAddress(msg.sender);
+		//testvar = 'Hello this is test';
+		//setDougAddress(msg.sender);
 
 		//return true;
 
 //		setPermission(nousaddress, 4); // nous platform
 //		setPermission(foundOwner, 3); // owner
 //		setPermission(msg.sender, 3); // FUND - contract (DOUG)
+    }
+
+    function constructor(address foundOwner, address nousaddress){
+    	//if (isCall) throw();
+		//TODO ONLY FIRST START
+    	owner = foundOwner;
+        nous = nousaddress;
+        fund = msg.sender;
+        setPermission(nousaddress, 4); // nous platform
+        setPermission(foundOwner, 3); // owner
+        setPermission(msg.sender, 3); // FUND - contract (DOUG)
+        isCall = true;
     }
 
     function constructSetPermission(){

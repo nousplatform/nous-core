@@ -3,8 +3,9 @@ pragma solidity ^0.4.4;
 import "../interfaces/ContractProvider.sol";
 import "../models/WalletDb.sol";
 import "../security/FundManagerEnabled.sol";
+import "../interfaces/Constructor.sol";
 
-contract Wallets is FundManagerEnabled {
+contract Wallets is FundManagerEnabled, Constructor {
 
     function Wallets(){
         //super.setDougAddress(msg.sender);
