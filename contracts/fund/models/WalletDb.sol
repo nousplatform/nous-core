@@ -3,9 +3,9 @@ pragma solidity ^0.4.4;
 
 import "../security/DougEnabled.sol";
 import "../interfaces/ContractProvider.sol";
-import "../interfaces/Constructor.sol";
+import "../interfaces/Construct.sol";
 
-contract WalletDb is DougEnabled {
+contract WalletDb is DougEnabled, Construct {
 
     struct Snapshot {
         uint balance; // current balance
@@ -24,10 +24,6 @@ contract WalletDb is DougEnabled {
 
     mapping ( address => Wallets ) private wallets;
     address[] private walletsIndex;
-
-    function WalletsDB(){
-        //setDougAddress(msg.sender);
-    }
 
 	// validate did the request from wallets contract
     function isFromWallet() returns (bool){

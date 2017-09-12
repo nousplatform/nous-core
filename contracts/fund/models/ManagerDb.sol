@@ -2,9 +2,9 @@ pragma solidity ^0.4.4;
 
 import "../security/DougEnabled.sol";
 import "../interfaces/ContractProvider.sol";
-import "../interfaces/Constructor.sol";
+import "../interfaces/Construct.sol";
 
-contract ManagerDb is DougEnabled, Constructor {
+contract ManagerDb is DougEnabled, Construct {
 
 	struct ManagerStruct {
 		bytes32 firstname;
@@ -15,10 +15,6 @@ contract ManagerDb is DougEnabled, Constructor {
 
 	mapping ( address => ManagerStruct ) Managers;
 	address[] public managerIndex; // Managers
-
-	function ManagerDb(){
-		//setDougAddress(msg.sender);
-	}
 
 	function isFromManager() returns (bool){
 		if(DOUG != 0x0){

@@ -3,13 +3,9 @@ pragma solidity ^0.4.0;
 import "../interfaces/ContractProvider.sol";
 import "../models/ManagerDb.sol";
 import "../security/FundManagerEnabled.sol";
-import "../interfaces/Constructor.sol";
+import "../interfaces/Construct.sol";
 
-contract Managers is FundManagerEnabled, Constructor  {
-
-	function Managers(){
-		//super.setDougAddress(msg.sender);
-	}
+contract Managers is FundManagerEnabled, Construct  {
 
     function addManager(
     	address managerAddress,

@@ -2,23 +2,23 @@ pragma solidity ^0.4.4;
 
 import "../security/DougEnabled.sol";
 import "../interfaces/ContractProvider.sol";
-import "../interfaces/Constructor.sol";
+import "../interfaces/Construct.sol";
 
 // Permissions database
-contract PermissionDb is DougEnabled, Constructor {
+contract PermissionDb is DougEnabled, Construct {
 
     mapping (address => uint8) public perms;
 
     mapping(bytes32 => uint8) public rolePermission;
 
-    function PermissionDb() {
-		//setDougAddress(msg.sender);
+	function construct(address foundOwner, address nousaddress){
+		if (isCall) revert();
 
-		// set default permission
 		rolePermission['nous'] = 4;
 		rolePermission['owner'] = 3;
 		rolePermission['manager'] = 2;
 		rolePermission['investor'] = 1;
+		isCall = true;
 	}
 
     // Set the permissions of an account.
@@ -35,12 +35,12 @@ contract PermissionDb is DougEnabled, Constructor {
         }
     }
 
-    function getRolePerm(bytes32 role) returns (uint8) {
+    /*function getRolePerm(bytes32 role) returns (uint8) {
     	return rolePermission[role];
     }
 
     function getUserPerm(address addr) returns (uint8) {
     	return perms[addr];
-    }
+    }*/
 
 }

@@ -1,7 +1,7 @@
 pragma solidity ^0.4.4;
 
 import "./security/DougEnabled.sol";
-import "./interfaces/Constructor.sol";
+import "./interfaces/Construct.sol";
 
 // The Doug contract.
 contract Fund {
@@ -25,7 +25,7 @@ contract Fund {
     	return contracts[name];
     }
 
-    // Constructor
+    // Construct
     function Fund(address fundOwn, bytes32 name) {
         owner = fundOwn;
         nous = msg.sender;
@@ -70,7 +70,6 @@ contract Fund {
     	}
 
     	//addr.call(bytes4(keccak256("constructor()"))); // конструктор срабатывает
-    	Constructor(addr).constructor(owner, nous);
 
         DougEnabled de = DougEnabled(addr);
         // Don't add the contract if this does not work.
@@ -78,6 +77,9 @@ contract Fund {
             return false;
         }
         contracts[name] = addr;
+
+        Construct(addr).construct(owner, nous);
+
         return true;
     }
 

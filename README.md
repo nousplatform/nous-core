@@ -50,10 +50,11 @@ setInstance(ManagerDb, 'managerdb')
 setInstance(PermissionDb, 'permissiondb')
 setInstance(WalletDb, 'walletdb')
 
-nousCreater.addContract('fundmanager', fundmanager.address)
-
 nousCreater.addContract('permissions', permissions.address)
 nousCreater.addContract('permissiondb', PermissionDb.address)
+
+nousCreater.addContract('fundmanager', fundmanager.address)
+
 
 nousCreater.addContract('managers', managers.address)
 nousCreater.addContract('managerdb', managerdb.address)

@@ -16,9 +16,8 @@ const contracts = {};
 const deployedAndWriteInAddressBook = contract =>
     contract.deployed().then(deployedContract => {
 
-        const name = deployedContract.constructor.toJSON().contract_name;
 
-        //console.log(  name);
+        const name = deployedContract.constructor.toJSON().contract_name;
 
         contracts[name] = {
             name: name.toLowerCase(),
@@ -83,7 +82,7 @@ contract('All contracts', function (accounts) {
     it('attempt to create fund', done => {
 
         contracts.NousCreator.contract.createNewFund('test')
-            .then(contracts.NousCreator.contract.getAllFund)
+            .then(res => { console.log('create Fond', res); return contracts.NousCreator.contract.getAllFund();})
             .then( arrayOfContracts => {
 
                 assert.notEqual( arrayOfContracts.length, 0, 'array is empty' );
@@ -119,14 +118,18 @@ contract('All contracts', function (accounts) {
             .then(() => done());
     });
 
-    it('Check permissions', done => {
+    it('Check permissions nous', done => {
         let PDB;
         fund.contracts('permissiondb')
             .then(permissiondb_address => {
                 PDB = PermissionDb.at(permissiondb_address);
-                PDB.rolePermission('nous').then(console.log)
+
+                    PDB.rolePermission('nous').then(res => {
+                        assert.equal(res, 4);
+                        done();
+                    });
             });
-    })
+    });
 
     it('Check add manager in managerDb', done => {
         let FM;
@@ -136,9 +139,9 @@ contract('All contracts', function (accounts) {
                 return FM.addManager(accounts[2], 'testFN', 'testLN', 'test@test');
             })
             .then(transaction => {
-                console.log("transaction", transaction);
+                //console.log("transaction", transaction);
                 FM.getAllManagers()
-                    .then(console.log);
+                    .then(res=> {console.log(res); done();});
 
             })
 
