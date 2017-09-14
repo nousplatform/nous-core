@@ -32,6 +32,11 @@ contract FundManager is DougEnabled, Construct {
     	return DOUG;
     }
 
+    function getOwnerAddress() constant returns (address, address, address, address){
+    	return (owner, msg.sender, nous, fund);
+    }
+
+
     function construct(address foundOwner, address nousaddress){
     	if (isCall) revert();
 		//TODO ONLY FIRST START
@@ -39,12 +44,9 @@ contract FundManager is DougEnabled, Construct {
         nous = nousaddress;
         fund = msg.sender;
 
-        address perms = ContractProvider(DOUG).contracts("permissions");
-		if ( perms != 0x0 ) {
-			PermissionProvider(perms).setPermission(nous, 4);
-			PermissionProvider(perms).setPermission(fund, 3);
-			PermissionProvider(perms).setPermission(owner, 3);
-		}
+        setPermission(nous, 4);
+        setPermission(fund, 3);
+        setPermission(owner, 3);
 
         isCall = true; // disabled constructor
     }
@@ -52,7 +54,7 @@ contract FundManager is DougEnabled, Construct {
 
     function checkPermission(bytes32 role) returns (bool) {
 
-    	address permsdb = ContractProvider(DOUG).contracts("permissionsdb");
+    	address permsdb = ContractProvider(DOUG).contracts("permissiondb");
     	if ( permsdb != 0x0 ){
     		PermissionProvider permComp = PermissionProvider(permsdb);
     		return permComp.getUserPerm(msg.sender) == permComp.getRolePerm(role);
@@ -60,29 +62,49 @@ contract FundManager is DougEnabled, Construct {
     	return false;
     }
 
+    // Set the permissions for a given address.
+	function setPermission(address addr, uint8 permLvl) returns (bool res) {
+		if (msg.sender != owner && msg.sender != fund) {
+			return false;
+		}
+
+		address perms = ContractProvider(DOUG).contracts("permissions");
+		if ( perms == 0x0 ) {
+			return false;
+		}
+
+		return PermissionProvider(perms).setPermission(addr, permLvl);
+	}
+
+	function getRole(bytes32 role) constant returns (uint8, uint8){
+		address permsdb = ContractProvider(DOUG).contracts("permissionsdb");
+		if ( permsdb != 0x0 ){
+			PermissionProvider permComp = PermissionProvider(permsdb);
+			return (permComp.getUserPerm(msg.sender), permComp.getRolePerm(role));
+		}
+		return (0, 0);
+	}
+
 	// Prmissions only owner delete or add manager
     function addManager(
 		address managerAddress,
 		bytes32 firstName,
 		bytes32 lastName,
 		bytes32 email
-	)  returns (bool) {
-		/*if (!checkPermission("owner")){
+	) returns (bool) {
+		if (!checkPermission("owner")){
 			return false;
-		}*/
+		}
 
 		address managers = ContractProvider(DOUG).contracts("managers");
 		if (managers == 0x0){
 			return false;
 		}
 
-		if (!Managers(managers).addManager(managerAddress, firstName, lastName, email)){
-			return false;
-		}
-
-		return true;
+		return Managers(managers).addManager(managerAddress, firstName, lastName, email);
 	}
 
+	// public method
 	function getAllManagers() constant returns (bytes32[] memory names, address[] memory addrs){
 		if (!checkPermission("owner")){
 			//return false;
@@ -188,28 +210,7 @@ contract FundManager is DougEnabled, Construct {
 		return true;
 	}
 
-	// Set the permissions for a given address.
-	function setPermission(address addr, uint8 permLvl) returns (bool res) {
-		if (!checkPermission("owner") && !checkPermission("doug")){
-			return false;
-		}
 
-		address perms = ContractProvider(DOUG).contracts("permissions");
-		if ( perms == 0x0 ) {
-			return false;
-		}
-
-		return PermissionProvider(perms).setPermission(addr, permLvl);
-	}
-
-	function getRole(bytes32 role) constant returns (uint8, uint8){
-		address permsdb = ContractProvider(DOUG).contracts("permissionsdb");
-		if ( permsdb != 0x0 ){
-			PermissionProvider permComp = PermissionProvider(permsdb);
-			return (permComp.getUserPerm(msg.sender), permComp.getRolePerm(role));
-		}
-		return (0, 0);
-	}
 
 
 }

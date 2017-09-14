@@ -81,19 +81,29 @@ fund.getContracts('fundmanager')
 fund.getContracts('fundmanager').then(res => fundManager = FundManager.at(res).getTestVar().then(console.log))
 
 fund.getContracts('fundmanager').then(res => fundManager = FundManager.at(res).getDoug().then(console.log))
-fund.getContracts('perms').then(res => permissiontest = Permissions.at(res).validateDoug().then(console.log))
+fund.getContracts('permissions').then(res => permissiontest = Permissions.at(res).validateDoug().then(console.log))
 fund.getContracts('managers').then(res => managerstest = Managers.at(res).validateDoug().then(console.log))
 fund.getContracts('wallets').then(res => walletstest = Wallets.at(res).validateDoug().then(console.log))
 fund.getContracts('managerdb').then(res => managerdbtest = ManagerDb.at(res).validateDoug().then(console.log))
 
-fund.getContracts('permsdb').then(res => permsdb = PermissionDb.at(res).validateDoug().then(console.log))
+fund.getContracts('permissiondb').then(res => permsdb = PermissionDb.at(res).validateDoug().then(console.log))
 
 
 //end
 
 
 
-fund.getContracts('fundManager').then(res => fundManager = FundManager.at(res)).then(()=> fundManager.addManager(web3.eth.accounts[2], 'testFN', 'testLN', 'test@test'))
+fund.getContracts('fundmanager').then(res => fundManager = FundManager.at(res)).then(()=> fundManager.addManager(web3.eth.accounts[2], 'testFN', 'testLN', 'test@test'))
+fundManager.getOwnerAddress()
+fundManager.getAllManagers()
+fundManager.checkPermission('owner')
+fundManager.setPermission(web3.eth.accounts, 'owner')
+
+
+//проверка задался адресс разрешений
+fund.getContracts('permissiondb').then(res => permissionDb = PermissionDb.at(res))
+permissionDb.rolePermission('owner')
+permissionDb.perms(web3.eth.accounts[0])
 
 
 //add fund manager

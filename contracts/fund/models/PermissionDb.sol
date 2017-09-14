@@ -24,7 +24,7 @@ contract PermissionDb is DougEnabled, Construct {
     // Set the permissions of an account.
     function setPermission(address addr, uint8 perm) returns (bool res) {
         if(DOUG != 0x0){
-            address permC = ContractProvider(DOUG).contracts("perms");
+            address permC = ContractProvider(DOUG).contracts("permissions");
             if (msg.sender == permC ){
                 perms[addr] = perm;
                 return true;
@@ -35,12 +35,12 @@ contract PermissionDb is DougEnabled, Construct {
         }
     }
 
-    /*function getRolePerm(bytes32 role) returns (uint8) {
+    function getRolePerm(bytes32 role) returns (uint8) {
     	return rolePermission[role];
     }
 
     function getUserPerm(address addr) returns (uint8) {
     	return perms[addr];
-    }*/
+    }
 
 }

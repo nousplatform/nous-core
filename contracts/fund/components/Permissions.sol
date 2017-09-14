@@ -13,10 +13,12 @@ contract Permissions is FundManagerEnabled, Construct {
         if (!isFundManager()){
             return false;
         }
+
         address permdb = ContractProvider(DOUG).contracts("permissiondb");
         if ( permdb == 0x0 ) {
             return false;
         }
+
         return PermissionDb(permdb).setPermission(addr, perm);
     }
 
