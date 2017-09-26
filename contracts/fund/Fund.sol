@@ -2,6 +2,7 @@ pragma solidity ^0.4.4;
 
 import "./security/DougEnabled.sol";
 import "./interfaces/Construct.sol";
+import "../../node_modules/zeppelin-solidity/contracts/token/ERC20.sol";
 
 // The Doug contract.
 contract Fund {
@@ -11,6 +12,10 @@ contract Fund {
     address nous;
 
     bool allowAddContract;
+
+    bytes32 public fundName;
+
+
 
     // This is where we keep all the contracts.
     mapping (bytes32 => address) public contracts;
@@ -63,22 +68,47 @@ contract Fund {
 
     }*/
 
-    // Add a new contract to Doug. This will overwrite an existing contract.
-    function addContract(bytes32 name, address addr) returns (bool result) {
+    /**
+	 * Get notify in token contracts, only nous token
+	 *
+	 * @param _sender Sender coins
+	 * @param _value The max amount they can spend
+	 * @param _tkn_address Address token contract, where did the money come from
+	 * @param _extraData SomeExtra Information
+	 */
+	function receiveApproval(address _sender, uint256 _value, address _tkn_address, bytes _extraData) returns (bool) {
+		if (_sender == 0x0 || _tkn_address == 0x0 || _value > 0){
+			return false;
+		}
+
+		ERC20 tkn = ERC20(_tkn_address);
+		uint256 amount = tkn.allowance(_sender, this); // how many coins we are allowed to spend
+		if (amount >= _value) {
+			if (tkn.transferFrom(_sender, this, _value)) {
+
+			}
+		}
+	}
+
+    /**
+     * Add a new contract to Doug. This will overwrite an existing contract.
+     *
+     */
+    function addContract(bytes32 _name, address _addr) returns (bool result) {
     	if (msg.sender != nous || allowAddContract == false){
 			return false;
     	}
 
     	//addr.call(bytes4(keccak256("constructor()"))); // конструктор срабатывает
 
-        DougEnabled de = DougEnabled(addr);
+        DougEnabled de = DougEnabled(_addr);
         // Don't add the contract if this does not work.
         if(!de.setDougAddress(address(this))) {
             return false;
         }
-        contracts[name] = addr;
+        contracts[_name] = _addr;
 
-        Construct(addr).construct(owner, nous);
+        Construct(_addr).construct(owner, nous);
 
         return true;
     }

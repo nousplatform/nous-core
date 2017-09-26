@@ -12,8 +12,11 @@ import "./security/DougEnabled.sol";
 import "./interfaces/ContractProvider.sol";
 import "./interfaces/PermissionProvider.sol";
 
+
+
 //import "./models/PermissionDb.sol";
 //import "./components/Permissions.sol";
+import "../../node_modules/zeppelin-solidity/contracts/token/ERC20.sol";
 
 import "./components/Managers.sol";
 import "./components/Wallets.sol";
@@ -27,15 +30,6 @@ contract FundManager is DougEnabled, Construct {
     address owner;
     address nous;
     address fund;
-
-    function getDoug() constant returns (address){
-    	return DOUG;
-    }
-
-    function getOwnerAddress() constant returns (address, address, address, address){
-    	return (owner, msg.sender, nous, fund);
-    }
-
 
     function construct(address foundOwner, address nousaddress){
     	if (isCall) revert();
@@ -140,11 +134,7 @@ contract FundManager is DougEnabled, Construct {
 			return false;
 		}
 
-		if (!Managers(managers).delManager(managerAddr)){
-			return false;
-		}
-
-		return true;
+		return Managers(managers).delManager(managerAddr);
 	}
 
 	/**
@@ -160,11 +150,7 @@ contract FundManager is DougEnabled, Construct {
 			return false;
 		}
 
-		if (!Wallets(wallets).addWallet(type_wallet, walletAddress)){
-			return false;
-		}
-
-		return true;
+		return Wallets(wallets).addWallet(type_wallet, walletAddress);
 	}
 
 	/**
@@ -184,11 +170,7 @@ contract FundManager is DougEnabled, Construct {
 			return false;
 		}
 
-		if (!Wallets(wallets).confirmWallet(walletAddress)) {
-			return false;
-		}
-
-		return true;
+		return Wallets(wallets).confirmWallet(walletAddress);
 	}
 
 	// Create snapshot can do only Nous platform
@@ -203,12 +185,35 @@ contract FundManager is DougEnabled, Construct {
 			return false;
 		}
 
-		if (!Wallets(wallets).createSnapshot(walletAddress, balance)) {
+		return Wallets(wallets).createSnapshot(walletAddress, balance);
+	}
+
+
+
+	//
+	function bayShares(uint32 tokens) returns (bool){
+
+		address erc20address = ContractProvider(DOUG).contracts("erc20");
+
+		if (erc20address == 0x0){
 			return false;
 		}
 
+		bool res = ERC20(erc20address).transferFrom(msg.sender, DOUG, tokens);
+
+		address assets = ContractProvider(DOUG).contracts("assets");
+
+		if (assets == 0x0){
+			return false;
+		}
+
+		//return Assets(assets).addDeposit(walletAddress, balance);
 		return true;
 	}
+
+
+
+
 
 
 

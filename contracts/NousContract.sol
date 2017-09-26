@@ -1,6 +1,7 @@
 pragma solidity ^0.4.4;
 
 import "./fund/Fund.sol";
+import "./investor/Investor.sol";
 
 contract NousCreator {
 
@@ -19,6 +20,9 @@ contract NousCreator {
     mapping(bytes32 => address) defaultContracts;
     bytes32[] contractsList;
 
+	// address nous contract investor => address account investor
+    mapping(address => address) investors;
+    address[] indexInvestors;
 
     function NousCreator(){
         owner = msg.sender;
@@ -54,6 +58,13 @@ contract NousCreator {
 				Funds[fundAddr].indexChild.push(name);
 			}
 		}
+    }
+
+    function createNewInvestor() constant returns (address){
+		address new_investor = new Investor(msg.sender);
+		investors[new_investor] = msg.sender;
+		indexInvestors.push(new_investor);
+		return new_investor;
     }
 
     function getAllFund() constant returns (address[]){
