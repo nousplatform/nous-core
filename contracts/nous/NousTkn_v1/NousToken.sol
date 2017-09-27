@@ -25,5 +25,7 @@ contract NousToken is MintableToken {
 		saleAgent = _newSaleAgent;
 		transferOwnership(_newSaleAgent);
 	}
+
+
 }
 
