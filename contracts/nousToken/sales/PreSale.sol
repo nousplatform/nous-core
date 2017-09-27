@@ -18,8 +18,17 @@ import "../NousToken.sol";
  * to ensure that subcontracts works together as intended.
  */
 contract PreSale is CappedCrowdsale, RefundableCrowdsale, BonusCrowdsale {
+    
+    uint256 _startTime = 1506526500; // 27.09.2017 00:00:00
+    uint256 _endTime = 1506526800; // 27.09.2017 00:00:00
+    uint256 _rate = 100000000000000000000;
+    uint256 _goal = 400000;
+    uint256 _cap = 777000000;
+    address _wallet = 0xEA15Adb66DC92a4BbCcC8Bf32fd25E2e86a2A770;
+    address restricted = 0xb3eD172CC64839FB0C0Aa06aa129f402e994e7De;
+    uint256 restrictedPercent = 40;
 
-	function PreSale(uint256 _startTime, uint256 _endTime, uint256 _rate, uint256 _goal, uint256 _cap, address _wallet)
+	function PreSale()
 		CappedCrowdsale(_cap)
 		FinalizableCrowdsale()
 		RefundableCrowdsale(_goal)
