@@ -25,8 +25,8 @@ contract PreSale is CappedCrowdsale, RefundableCrowdsale, BonusCrowdsale {
     uint256 _goal = 400000;
     uint256 _cap = 777000000;
     address _wallet = 0xEA15Adb66DC92a4BbCcC8Bf32fd25E2e86a2A770;
-    address restricted = 0xb3eD172CC64839FB0C0Aa06aa129f402e994e7De;
-    uint256 restrictedPercent = 40;
+    //address restricted = 0xb3eD172CC64839FB0C0Aa06aa129f402e994e7De;
+    //uint256 restrictedPercent = 40;
 
 	function PreSale()
 		CappedCrowdsale(_cap)
