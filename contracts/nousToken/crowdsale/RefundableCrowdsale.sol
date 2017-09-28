@@ -23,8 +23,12 @@ contract RefundableCrowdsale is FinalizableCrowdsale {
 
   function RefundableCrowdsale(uint256 _goal) {
     require(_goal > 0);
-    vault = new RefundVault(wallet);
+    vault = createRefundVault();
     goal = _goal;
+  }
+
+  function createRefundVault() internal returns (RefundVault){
+	return new RefundVault(wallet);
   }
 
   // We're overriding the fund forwarding from Crowdsale.

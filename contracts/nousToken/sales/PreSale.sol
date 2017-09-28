@@ -19,8 +19,8 @@ import "../NousToken.sol";
  */
 contract PreSale is CappedCrowdsale, RefundableCrowdsale, BonusCrowdsale {
     
-    uint256 startTime = 1506611700; // 27.09.2017 00:00:00
-    uint256 endTime = 1506607210; // 27.09.2017 00:00:00
+    uint256 startTime = 1506616500; // Thu, 28 Sep 2017 16:35:00 GMT
+    uint256 endTime = 1506686400; // Fri, 29 Sep 2017 12:00:00 GMT
     uint256 rate = 6400;
     uint256 goal = 400000;
     uint256 cap = 777000000;
