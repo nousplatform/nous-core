@@ -21,7 +21,9 @@ var FundManager = artifacts.require("./FundManager.sol");
 
 var NousCreator = artifacts.require("./NousCreator.sol");
 
-var NousToken = artifacts.require("./NousToken.sol");
+//var NousToken = artifacts.require("./NousToken.sol");
+
+var PreSale = artifacts.require("./PreSale.sol");
 
 
 module.exports = function(deployer) {
@@ -39,7 +41,8 @@ module.exports = function(deployer) {
   //deployer.deploy([DougEnabled, FundManagerEnabled]);
     //deployer.deploy([Fund]);
     deployer.deploy([FundManager]);
+    deployer.deploy([PreSale]);
 
-    deployer.deploy([NousCreator, NousToken]);
+    //deployer.deploy([NousCreator, NousToken]);
 
 };

@@ -1,5 +1,7 @@
 pragma solidity ^0.4.4;
 
+import "../crowdsale/CappedCrowdsale.sol";
+import "../crowdsale/RefundableCrowdsale.sol";
 import './Crowdsale.sol';
 
 contract BonusCrowdsale is Crowdsale {

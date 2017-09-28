@@ -19,25 +19,25 @@ import "../NousToken.sol";
  */
 contract PreSale is CappedCrowdsale, RefundableCrowdsale, BonusCrowdsale {
     
-    uint256 _startTime = 1506598500; // 27.09.2017 00:00:00
-    uint256 _endTime = 1506598800; // 27.09.2017 00:00:00
-    uint256 _rate = 100000000000000000000;
-    uint256 _goal = 400000;
-    uint256 _cap = 777000000;
-    address _wallet = 0xEA15Adb66DC92a4BbCcC8Bf32fd25E2e86a2A770;
+    uint256 startTime = 1506611700; // 27.09.2017 00:00:00
+    uint256 endTime = 1506607210; // 27.09.2017 00:00:00
+    uint256 rate = 6400;
+    uint256 goal = 400000;
+    uint256 cap = 777000000;
+    address wallet = 0xEA15Adb66DC92a4BbCcC8Bf32fd25E2e86a2A770;
     //address restricted = 0xb3eD172CC64839FB0C0Aa06aa129f402e994e7De;
     //uint256 restrictedPercent = 40;
 
 	function PreSale()
-		CappedCrowdsale(_cap)
+		CappedCrowdsale(cap)
 		FinalizableCrowdsale()
-		RefundableCrowdsale(_goal)
-		Crowdsale(_startTime, _endTime, _rate, _wallet)
+		RefundableCrowdsale(goal)
+		Crowdsale(startTime, endTime, rate, wallet)
 		BonusCrowdsale()
 	{
 		//As goal needs to be met for a successful crowdsale
 		//the value needs to less or equal than a cap which is limit for accepted funds
-		require(_goal <= _cap);
+		require(goal <= cap);
 	}
 
 	function createTokenContract() internal returns (MintableToken) {

@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.10;
 
 import '../math/SafeMath.sol';
 import '../ownership/Ownable.sol';
