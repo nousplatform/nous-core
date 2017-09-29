@@ -21,10 +21,11 @@ contract PreSale is CappedCrowdsale, RefundableCrowdsale, BonusCrowdsale {
     
     uint256 startTime = 1506616500; // Thu, 28 Sep 2017 16:35:00 GMT
     uint256 endTime = 1506686400; // Fri, 29 Sep 2017 12:00:00 GMT
-    uint256 rate = 6400;
-    uint256 goal = 400000;
-    uint256 cap = 777000000;
+    uint256 rate = 6400 * 1 ether; // 6400 NOUS => 1 ether => per wei;
+    uint256 goal = 400000 * 1 ether; // min investment capital
+    uint256 cap = 10000000 * 1 ether; // max capital in ether
     address wallet = 0xEA15Adb66DC92a4BbCcC8Bf32fd25E2e86a2A770;
+    address nextSale;
     //address restricted = 0xb3eD172CC64839FB0C0Aa06aa129f402e994e7De;
     //uint256 restrictedPercent = 40;
 
@@ -42,6 +43,21 @@ contract PreSale is CappedCrowdsale, RefundableCrowdsale, BonusCrowdsale {
 
 	function createTokenContract() internal returns (MintableToken) {
 		return new NousToken();
+	}
+
+	// finalize an add new sale.
+	function finalize(address _nextSale) onlyOwner public {
+		require(nextSale != 0x0);
+		nextSale = _nextSale;
+		super.finalize();
+	}
+
+
+	// pre sale finalization and chang owner in RefundVault and new sale
+	function finalization() internal {
+		require(nextSale != 0x0);
+		token.transferOwnership(nextSale);
+		vault.transferOwnership(nextSale);
 	}
 }
 
