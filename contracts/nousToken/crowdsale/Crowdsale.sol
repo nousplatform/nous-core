@@ -20,6 +20,7 @@ contract Crowdsale {
 	// start and end timestamps where investments are allowed (both inclusive)
 	uint256 public startTime;
 	uint256 public endTime;
+	uint256 public period;
 
 	// address where funds are collected
 	address public wallet;
@@ -39,9 +40,10 @@ contract Crowdsale {
 	*/
 	event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
-	function Crowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, address _wallet) {
+	function Crowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, address _wallet, uint256 _period) {
 		require(_startTime >= now);
-		require(_endTime >= _startTime);
+		//require(_endTime >= _startTime);
+		require(_period > 0);
 		require(_rate > 0);
 		require(_wallet != 0x0);
 
@@ -50,6 +52,7 @@ contract Crowdsale {
 		endTime = _endTime;
 		rate = _rate;
 		wallet = _wallet;
+		period = _period;
 	}
 
 	// creates the token to be sold.
@@ -72,7 +75,7 @@ contract Crowdsale {
 		uint256 weiAmount = msg.value;
 
 		// calculate token amount to be created
-		uint256 tokens = weiAmount.mul(rate);
+		uint256 tokens = weiAmount.mul(rate).div(1 ether);
 
 		// add filter for calculate bonus
 		uint256 addFilterBonus = additionalFilterBuyTokens(tokens);
@@ -101,7 +104,8 @@ contract Crowdsale {
 
 	// @return true if the transaction can buy tokens
 	function validPurchase() internal constant returns (bool) {
-		bool withinPeriod = now >= startTime && now <= endTime;
+		//bool withinPeriod = now >= startTime && now <= endTime;
+		bool withinPeriod = now >= startTime && now <= startTime.add(period);
 		bool nonZeroPurchase = msg.value != 0;
 		return withinPeriod && nonZeroPurchase;
 	}

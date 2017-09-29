@@ -71,20 +71,20 @@ contract Fund {
     /**
 	 * Get notify in token contracts, only nous token
 	 *
-	 * @param _sender Sender coins
+	 * @param _from Sender coins
 	 * @param _value The max amount they can spend
 	 * @param _tkn_address Address token contract, where did the money come from
 	 * @param _extraData SomeExtra Information
 	 */
-	function receiveApproval(address _sender, uint256 _value, address _tkn_address, bytes _extraData) returns (bool) {
-		if (_sender == 0x0 || _tkn_address == 0x0 || _value > 0){
+	function receiveApproval(address _from, uint256 _value, address _tkn_address, bytes _extraData) returns (bool) {
+		if (_from == 0x0 || _tkn_address == 0x0 || _value > 0){
 			return false;
 		}
 
 		ERC20 tkn = ERC20(_tkn_address);
-		uint256 amount = tkn.allowance(_sender, this); // how many coins we are allowed to spend
+		uint256 amount = tkn.allowance(_from, this); // how many coins we are allowed to spend
 		if (amount >= _value) {
-			if (tkn.transferFrom(_sender, this, _value)) {
+			if (tkn.transferFrom(_from, this, _value)) {
 
 			}
 		}

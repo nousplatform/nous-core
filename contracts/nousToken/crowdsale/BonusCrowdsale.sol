@@ -31,7 +31,7 @@ contract BonusCrowdsale is Crowdsale {
 		uint256 bonus = 0;
 		uint256 totalSupply = token.totalSupply();
 		for (uint256 i; i < bonuses.length; i++){
-			if (totalSupply > bonuses[i].amountFrom && totalSupply <= bonuses[i].amountTo){
+			if (totalSupply >= bonuses[i].amountFrom && totalSupply < bonuses[i].amountTo){
 				bonus = tokens.mul(bonuses[i].percentBonus).div(100);
 				accruedBonuses = accruedBonuses.add(bonus);
 			}
