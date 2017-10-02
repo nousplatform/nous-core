@@ -30,6 +30,8 @@ contract Crowdsale {
 
 	// amount of raised money in wei
 	uint256 public weiRaised;
+	
+	uint256 public timeNow;
 
 	/**
 	* event for token purchase logging
@@ -105,6 +107,7 @@ contract Crowdsale {
 	// @return true if the transaction can buy tokens
 	function validPurchase() internal constant returns (bool) {
 		//bool withinPeriod = now >= startTime && now <= endTime;
+		timeNow = now;
 		bool withinPeriod = now >= startTime && now <= startTime.add(period);
 		bool nonZeroPurchase = msg.value != 0;
 		return withinPeriod && nonZeroPurchase;

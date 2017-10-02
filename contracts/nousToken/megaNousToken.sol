@@ -185,7 +185,7 @@ contract RocketPoolToken is StandardToken, Ownable {
     /// @param _depositAddress The address that receives the ether for that sale contract
     function setSaleAgentContract(
         address _saleAddress,
-         string _saleContractType,
+        string _saleContractType,
         uint256 _targetEthMin,
         uint256 _targetEthMax,
         uint256 _tokensLimit,

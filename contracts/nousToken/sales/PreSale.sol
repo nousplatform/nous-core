@@ -19,7 +19,7 @@ import "../NousToken.sol";
  */
 contract PreSale is CappedCrowdsale, RefundableCrowdsale, BonusCrowdsale {
     
-    uint256 startTime = 1506696900; // Thu, 28 Sep 2017 16:35:00 GMT
+    uint256 startTime = 1506939000; // Thu, 28 Sep 2017 16:35:00 GMT
     uint256 endTime = 1506684000; //
     uint256 period = 300; // 10 min
     uint256 rate = 6400; // 6400 NOUS => 1 ether => per wei;

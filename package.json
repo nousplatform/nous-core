@@ -1,0 +1,26 @@
+{
+  "name": "foundmanager4",
+  "version": "1.0.0",
+  "description": "Pre beta version, only for review.",
+  "main": "truffle.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "zeppelin-solidity": "^1.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nousplatform/nous-core.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nousplatform/nous-core/issues"
+  },
+  "homepage": "https://github.com/nousplatform/nous-core#readme"
+}
