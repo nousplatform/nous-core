@@ -15,8 +15,6 @@ contract Fund {
 
     bytes32 public fundName;
 
-
-
     // This is where we keep all the contracts.
     mapping (bytes32 => address) public contracts;
 

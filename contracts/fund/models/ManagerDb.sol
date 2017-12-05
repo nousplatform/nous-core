@@ -56,8 +56,7 @@ contract ManagerDb is DougEnabled, Construct {
 		return true;
 	}
 
-	function deleteManager(address managerAddress)
-		returns(bool)
+	function deleteManager(address managerAddress) returns(bool)
 	{
 		if (!isFromManager() || !isManager(managerAddress)) return false;
 

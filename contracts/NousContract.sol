@@ -16,7 +16,6 @@ contract NousCreator {
     mapping (address => FundStructure) Funds;
     address[] fundsIndex;
 
-
     mapping(bytes32 => address) defaultContracts;
     bytes32[] contractsList;
 
@@ -33,7 +32,7 @@ contract NousCreator {
         _;
     }
 
-    function createNewFund(bytes32 name ) onlyOwner() returns (address fundAddress){
+    function createNewFund(bytes32 name) onlyOwner() returns (address fundAddress) {
     	address fundAddr = new Fund(msg.sender, name);
         fundsIndex.push(fundAddr);
         FundStructure memory newFund;

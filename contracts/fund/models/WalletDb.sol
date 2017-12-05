@@ -8,19 +8,19 @@ import "../interfaces/Construct.sol";
 contract WalletDb is DougEnabled, Construct {
 
     struct Snapshot {
-        uint balance; // current balance
-        uint index; // time in snapshot
+        uint256 balance; // current balance
+        uint256 index; // time in snapshot
     }
 
     struct Wallets {
         bytes32 type_wallet;
         bool confirmed;
-        uint index;
+        uint256 index;
         mapping ( uint => Snapshot ) snapshot; // timestamp to structures
     }
 
     //mapping (uint32 => uint) snapshotMap; //
-    uint[] snapshotIndex; // format YYYYMMDD
+    uint256[] snapshotIndex; // format YYYYMMDD
 
     mapping ( address => Wallets ) private wallets;
     address[] private walletsIndex;

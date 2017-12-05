@@ -6,18 +6,12 @@ pragma solidity ^0.4.4;
 * Permission: (Nous platform = 4, Owner Fund = 3, Manager = 2, Investor = 1, No permission = 0 )
 *
 */
-
-
 import "./security/DougEnabled.sol";
 import "./interfaces/ContractProvider.sol";
 import "./interfaces/PermissionProvider.sol";
-
-
-
 //import "./models/PermissionDb.sol";
 //import "./components/Permissions.sol";
 import "../../node_modules/zeppelin-solidity/contracts/token/ERC20.sol";
-
 import "./components/Managers.sol";
 import "./components/Wallets.sol";
 import "./interfaces/Construct.sol";
@@ -31,8 +25,9 @@ contract FundManager is DougEnabled, Construct {
     address nous;
     address fund;
 
-    function construct(address foundOwner, address nousaddress){
-    	if (isCall) revert();
+    function construct(address foundOwner, address nousaddress) {
+		require(isCall);
+    	//if (isCall) revert();
 		//TODO ONLY FIRST START
     	owner = foundOwner;
         nous = nousaddress;
@@ -174,7 +169,7 @@ contract FundManager is DougEnabled, Construct {
 	}
 
 	// Create snapshot can do only Nous platform
-	function createSnapshot(address walletAddress, uint32 balance) returns (bool){
+	function createSnapshot(address walletAddress, uint32 balance) returns (bool) {
 		if (!checkPermission("nous")){
 			return false;
 		}
@@ -187,8 +182,6 @@ contract FundManager is DougEnabled, Construct {
 
 		return Wallets(wallets).createSnapshot(walletAddress, balance);
 	}
-
-
 
 	//
 	function bayShares(uint32 tokens) returns (bool){
