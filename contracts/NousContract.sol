@@ -7,7 +7,7 @@ contract NousCreator {
 
     address private owner;    // the Creator of the contract
 
-    struct FundStructure{
+    struct FundStructure {
     	bytes32 fundName;
     	mapping(bytes32 => address) childFundContracts;
     	bytes32[] indexChild;
@@ -23,7 +23,7 @@ contract NousCreator {
     mapping(address => address) investors;
     address[] indexInvestors;
 
-    function NousCreator(){
+    function NousCreator() {
         owner = msg.sender;
     }
 
@@ -59,14 +59,14 @@ contract NousCreator {
 		}
     }
 
-    function createNewInvestor() constant returns (address){
+    function createNewInvestor() constant returns (address) {
 		address new_investor = new Investor(msg.sender);
 		investors[new_investor] = msg.sender;
 		indexInvestors.push(new_investor);
 		return new_investor;
     }
 
-    function getAllFund() constant returns (address[]){
+    function getAllFund() constant returns (address[]) {
     	address[] memory alladdr = new address[](fundsIndex.length);
     	for (uint8 i = 0; i < fundsIndex.length; i++){
     		alladdr[i] = fundsIndex[i];
@@ -139,7 +139,7 @@ contract NousCreator {
 		defaultContracts[name] = addr;
 	}
 
-	function getDefaultContracts() constant returns (bytes32[], address[]){
+	function getDefaultContracts() constant returns (bytes32[], address[]) {
 
 		uint length = contractsList.length;
 		bytes32[] memory names = new bytes32[](length);

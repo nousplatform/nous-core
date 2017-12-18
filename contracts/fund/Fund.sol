@@ -1,6 +1,6 @@
 pragma solidity ^0.4.4;
 
-import "./security/DougEnabled.sol";
+import "./base/DougEnabled.sol";
 import "./interfaces/Construct.sol";
 import "../../node_modules/zeppelin-solidity/contracts/token/ERC20.sol";
 
@@ -34,37 +34,6 @@ contract Fund {
         nous = msg.sender;
         allowAddContract = true;
     }
-
-    /*function createComponents() onlyOwner() {
-    	//ToDo поставить проверку
-		//permission
-    	address addrPermissions = address(new Permissions());
-		addContract('perms', addrPermissions);
-
-		address addrPermissionDb = address(new PermissionDb());
-		addContract('permsdb', addrPermissionDb);
-
-		// fund manager
-		address addrFundManager = address(new FundManager(owner, nous));
-		contracts['fundManager'] = addrFundManager;
-
-		FundManager(contracts['fundManager']).constructSetPermission();
-
-		//manager db
-		address addrManagers = address(new Managers());
-		contracts['managers'] = addrManagers;
-
-		address addrManagerDb = address(new ManagerDb());
-		contracts['managerdb'] = addrManagerDb;
-
-		//wallets
-		address addrWallets = address(new Wallets());
-		contracts['wallets'] = addrWallets;
-
-		address addrWalletDb = address(new WalletDb());
-		contracts['walletsdb'] = addrWalletDb;
-
-    }*/
 
     /**
 	 * Get notify in token contracts, only nous token

@@ -1,11 +1,12 @@
 pragma solidity ^0.4.4;
 
 
-import "../security/DougEnabled.sol";
+import "../base/FundManagerEnabled.sol";
 import "../interfaces/ContractProvider.sol";
 import "../interfaces/Construct.sol";
 
-contract WalletDb is DougEnabled, Construct {
+
+contract WalletDb is FundManagerEnabled, Construct {
 
     struct Snapshot {
         uint256 balance; // current balance
@@ -25,18 +26,8 @@ contract WalletDb is DougEnabled, Construct {
     mapping ( address => Wallets ) private wallets;
     address[] private walletsIndex;
 
-	// validate did the request from wallets contract
-    function isFromWallet() returns (bool){
-        if(DOUG != 0x0 && msg.sender == ContractProvider(DOUG).contracts("wallets")){
-            return true;
-        }
-        return false;
-    }
-
 	// validate if wallet exists
-    function isWallet(address walletAddress)
-        public
-        returns(bool isIndeed)
+    function isWallet(address walletAddress) public returns(bool isIndeed)
     {
         if (walletsIndex.length == 0 ) return false;
         return walletsIndex[wallets[walletAddress].index] == walletAddress;
@@ -45,7 +36,7 @@ contract WalletDb is DougEnabled, Construct {
 	// Add new wallet
     function insertWallet(bytes32 type_wallet, address walletAddress) returns (bool)
     {
-        if (!isFromWallet() || !isWallet(walletAddress)) return false;
+        if (!isFundManager()  || !isWallet(walletAddress)) return false;
 
         Wallets memory newWallet;
 
@@ -60,14 +51,15 @@ contract WalletDb is DougEnabled, Construct {
 
 	// confirm wallet
     function confirmWallet(address walletAddress) returns (bool){
-        if (!isFromWallet() || !isWallet(walletAddress)) return false;
+        if (!isFundManager() || !isWallet(walletAddress)) return false;
         wallets[walletAddress].confirmed = true;
 
         return true;
     }
 
     function addSnapshot(address walletAddress, uint balance) returns (bool){
-    	uint timestamp = block.timestamp;
+        if (!isFundManager()) return false;
+        uint timestamp = block.timestamp;
     	Snapshot memory newSnapshot;
     	newSnapshot.balance = balance;
 

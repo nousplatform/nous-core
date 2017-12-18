@@ -1,7 +1,3 @@
-//componenets
-var Managers = artifacts.require("./Managers.sol");
-var Permissions = artifacts.require("./Permissions.sol");
-var Wallets = artifacts.require("./Wallets.sol");
 
 //interfaces
 var ContractProvider = artifacts.require("./ContractProvider.sol");

@@ -1,10 +1,12 @@
 pragma solidity ^0.4.4;
 
-import "../security/DougEnabled.sol";
+
 import "../interfaces/ContractProvider.sol";
 import "../interfaces/Construct.sol";
+import "../base/FundManagerEnabled.sol";
 
-contract ManagerDb is DougEnabled, Construct {
+
+contract ManagerDb is FundManagerEnabled, Construct {
 
 	struct ManagerStruct {
 		bytes32 firstname;
@@ -13,23 +15,12 @@ contract ManagerDb is DougEnabled, Construct {
 		uint index;
 	}
 
-	mapping ( address => ManagerStruct ) Managers;
+	mapping (address => ManagerStruct) Managers;
 	address[] public managerIndex; // Managers
-
-	function isFromManager() returns (bool){
-		if(DOUG != 0x0){
-			address managC = ContractProvider(DOUG).contracts("managers");
-			if (msg.sender == managC ){
-				return true;
-			}
-			return false;
-		} else {
-			return false;
-		}
-	}
 
 	function isManager(address managerAddress)
 		public
+		constant
 		returns(bool isIndeed)
 	{
 		if (managerIndex.length == 0 ) return false;
@@ -44,7 +35,7 @@ contract ManagerDb is DougEnabled, Construct {
 	)
 		returns (bool)
 	{
-		if (!isFromManager() || isManager(managerAddress)) return false;
+		if (!isFundManager() || isManager(managerAddress)) return false;
 
 		ManagerStruct memory newManager;
 		newManager.firstname = firstName;
@@ -58,7 +49,7 @@ contract ManagerDb is DougEnabled, Construct {
 
 	function deleteManager(address managerAddress) returns(bool)
 	{
-		if (!isFromManager() || !isManager(managerAddress)) return false;
+		if (!isFundManager() || !isManager(managerAddress)) return false;
 
 		uint rowToDelete = Managers[managerAddress].index; // index manager to de
 		address keyToMove = managerIndex[managerIndex.length-1];
@@ -93,16 +84,16 @@ contract ManagerDb is DougEnabled, Construct {
 
 	function getAllManagers() constant returns (bytes32[] _data1) {
 		uint length = managerIndex.length;
-		bytes32[] memory firstname = new bytes32[](1);
-		//bytes32[] memory lastname = new bytes32[](managerIndex.length);
-		//bytes32[] memory email = new bytes32[](managerIndex.length);
-		//address[] memory addrs = new address[](managerIndex.length);
+		bytes32[] memory firstname = new bytes32[](length);
+		bytes32[] memory lastname = new bytes32[](length);
+		bytes32[] memory email = new bytes32[](length);
+		address[] memory addrs = new address[](length);
 		for (uint i = 0; i < managerIndex.length; i++) {
 			ManagerStruct memory ms = Managers[managerIndex[i]];
-			firstname[1] = ms.firstname;
-			//lastname[i] = ms.lastname;
-			//email[i] = ms.email;
-			//addrs[i] = managerIndex[i];
+			firstname[i] = ms.firstname;
+			lastname[i] = ms.lastname;
+			email[i] = ms.email;
+			addrs[i] = managerIndex[i];
 		}
 		return (firstname);
 	}

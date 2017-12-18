@@ -1,6 +1,6 @@
 pragma solidity ^0.4.4;
 
-import "../security/DougEnabled.sol";
+import "../base/DougEnabled.sol";
 import "../interfaces/ContractProvider.sol";
 import "../interfaces/Construct.sol";
 

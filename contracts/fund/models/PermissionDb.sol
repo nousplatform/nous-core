@@ -1,17 +1,18 @@
 pragma solidity ^0.4.4;
 
-import "../security/DougEnabled.sol";
+import "../base/FundManagerEnabled.sol";
 import "../interfaces/ContractProvider.sol";
 import "../interfaces/Construct.sol";
 
+
 // Permissions database
-contract PermissionDb is DougEnabled, Construct {
+contract PermissionDb is FundManagerEnabled, Construct {
 
     mapping (address => uint8) public perms;
 
     mapping(bytes32 => uint8) public rolePermission;
 
-	function construct(address foundOwner, address nousaddress){
+	function construct(address foundOwner, address nousaddress) {
 		if (isCall) revert();
 
 		rolePermission['nous'] = 4;
@@ -23,16 +24,9 @@ contract PermissionDb is DougEnabled, Construct {
 
     // Set the permissions of an account.
     function setPermission(address addr, uint8 perm) returns (bool res) {
-        if(DOUG != 0x0){
-            address permC = ContractProvider(DOUG).contracts("permissions");
-            if (msg.sender == permC ){
-                perms[addr] = perm;
-                return true;
-            }
-            return false;
-        } else {
-            return false;
-        }
+        if (!isFundManager()) return false;
+        perms[addr] = perm;
+        return true;
     }
 
     function getRolePerm(bytes32 role) returns (uint8) {
