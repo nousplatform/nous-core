@@ -25,6 +25,11 @@ var MainSale = artifacts.require("./MainSale.sol");
 
 module.exports = function(deployer) {
 
+  deployer
+    .then(function() {
+
+    })
+
   //componenets
   deployer.deploy([Managers, Permissions, Wallets]);
 

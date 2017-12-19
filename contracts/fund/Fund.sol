@@ -2,7 +2,7 @@ pragma solidity ^0.4.4;
 
 import "./base/DougEnabled.sol";
 import "./interfaces/Construct.sol";
-import "../../node_modules/zeppelin-solidity/contracts/token/ERC20.sol";
+import "../token/ERC20.sol";
 
 // The Doug contract.
 contract Fund {

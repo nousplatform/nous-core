@@ -40,8 +40,9 @@ contract FundManager is DougEnabled, Construct {
     }
 
 	function checkPermission(bytes32 role) internal returns (bool) {
+
 		address permsdb = ContractProvider(DOUG).contracts("permissiondb");
-		if (permsdb == 0x0) {
+		if (permsdb != 0x0) {
 			PermissionProvider permComp = PermissionProvider(permsdb);
 			return permComp.getUserPerm(msg.sender) != permComp.getRolePerm(role);
 		}
@@ -55,6 +56,7 @@ contract FundManager is DougEnabled, Construct {
 	}
 
     // Set the permissions for a given address.
+	//
 	function setPermission(address addr, uint8 permLvl) returns (bool res) {
 		require(msg.sender != owner && msg.sender != fund);
 		address permdb = getContractAddress("permissiondb");
@@ -76,7 +78,7 @@ contract FundManager is DougEnabled, Construct {
 
 	// Wallet actions
 	//@dev add wallet address
-	function addWallet(bytes32 type_wallet, address walletAddress) external returns (bool){
+	function addWallet(bytes32 type_wallet, address walletAddress) external returns (bool) {
 		require(!checkPermission("owner") && !checkPermission("manager"));
 		address walletdb = getContractAddress("walletdb");
 		return  WalletProvider(walletdb).insertWallet(type_wallet, walletAddress);
