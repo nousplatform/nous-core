@@ -11,8 +11,7 @@ import "./interfaces/ContractProvider.sol";
 import "./interfaces/PermissionProvider.sol";
 import "./interfaces/ManagerProvider.sol";
 import "./interfaces/WalletProvider.sol";
-
-import "../../node_modules/zeppelin-solidity/contracts/token/ERC20.sol";
+import "../token/ERC20.sol";
 import "./interfaces/Construct.sol";
 
 

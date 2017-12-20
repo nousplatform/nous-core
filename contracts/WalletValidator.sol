@@ -24,4 +24,13 @@ contract WalletValidator {
         }
         return (verAddr, verifiedWallets.length);
     }
+
+    function verifyWallet(address searchAddress) external constant returns (bool) {
+        for (uint256 i = 0; i < verifiedWallets.length; i++) {
+            if (searchAddress == verifiedWallets[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
