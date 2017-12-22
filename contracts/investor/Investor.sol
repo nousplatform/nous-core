@@ -9,7 +9,7 @@ contract Investor {
 
 	address[] investedFunds;
 
-	function Investor(address account){
+	function Investor(address account) {
 		owner = account;
 		//todo address nous token address
 		//nousToken = '';

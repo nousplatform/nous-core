@@ -8,7 +8,7 @@ contract NousCreator {
     address private owner;    // the Creator of the contract
 
     struct FundStructure {
-    	bytes32 fundName;
+    	string fundName;
     	mapping(bytes32 => address) childFundContracts;
     	bytes32[] indexChild;
     }
@@ -32,19 +32,19 @@ contract NousCreator {
         _;
     }
 
-    function createNewFund(bytes32 name) onlyOwner() returns (address fundAddress) {
-    	address fundAddr = new Fund(msg.sender, name);
+    function createNewFund(string _fundName, string _tokenName, string _tokenSymbol, uint256 _initialSupply) onlyOwner() returns (address fundAddress) {
+    	address fundAddr = new Fund(msg.sender, _fundName, _tokenName, _tokenSymbol, _initialSupply);
         fundsIndex.push(fundAddr);
         FundStructure memory newFund;
-        newFund.fundName = name;
+        newFund.fundName = _fundName;
         Funds[fundAddr] = newFund;
 
         createComponents(fundAddr);
 
-        return fundsIndex[fundsIndex.length-1];
+        return fundAddr; //fundsIndex[fundsIndex.length-1];
     }
 
-    function createComponents(address fundAddr){
+    function createComponents(address fundAddr) {
     	Fund fund = Fund(fundAddr);
 		for (uint i = 0; i < contractsList.length; i++){
 			bytes32 name = contractsList[i];

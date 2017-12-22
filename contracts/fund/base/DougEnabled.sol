@@ -21,7 +21,7 @@ contract DougEnabled {
         }
     }
 
-    function validateDoug() constant returns (address){
+    function validateDoug() external constant returns (address) {
 		return DOUG;
 	}
 }

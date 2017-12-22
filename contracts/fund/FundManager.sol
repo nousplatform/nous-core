@@ -55,7 +55,6 @@ contract FundManager is DougEnabled, Construct {
 	}
 
     // Set the permissions for a given address.
-	//
 	function setPermission(address addr, uint8 permLvl) returns (bool res) {
 		require(msg.sender != owner && msg.sender != fund);
 		address permdb = getContractAddress("permissiondb");
