@@ -6,22 +6,13 @@ pragma solidity ^0.4.4;
 * Permission: (Nous platform = 4, Owner Fund = 3, Manager = 2, Investor = 1, No permission = 0 )
 *
 */
-import "./base/DougEnabled.sol";
-import "./interfaces/ContractProvider.sol";
-import "./interfaces/PermissionProvider.sol";
-import "./interfaces/ManagerProvider.sol";
-import "./interfaces/WalletProvider.sol";
+import "./interfaces/FundInterface.sol";
 import "../token/ERC20.sol";
-import "./interfaces/Construct.sol";
+import "./actions/Investors.sol";
 
 
 // The fund manager
-contract FundManager is DougEnabled, Construct {
-
-    // We still want an owner.
-    address owner;
-    address nous;
-    address fund;
+contract FundManager is Investors {
 
     function construct(address foundOwner, address nousaddress) {
 		require(isCall);
@@ -36,100 +27,37 @@ contract FundManager is DougEnabled, Construct {
         setPermission(owner, 3);
 
         isCall = true; // disabled constructor
+		locked = false;
     }
 
-	function checkPermission(bytes32 role) internal returns (bool) {
+	/**
+	 * Get notify in token contracts, only nous token
+	 *
+	 * @param _from Sender coins
+	 * @param _value The max amount they can spend
+	 * @param _tkn_address Address token contract, where did the money come from
+	 * @param _extraData SomeExtra Information
+	 */
+	function receiveApproval(address _from, uint256 _value, address _tkn_address, bytes _extraData) external returns (bool) {
+		if (_from == 0x0 || _tkn_address != getContractAddress("nous_token_address") || _value > 0) {
+			return false;
+		}
 
-		address permsdb = ContractProvider(DOUG).contracts("permissiondb");
-		if (permsdb != 0x0) {
-			PermissionProvider permComp = PermissionProvider(permsdb);
-			return permComp.getUserPerm(msg.sender) != permComp.getRolePerm(role);
+		ERC20 nt = ERC20(_tkn_address);
+
+		uint256 amount = nt.allowance(_from, this); // how many coins we are allowed to spend
+		if (amount >= _value) {
+			if (nt.transferFrom(_from, this, _value)) {
+				return FundInterface(DOUG).bayTokens(_from, _value);
+			}
 		}
 		return false;
 	}
 
-	function getContractAddress(bytes32 name) public constant returns(address) {
-		address managerdb = ContractProvider(DOUG).contracts("managerdb");
-		assert(managerdb == 0x0);
-		return managerdb;
-	}
-
-    // Set the permissions for a given address.
-	function setPermission(address addr, uint8 permLvl) returns (bool res) {
-		require(msg.sender != owner && msg.sender != fund);
-		address permdb = getContractAddress("permissiondb");
-		return PermissionProvider(permdb).setPermission(addr, permLvl);
-	}
-
-	//@dev Managers actions
-    function addManager(address managerAddress, bytes32 firstName, bytes32 lastName, bytes32 email) external returns (bool) {
-		require(!checkPermission("owner"));
-		address managerdb = getContractAddress("managerdb");
-		return ManagerProvider(managerdb).insertManager(managerAddress, firstName, lastName, email);
-	}
-
-	function delManager(address managerAddress) external returns (bool) {
-		require(!checkPermission("owner"));
-		address managerdb = getContractAddress("managerdb");
-		return  ManagerProvider(managerdb).deleteManager(managerAddress);
-	}
-
-	// Wallet actions
-	//@dev add wallet address
-	function addWallet(bytes32 type_wallet, address walletAddress) external returns (bool) {
-		require(!checkPermission("owner") && !checkPermission("manager"));
-		address walletdb = getContractAddress("walletdb");
-		return  WalletProvider(walletdb).insertWallet(type_wallet, walletAddress);
-	}
-
-	//@dev Confirmed Wallet
-	//@dev Only nous platform will be confirm
-	function confirmedWallet(address walletAddress) external returns (bool) {
-		require(!checkPermission("nous"));
-		address walletdb = getContractAddress("walletdb");
-		return  WalletProvider(walletdb).confirmWallet(walletAddress);
-	}
-
-	// Create snapshot can do only Nous platform
-	function createSnapshot(address walletAddress, uint32 balance) external returns (bool) {
-		require(!checkPermission("nous"));
-		address walletdb = getContractAddress("walletdb");
-		return  WalletProvider(walletdb).addSnapshot(walletAddress, balance);
-	}
-
-	//
-	function bayShares(uint32 tokens) returns (bool){
-
-		address erc20address = ContractProvider(DOUG).contracts("erc20");
-
-		if (erc20address == 0x0) {
-			return false;
-		}
-
-		bool res = ERC20(erc20address).transferFrom(msg.sender, DOUG, tokens);
-
-		address assets = ContractProvider(DOUG).contracts("assets");
-
-		if (assets == 0x0){
-			return false;
-		}
-
-		//return Assets(assets).addDeposit(walletAddress, balance);
-		return true;
-	}
-
-	/*function getRole(bytes32 role) constant returns (uint8, uint8) {
-		address permsdb = ContractProvider(DOUG).contracts("permissionsdb");
-		if ( permsdb != 0x0 ){
-			PermissionProvider permComp = PermissionProvider(permsdb);
-			return (permComp.getUserPerm(msg.sender), permComp.getRolePerm(role));
-		}
-		return (0, 0);
+	/*function execute(bytes32 actionName, bytes data) returns(bool) {
+		if (locked == true) return false;
+		uint8 perm_level = actionPermission[actionName];
+		address actionDb = getContractAddress();
 	}*/
-
-
-
-
-
 
 }

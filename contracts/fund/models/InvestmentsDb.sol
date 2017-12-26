@@ -1,43 +1,43 @@
 pragma solidity ^0.4.4;
 
-import "../base/DougEnabled.sol";
 import "../interfaces/ContractProvider.sol";
 import "../interfaces/Construct.sol";
+import "../base/FundManagerEnabled.sol";
+import "../../token/ERC20.sol";
 
 
-contract AssetsDb  is DougEnabled, Construct {
+contract InvestmentsDb  is FundManagerEnabled, Construct {
 
-	// investor contract address => share amount fund
- 	mapping (address => uint) public balances;
+	mapping (address => uint256) investors;
 
-	function deposit(address addr) returns (bool res) {
-		if(DOUG != 0x0){
-			address bank = ContractProvider(DOUG).contracts("bank");
-			if (msg.sender == bank ){
-				balances[addr] += msg.value;
-				return true;
-			}
-		}
-		// Return if deposit cannot be made.
-		//msg.sender.send(msg.value);
-		return false;
+	address[] public investorsIndex;
+
+	function addInvestor(address addr) public returns(bool) {
+		require(isFundManager());
+		investors[addr] = investorsIndex.push(addr)-1;
+		return true;
 	}
 
-	function withdraw(address addr, uint amount) returns (bool res) {
-		if(DOUG != 0x0){
-			address bank = ContractProvider(DOUG).contracts("bank");
-			if (msg.sender == bank ){
-				uint oldBalance = balances[addr];
-				if(oldBalance >= amount){
-					//msg.sender.send(amount);
-					balances[addr] = oldBalance - amount;
-					return true;
-				}
-			}
-		}
-		return false;
+	function deleteInvestor(address addr) public returns(bool) {
+		require(isFundManager());
+		//require(investors[addr]);
+		uint256 rowToDelete = investors[addr];
+		address keyToMove = investorsIndex[investorsIndex.length-1];
+		investorsIndex[rowToDelete] = keyToMove;
+		investors[keyToMove] = rowToDelete;
+		investorsIndex.length--;
+		return true;
 	}
 
-
-
+	function getAllBalances() public constant returns(address[], uint256[]) {
+		uint256 length = investorsIndex.length;
+		address[] memory _investors = new address[](length);
+		uint256[] memory _balances = new uint256[](length);
+		ERC20 FundTkn = ERC20(ContractProvider(DOUG).contracts("fund_tokens"));
+		for (uint256 i; i < length; i++) {
+			_investors[i] = investorsIndex[i];
+			_balances[i] = FundTkn.balanceOf(investorsIndex[i]);
+		}
+		return (_investors, _balances);
+	}
 }

@@ -14,7 +14,12 @@ module.exports = function(deployer) {
 
   //deployer.deploy(NousCreator)
 
-  deployer.deploy([FundManager, PermissionDb, WalletDb, ManagerDb])
+  //deployer.deploy([FundManager, PermissionDb, WalletDb, ManagerDb])
+
+  deployer.deploy(FundManager);
+  deployer.deploy(PermissionDb);
+  deployer.deploy(WalletDb);
+  deployer.deploy(ManagerDb);
 
   /*deployer.then(function () {
       return NousCreator.new();

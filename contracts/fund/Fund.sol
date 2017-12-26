@@ -2,7 +2,7 @@ pragma solidity ^0.4.4;
 
 import "./base/DougEnabled.sol";
 import "./interfaces/Construct.sol";
-//import "../token/ERC20.sol";
+import "../token/ERC20.sol";
 import "../token/FundToken.sol";
 
 // The Doug contract.
@@ -38,32 +38,17 @@ contract Fund {
         nous = msg.sender;
         fondName = _fundName;
 
-        contracts['fundTokens'] =  new FundToken(_tokenName, _tokenSymbol, _initialSupply);
-        contracts['nousTokenAddress'] = 0x6Ff4Ac67c80778ad42Ac747b3B89B9EfB4d5BE7B;
+        contracts['fund_tokens'] =  new FundToken(_tokenName, _tokenSymbol, _initialSupply);
+        contracts['nous_token_address'] = 0x6Ff4Ac67c80778ad42Ac747b3B89B9EfB4d5BE7B;
 
         allowAddContract = true;
     }
 
-    /**
-	 * Get notify in token contracts, only nous token
-	 *
-	 * @param _from Sender coins
-	 * @param _value The max amount they can spend
-	 * @param _tkn_address Address token contract, where did the money come from
-	 * @param _extraData SomeExtra Information
-	 */
-	function receiveApproval(address _from, uint256 _value, address _tkn_address, bytes _extraData) external returns (bool) {
-		if (_from == 0x0 || _tkn_address != contracts['nousTokenAddress'] || _value > 0) {
-			return false;
-		}
-        FundToken tkn = FundToken(_tkn_address);
-		uint256 amount = tkn.allowance(_from, this); // how many coins we are allowed to spend
-		if (amount >= _value) {
-			if (tkn.transferFrom(_from, this, _value)) {
-                tkn.transfer(_from, _value);
-			}
-		}
-	}
+    //@dev
+    function bayShares(address _from, uint256 _value) public returns(bool) {
+        require (msg.sender == contracts['fund_manager']);
+        return ERC20(contracts["fund_tokens"]).transfer(_from, _value);
+    }
 
     /**
      * Add a new contract to Doug. This will overwrite an existing contract.

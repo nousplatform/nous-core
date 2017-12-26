@@ -23,7 +23,7 @@ contract WalletDb is FundManagerEnabled, Construct {
     //mapping (uint32 => uint) snapshotMap; //
     uint256[] snapshotIndex; // format YYYYMMDD
 
-    mapping ( address => Wallets ) private wallets;
+    mapping (address => Wallets) private wallets;
     address[] private walletsIndex;
 
 	// validate if wallet exists
