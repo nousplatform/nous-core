@@ -31,11 +31,11 @@ contract NousCreator is Ownable {
         newFund.fundName = _fundName;
         newFund.index = fundsIndex.push(fundAddr) - 1;
         Funds[fundAddr] = newFund;
-        //createComponents(fundAddr);
+        createComponents(fundAddr);
         return fundAddr;
     }
 
-    function createComponents(address fundAddr) external {
+    function createComponents(address fundAddr) internal {
 		require(fundsIndex[Funds[fundAddr].index] == fundAddr);
 		require(Funds[fundAddr].indexChild.length == 0);
 

@@ -59,3 +59,4 @@ module.exports = function(deployer) {
 
 // "Trast","Trast Token","TTT",1000000
 // ["fund_manager","investor_db"],["0xdffc69d37eb87b500e3bf7ee3d3a7feb66aede89","0xa084b4172c996cf111fdeea4461c2e81836c8c6d"]
+// ["investor_db"],["0xa084b4172c996cf111fdeea4461c2e81836c8c6d"]

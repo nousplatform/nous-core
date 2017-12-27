@@ -59,16 +59,20 @@ contract Fund {
 			return false;
     	}
 
-    	//addr.call(bytes4(keccak256("constructor()"))); // конструктор срабатывает
+    	_addr.call(bytes4(keccak256("constructor()"))); // конструктор срабатывает
 
-        DougEnabled de = DougEnabled(_addr);
+        //_addr.call("setDougAddress", address(this));
+
+        //_addr.call(bytes4(keccak256("setDougAddress(address)", _addr))); // конструктор срабатывает
+
+        /*DougEnabled de = DougEnabled(_addr);
         // Don't add the contract if this does not work.
         if(!de.setDougAddress(address(this))) {
             return false;
-        }
+        }*/
         contracts[_name] = _addr;
 
-        Construct(_addr).construct(owner, nous);
+        //Construct(_addr).construct(owner, nous);
 
         return true;
     }

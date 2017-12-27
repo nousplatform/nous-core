@@ -16,7 +16,6 @@ contract FundManagerBase is DougEnabled, Construct {
 
     bool locked;
 
-
     //@dev get contract address
     function getContractAddress(bytes32 name) public constant returns(address) {
         address conAddr = ContractProvider(DOUG).contracts(name);
