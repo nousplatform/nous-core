@@ -1,16 +1,17 @@
 pragma solidity ^0.4.18;
 
+
 import "./fund/Fund.sol";
-import "./investor/Investor.sol";
+import "./base/Ownable.sol";
 
-contract NousCreator {
 
-    address private owner;    // the Creator of the contract
+contract NousCreator is Ownable {
 
     struct FundStructure {
     	string fundName;
     	mapping(bytes32 => address) childFundContracts;
     	bytes32[] indexChild;
+		uint256 index;
     }
 
     mapping (address => FundStructure) Funds;
@@ -19,34 +20,27 @@ contract NousCreator {
     mapping(bytes32 => address) defaultContracts;
     bytes32[] contractsList;
 
-	// address nous contract investor => address account investor
-    mapping(address => address) investors;
-    address[] indexInvestors;
-
     function NousCreator() {
         owner = msg.sender;
     }
 
-    modifier onlyOwner() {
-        if (msg.sender != owner) { revert(); }
-        _;
-    }
-
-    function createNewFund(string _fundName, string _tokenName, string _tokenSymbol, uint256 _initialSupply) onlyOwner() returns (address fundAddress) {
+    function createNewFund(string _fundName, string _tokenName, string _tokenSymbol, uint256 _initialSupply) external returns(address) {
     	address fundAddr = new Fund(msg.sender, _fundName, _tokenName, _tokenSymbol, _initialSupply);
-        fundsIndex.push(fundAddr);
+
         FundStructure memory newFund;
         newFund.fundName = _fundName;
+        newFund.index = fundsIndex.push(fundAddr) - 1;
         Funds[fundAddr] = newFund;
-
-        createComponents(fundAddr);
-
-        return fundAddr; //fundsIndex[fundsIndex.length-1];
+        //createComponents(fundAddr);
+        return fundAddr;
     }
 
-    function createComponents(address fundAddr) {
+    function createComponents(address fundAddr) external {
+		require(fundsIndex[Funds[fundAddr].index] == fundAddr);
+		require(Funds[fundAddr].indexChild.length == 0);
+
     	Fund fund = Fund(fundAddr);
-		for (uint i = 0; i < contractsList.length; i++){
+		for (uint i = 0; i < contractsList.length; i++) {
 			bytes32 name = contractsList[i];
 			address addr = defaultContracts[contractsList[i]];
 			address newComp = clone(addr);
@@ -59,23 +53,8 @@ contract NousCreator {
 		}
     }
 
-    function createNewInvestor() constant returns (address) {
-		address new_investor = new Investor(msg.sender);
-		investors[new_investor] = msg.sender;
-		indexInvestors.push(new_investor);
-		return new_investor;
-    }
-
-    function getAllFund() constant returns (address[]) {
-    	address[] memory alladdr = new address[](fundsIndex.length);
-    	for (uint8 i = 0; i < fundsIndex.length; i++){
-    		alladdr[i] = fundsIndex[i];
-		}
-		return alladdr;
-    }
-
     // clone contracts
-	function clone(address a) onlyOwner returns(address) {
+	function clone(address a) internal returns(address) {
 		/*
 		Assembly of the code that we want to use as init-code in the new contract,
 		along with stack values:
@@ -132,15 +111,24 @@ contract NousCreator {
 	}
 
 	//add or edit default contracts
-	function addContract(bytes32 name, address addr) onlyOwner() {
-		if (defaultContracts[name] == 0x0) {
-			contractsList.push(name);
+	function addContract(bytes32[] names, address[] addrs) public onlyOwner {
+		for (uint256 i=0; i < names.length; i++) {
+			if (defaultContracts[names[i]] == 0x0) {
+				contractsList.push(names[i]);
+			}
+			defaultContracts[names[i]] = addrs[i];
 		}
-		defaultContracts[name] = addr;
 	}
 
-	function getDefaultContracts() constant returns (bytes32[], address[]) {
+	function getAllFunds() public constant returns (address[]) {
+		address[] memory alladdr = new address[](fundsIndex.length);
+		for (uint8 i = 0; i < fundsIndex.length; i++){
+			alladdr[i] = fundsIndex[i];
+		}
+		return alladdr;
+	}
 
+	function getDefaultContracts() public constant returns (bytes32[], address[]) {
 		uint length = contractsList.length;
 		bytes32[] memory names = new bytes32[](length);
 		address[] memory addr = new address[](length);
@@ -151,7 +139,7 @@ contract NousCreator {
 		return (names, addr);
 	}
 
-	function getFundContracts(address faddr) constant returns (bytes32[], address[]){
+	function getFundContracts(address faddr) public  constant returns (bytes32[], address[]) {
 		FundStructure storage fs = Funds[faddr];
 		uint length = fs.indexChild.length;
 		bytes32[] memory names = new bytes32[](length);
@@ -163,10 +151,4 @@ contract NousCreator {
 		return (names, addr);
 	}
 
-
-
-    /*function createAndEndowD(uint arg, uint amount) {
-        // Send ether along with the creation
-        D newD = (new fund).value(amount)(arg);
-    }*/
 }
