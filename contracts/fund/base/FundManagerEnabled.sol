@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.18;
 
 import "./DougEnabled.sol";
 import "../interfaces/ContractProvider.sol";

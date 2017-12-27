@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.18;
 
 // Base class for contracts that are used in a doug system.
 contract DougEnabled {

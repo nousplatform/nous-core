@@ -1,6 +1,6 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.18;
 
 
 contract FundInterface {
-    function bayTokens(address _from, uint256 _value) returns (bool);
+    function bayShares(address _from, uint256 _value) returns (bool);
 }

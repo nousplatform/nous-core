@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.18;
 
 import "../interfaces/ContractProvider.sol";
 import "../interfaces/Construct.sol";
@@ -6,7 +6,7 @@ import "../base/FundManagerEnabled.sol";
 import "../../token/ERC20.sol";
 
 
-contract InvestmentsDb  is FundManagerEnabled, Construct {
+contract InvestorDb  is FundManagerEnabled, Construct {
 
 	mapping (address => uint256) investors;
 

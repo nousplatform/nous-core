@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.18;
 
 import "./fund/Fund.sol";
 import "./investor/Investor.sol";
@@ -152,7 +152,7 @@ contract NousCreator {
 	}
 
 	function getFundContracts(address faddr) constant returns (bytes32[], address[]){
-		FundStructure fs = Funds[faddr];
+		FundStructure storage fs = Funds[faddr];
 		uint length = fs.indexChild.length;
 		bytes32[] memory names = new bytes32[](length);
 		address[] memory addr = new address[](length);

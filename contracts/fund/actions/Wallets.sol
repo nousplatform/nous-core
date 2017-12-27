@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.18;
 
 import "./Managers.sol";
 import "../interfaces/WalletProvider.sol";

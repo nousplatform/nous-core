@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.18;
 
 import "./base/DougEnabled.sol";
 import "./interfaces/Construct.sol";
@@ -45,9 +45,9 @@ contract Fund {
     }
 
     //@dev
-    function bayShares(address _from, uint256 _value) public returns(bool) {
+    function bayShares(address _to, uint256 _value) public returns(bool) {
         require (msg.sender == contracts['fund_manager']);
-        return ERC20(contracts["fund_tokens"]).transfer(_from, _value);
+        return ERC20(contracts["fund_tokens"]).transfer(_to, _value);
     }
 
     /**

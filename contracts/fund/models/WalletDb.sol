@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.18;
 
 
 import "../base/FundManagerEnabled.sol";
@@ -34,7 +34,7 @@ contract WalletDb is FundManagerEnabled, Construct {
     }
 
 	// Add new wallet
-    function insertWallet(bytes32 type_wallet, address walletAddress) returns (bool)
+    function insertWallet(bytes32 type_wallet, address walletAddress) public returns (bool)
     {
         if (!isFundManager()  || !isWallet(walletAddress)) return false;
 
@@ -50,14 +50,14 @@ contract WalletDb is FundManagerEnabled, Construct {
     }
 
 	// confirm wallet
-    function confirmWallet(address walletAddress) returns (bool){
+    function confirmWallet(address walletAddress) public returns (bool){
         if (!isFundManager() || !isWallet(walletAddress)) return false;
         wallets[walletAddress].confirmed = true;
 
         return true;
     }
 
-    function addSnapshot(address walletAddress, uint balance) returns (bool){
+    function addSnapshot(address walletAddress, uint balance) public returns (bool){
         if (!isFundManager()) return false;
         uint timestamp = block.timestamp;
     	Snapshot memory newSnapshot;
@@ -67,13 +67,13 @@ contract WalletDb is FundManagerEnabled, Construct {
     	wallets[walletAddress].snapshot[timestamp] = newSnapshot;
     }
 
-    function getSnapshot(address walletAddress, uint dateStart, uint countFrom)
+    function getSnapshot(address walletAddress, uint dateStart, uint countFrom) public
     	constant returns (uint[] timestamps, uint[] balances)
 	{
 		timestamps = new uint[](countFrom);
 		balances = new uint[](countFrom);
 		uint item = 0;
-		Wallets wallet = wallets[walletAddress];
+		Wallets storage wallet = wallets[walletAddress];
 		for (uint i = 0; i <= snapshotIndex.length && item >= countFrom; i++) {
 			if (snapshotIndex[i] >= dateStart) {
 				balances[item] = wallet.snapshot[snapshotIndex[i]].balance;

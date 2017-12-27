@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.18;
 
 import "../base/FundManagerEnabled.sol";
 import "../interfaces/ContractProvider.sol";
@@ -12,7 +12,7 @@ contract PermissionDb is FundManagerEnabled, Construct {
 
     mapping(bytes32 => uint8) public rolePermission;
 
-	function construct(address foundOwner, address nousaddress) {
+	function construct(address foundOwner, address nousaddress) public {
 		if (isCall) revert();
 
 		rolePermission['nous'] = 4;
@@ -23,18 +23,18 @@ contract PermissionDb is FundManagerEnabled, Construct {
 	}
 
     // Set the permissions of an account.
-    function setPermission(address addr, uint8 perm) returns (bool res) {
+    function setPermission(address _addr, bytes32 _role) public returns (bool res) {
         if (!isFundManager()) return false;
-        perms[addr] = perm;
+        perms[_addr] = rolePermission[_role];
         return true;
     }
 
-    function getRolePerm(bytes32 role) returns (uint8) {
-    	return rolePermission[role];
+    function getRolePerm(bytes32 _role) public returns (uint8) {
+    	return rolePermission[_role];
     }
 
-    function getUserPerm(address addr) returns (uint8) {
-    	return perms[addr];
+    function getUserPerm(address _addr) public returns (uint8) {
+    	return perms[_addr];
     }
 
 }

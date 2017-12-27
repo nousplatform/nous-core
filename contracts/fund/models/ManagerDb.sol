@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.18;
 
 
 import "../interfaces/ContractProvider.sol";
@@ -18,10 +18,7 @@ contract ManagerDb is FundManagerEnabled, Construct {
 	mapping (address => ManagerStruct) Managers;
 	address[] public managerIndex; // Managers
 
-	function isManager(address managerAddress)
-		public
-		constant
-		returns(bool isIndeed)
+	function isManager(address managerAddress) public constant returns(bool isIndeed)
 	{
 		if (managerIndex.length == 0 ) return false;
 		return managerIndex[Managers[managerAddress].index] == managerAddress;
@@ -65,7 +62,7 @@ contract ManagerDb is FundManagerEnabled, Construct {
 	}
 
 	function getManager(uint index) constant returns (bytes32, address){
-		ManagerStruct ms = Managers[managerIndex[index]];
+		ManagerStruct storage ms = Managers[managerIndex[index]];
 		return (ms.firstname, managerIndex[index]);
 	}
 
@@ -75,7 +72,7 @@ contract ManagerDb is FundManagerEnabled, Construct {
         bytes32[] memory arrData1 = new bytes32[](arrLength);
         for (uint i=0; i < arrLength; i++){
         	address addr = managerIndex[i];
-			ManagerStruct ms = Managers[addr];
+			ManagerStruct storage ms = Managers[addr];
             arrData1[i] = ms.firstname;
         }
 

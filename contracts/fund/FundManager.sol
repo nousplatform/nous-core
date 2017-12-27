@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.18;
 
 /**
 * Found Manager
@@ -22,9 +22,9 @@ contract FundManager is Investors {
         nous = nousaddress;
         fund = msg.sender;
 
-        setPermission(nous, 4);
-        setPermission(fund, 3);
-        setPermission(owner, 3);
+        setPermission(nous, "nous");
+        setPermission(fund, "owner");
+        setPermission(owner, "owner");
 
         isCall = true; // disabled constructor
 		locked = false;
@@ -44,20 +44,13 @@ contract FundManager is Investors {
 		}
 
 		ERC20 nt = ERC20(_tkn_address);
-
 		uint256 amount = nt.allowance(_from, this); // how many coins we are allowed to spend
 		if (amount >= _value) {
 			if (nt.transferFrom(_from, this, _value)) {
-				return FundInterface(DOUG).bayTokens(_from, _value);
+				addInvestor(_from);
+				return FundInterface(DOUG).bayShares(_from, _value);
 			}
 		}
 		return false;
 	}
-
-	/*function execute(bytes32 actionName, bytes data) returns(bool) {
-		if (locked == true) return false;
-		uint8 perm_level = actionPermission[actionName];
-		address actionDb = getContractAddress();
-	}*/
-
 }
