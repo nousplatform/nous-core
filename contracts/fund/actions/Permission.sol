@@ -16,7 +16,7 @@ contract Permission is FundManagerBase {
     }
 
     function checkPermission(bytes32 role) internal returns (bool) {
-        //if (locked == true) return false;
+        if (locked == true) return false;
         address permsdb = ContractProvider(DOUG).contracts("permission_db");
         if (permsdb != 0x0) {
             PermissionProvider permComp = PermissionProvider(permsdb);
