@@ -13,12 +13,13 @@ var WalletDb = artifacts.require("./WalletDb.sol");
 
 module.exports = function(deployer) {
 
-  deployer.deploy(NousCreator)
+  //deployer.deploy(NousCreator)
 
   deployer.then(function () {
       return NousCreator.new();
   })
     .then(function(NousCreator) {
+
       Promise.all(
         [
           FundManager.new(),
@@ -29,18 +30,15 @@ module.exports = function(deployer) {
         ]
       )
         .then(instances => {
+          console.log("NousCreator", NousCreator.address);
           console.log("FundManager:", instances[0].address);
           console.log("InvestorDb:", instances[1].address);
           console.log("ManagerDb:", instances[2].address);
           console.log("PermissionDb:", instances[3].address);
           console.log("WalletDb:", instances[4].address);
 
-          NousCreator.addContract("fund_manager", instances[0].address);
-          NousCreator.addContract("investors_db", instances[1].address);
-          NousCreator.addContract("manager_db", instances[2].address);
-          NousCreator.addContract("permission_db", instances[3].address);
-          NousCreator.addContract("wallet_db", instances[4].address);
-
+          NousCreator.addContract(["investors_db","manager_db","permission_db","wallet_db","fund_manager"],
+            [instances[1].address, instances[2].address,instances[3].address, instances[4].address, instances[0].address]);
         })
     })
 };
@@ -59,4 +57,15 @@ module.exports = function(deployer) {
 
 // "Trast","Trast Token","TTT",1000000
 // ["fund_manager","investor_db"],["0xdffc69d37eb87b500e3bf7ee3d3a7feb66aede89","0xa084b4172c996cf111fdeea4461c2e81836c8c6d"]
-// ["investor_db"],["0xa084b4172c996cf111fdeea4461c2e81836c8c6d"]
+// ["investor_db","manager_db"],["0xef55bfac4228981e850936aaf042951f7b146e41","0xdc04977a2078c8ffdf086d618d1f961b6c546222"]
+
+
+//NousCreator: 0x41091e367eb324be6880336f80e18a4524f88d6b
+//
+// FundManager: 0xe597a3db61dd2cdf4dbb0e113878fc207e91c5da
+// InvestorDb: 0x98d3bee26c28a820947ec81e1842a8200ebbd3c4
+// ManagerDb: 0x4b1ba8f64de4c15c065aef18774b957facfd0301
+// PermissionDb: 0xd3469e9a982cdb4d85961c4a1b09224652c46d89
+// WalletDb: 0xe386c3845f45a69e0489cf4a0dbe5132bbee8a3d
+
+

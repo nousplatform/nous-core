@@ -9,13 +9,14 @@ pragma solidity ^0.4.18;
 import "./interfaces/FundInterface.sol";
 import "../token/ERC20.sol";
 import "./actions/Investors.sol";
+import "./interfaces/Construct.sol";
 
 
 // The fund manager
-contract FundManager is Investors {
+contract FundManager is Investors, Construct {
 
     function construct(address foundOwner, address nousaddress) {
-		require(isCall);
+		require(!isCall);
     	//if (isCall) revert();
 		//TODO ONLY FIRST START
     	owner = foundOwner;

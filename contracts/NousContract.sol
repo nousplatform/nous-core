@@ -31,16 +31,28 @@ contract NousCreator is Ownable {
         newFund.fundName = _fundName;
         newFund.index = fundsIndex.push(fundAddr) - 1;
         Funds[fundAddr] = newFund;
-        createComponents(fundAddr);
+        //createComponents(fundAddr, 1);
         return fundAddr;
     }
 
-    function createComponents(address fundAddr) internal {
+    function createComponents(address fundAddr, uint8 step) public {
 		require(fundsIndex[Funds[fundAddr].index] == fundAddr);
-		require(Funds[fundAddr].indexChild.length == 0);
+		require(fundAddr != 0x0);
+		require(step == 2 && contractsList.length > 0);
+
+		uint256 start;
+		uint256 end;
+
+		if (step == 2) {
+			start = 4;
+			end = contractsList.length;
+		} else {
+			start = 0;
+			end = 4;
+		}
 
     	Fund fund = Fund(fundAddr);
-		for (uint i = 0; i < contractsList.length; i++) {
+		for (uint i = start; i < end; i++) {
 			bytes32 name = contractsList[i];
 			address addr = defaultContracts[contractsList[i]];
 			address newComp = clone(addr);

@@ -37,18 +37,32 @@ doug contract itself.
 
 function setInstance(contactName, shortName) {contactName.deployed().then(inst => global[shortName] = inst);} setInstance(NousCreator, 'nousCreater')
 
+nousCreater.createNewFund("Trast","Trast Token","TTT",1000000)
+
+
+
+
+
+
+
+
+nousCreater.addContract(["permission_db"],["0xd3469e9a982cdb4d85961c4a1b09224652c46d89"])
+
+
 var arr = [FundManager, Permissions, Wallets, ManagerDb, PermissionDb, WalletDb ]
 //components
 
 setInstance(FundManager, 'fundmanager')
-setInstance(Managers, 'managers')
-setInstance(Permissions, 'permissions')
-setInstance(Wallets, 'wallets')
+setInstance(PermissionDb, 'permissiondb')
+setInstance(ManagerDb, 'managerdb')
+setInstance(WalletDb, 'walletdb')
+
 
 //models
-setInstance(ManagerDb, 'managerdb')
-setInstance(PermissionDb, 'permissiondb')
-setInstance(WalletDb, 'walletdb')
+
+
+
+setInstance(NousCreater, 'nousCreater')
 
 nousCreater.addContract('permissions', permissions.address)
 nousCreater.addContract('permissiondb', PermissionDb.address)
@@ -140,5 +154,37 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 
 ## License
+eth_accounts
+^Cvaleriy@valeriy-To-be-filled-by-O-E-M ~ $ testrpc
+EthereumJS TestRPC v6.0.3 (ganache-core: 2.0.2)
 
+
+
+
+
+Available Accounts
+==================
+(0) 0x11fe174b86cb5aac1b25e7d2696589a82b02f303
+(1) 0x88379324d7e3c37cdab0aa0bdbf64ed64725adab
+(2) 0x0c5abdd90c91caa475c1b88ca0944dca2e720584
+(3) 0x78210f09612113805391ca75985807c11a084133
+(4) 0xeb8ab2fd520fb30aec9734d72168b815c09e91cc
+(5) 0x7014fb17d3fff189289524c3a3e61357c2a4810c
+(6) 0x7b67d43619a0dc443b55aabb60930a064b999640
+(7) 0x72bba2fd282b1703e082bb58d576b4f8785d4f10
+(8) 0xe4d55bfcb9fa8f5f29d64cb3f8772967eb333458
+(9) 0x06c3fc90700c2ed084260a94f3006ed95065de9d
+
+Private Keys
+==================
+(0) `a13f0ea77680ef585bacca82150b86501ce18235a9355c5aa29d547afafb468c`
+(1) 688bd9450fe165c4ec9085c33d30dca99e75fde362aef17da6caa85acae638c7
+(2) b5bfd001a7f8d8bf76df3982465aa2d1394eb2649b0a77eefe84f7baaf7ab042
+(3) 2386e050c20675da3ef8e597ce3e48007bbbd6922d5e8cb5e99bc86b2144236d
+(4) fc4b0870e641007196b4985e8a39c918c474b4f8ea34a692829a63ea839517cb
+(5) df876bde33a4ee3632e1eda503f346616812ee1ae9368df825a45bbd505f44b4
+(6) 725af2172c3b6fbcc7d39eb547e53abf0659998e8b5c77753126194f2f6322d2
+(7) 59b4d7b33cf136927bc7a70f8771c248fe43fa784829db4bcfeb263dc644897d
+(8) 731c0391f3b853d82849c8eca853bcef1f3f33053940da1cd3088266dc0f87ab
+(9) ae8addc5f03888fa59fef052d7a0d0eb23e8e0ef42cc85fe6fa131f0d7754929
 

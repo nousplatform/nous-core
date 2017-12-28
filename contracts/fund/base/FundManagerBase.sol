@@ -1,18 +1,19 @@
 pragma solidity ^0.4.18;
 
+
 import "../base/DougEnabled.sol";
 import "../interfaces/ContractProvider.sol";
 import "../interfaces/FundInterface.sol";
-import "../interfaces/Construct.sol";
 
-contract FundManagerBase is DougEnabled, Construct {
+
+contract FundManagerBase is DougEnabled {
 
     // We still want an owner.
-    address owner;
+    address public owner;
 
-    address nous;
+    address public nous;
 
-    address fund;
+    address public fund;
 
     bool locked;
 
