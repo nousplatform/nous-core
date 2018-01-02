@@ -10,7 +10,7 @@ contract FundManagerEnabled is DougEnabled {
     // Makes it easier to check that fundmanager is the caller.
     function isFundManager() constant returns (bool) {
         if(DOUG != 0x0){
-            address fm = ContractProvider(DOUG).contracts("fundmanager");
+            address fm = ContractProvider(DOUG).contracts("fund_manager");
             return msg.sender == fm;
         }
         return false;

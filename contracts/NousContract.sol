@@ -38,7 +38,7 @@ contract NousCreator is Ownable {
     function createComponents(address fundAddr, uint8 step) public {
 		require(fundsIndex[Funds[fundAddr].index] == fundAddr);
 		require(fundAddr != 0x0);
-		require(step == 2 && contractsList.length > 0);
+		//require(step == 2 && contractsList.length > 0);
 
 		uint256 start;
 		uint256 end;
@@ -58,7 +58,7 @@ contract NousCreator is Ownable {
 			address newComp = clone(addr);
 			bool res = fund.addContract(name, newComp);
 
-			if (res){
+			if (res) {
 				Funds[fundAddr].childFundContracts[name] = newComp;
 				Funds[fundAddr].indexChild.push(name);
 			}

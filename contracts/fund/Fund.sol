@@ -55,7 +55,7 @@ contract Fund {
      *
      */
     function addContract(bytes32 _name, address _addr) public returns (bool result) {
-    	if (msg.sender != nous || allowAddContract == false){
+    	if (msg.sender != nous && allowAddContract == false){
 			return false;
     	}
 
@@ -68,9 +68,9 @@ contract Fund {
             return false;
         }
 
-        Construct(_addr).construct(owner, nous);
-
         contracts[_name] = _addr;
+
+        Construct(_addr).construct(owner, nous);
 
         return true;
     }

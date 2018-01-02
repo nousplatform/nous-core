@@ -15,12 +15,12 @@ import "./interfaces/Construct.sol";
 // The fund manager
 contract FundManager is Investors, Construct {
 
-    function construct(address foundOwner, address nousaddress) {
-		require(!isCall);
-    	//if (isCall) revert();
+    function construct(address foundOwner, address nousAddress) {
+		//require(!isCall);
+    	if (isCall) revert();
 		//TODO ONLY FIRST START
     	owner = foundOwner;
-        nous = nousaddress;
+        nous = nousAddress;
         fund = msg.sender;
 
         setPermission(nous, "nous");
