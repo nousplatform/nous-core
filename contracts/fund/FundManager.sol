@@ -10,22 +10,19 @@ import "./interfaces/FundInterface.sol";
 import "../token/ERC20.sol";
 import "./actions/Investors.sol";
 import "./interfaces/Construct.sol";
+import "./interfaces/PermissionProvider.sol";
 
 
 // The fund manager
 contract FundManager is Investors, Construct {
 
-    function construct(address foundOwner, address nousAddress) {
-		//require(!isCall);
-    	if (isCall) revert();
+    function construct(address foundOwner, address nousAddress) public {
+		require(!isCall);
+    	//if (isCall) revert();
 		//TODO ONLY FIRST START
     	owner = foundOwner;
         nous = nousAddress;
         fund = msg.sender;
-
-        setPermission(nous, "nous");
-        setPermission(fund, "owner");
-        setPermission(owner, "owner");
 
         isCall = true; // disabled constructor
 		locked = false;

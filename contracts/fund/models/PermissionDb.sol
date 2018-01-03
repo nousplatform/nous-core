@@ -19,12 +19,18 @@ contract PermissionDb is FundManagerEnabled, Construct {
 		rolePermission['owner'] = 3;
 		rolePermission['manager'] = 2;
 		rolePermission['investor'] = 1;
+
+        perms[foundOwner] = 3;
+        perms[nousaddress] = 4;
+        perms[msg.sender] = 3;
+
 		isCall = true;
 	}
 
     // Set the permissions of an account.
     function setPermission(address _addr, bytes32 _role) public returns (bool res) {
-        if (!isFundManager()) return false;
+        require(isFundManager());
+        //if (!isFundManager()) return false;
         perms[_addr] = rolePermission[_role];
         return true;
     }

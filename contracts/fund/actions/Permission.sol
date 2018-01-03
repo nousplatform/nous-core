@@ -9,8 +9,9 @@ import "../interfaces/ContractProvider.sol";
 contract Permission is FundManagerBase {
 
     // Set the permissions for a given address.
-    function setPermission(address addr, bytes32 permLvl) returns (bool res) {
-        require(msg.sender == owner || msg.sender == fund);
+    // perm_lvl
+    function setPermission(address addr, bytes32 permLvl) public returns (bool) {
+        require(msg.sender == owner);
         address permdb = getContractAddress("permission_db");
         return PermissionProvider(permdb).setPermission(addr, permLvl);
     }
