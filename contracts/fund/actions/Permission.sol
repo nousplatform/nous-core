@@ -12,12 +12,17 @@ contract Permission is FundManagerBase {
     // perm_lvl
     function setPermission(address addr, bytes32 permLvl) public returns (bool) {
         require(msg.sender == owner);
+        require(addr == 0x0);
+        require(permLvl > 0);
+
         address permdb = getContractAddress("permission_db");
         return PermissionProvider(permdb).setPermission(addr, permLvl);
     }
 
     function checkPermission(bytes32 role) internal returns (bool) {
         if (locked == true) return false;
+        require(role > 0);
+
         address permsdb = ContractProvider(DOUG).contracts("permission_db");
         if (permsdb != 0x0) {
             PermissionProvider permComp = PermissionProvider(permsdb);
