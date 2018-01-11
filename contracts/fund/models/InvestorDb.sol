@@ -18,7 +18,7 @@ contract InvestorDb  is FundManagerEnabled, Construct {
 		return true;
 	}
 
-	function deleteInvestor(address addr) public returns(bool) {
+	/*function deleteInvestor(address addr) public returns(bool) {
 		require(isFundManager());
 		//require(investors[addr]);
 		uint256 rowToDelete = investors[addr];
@@ -27,7 +27,7 @@ contract InvestorDb  is FundManagerEnabled, Construct {
 		investors[keyToMove] = rowToDelete;
 		investorsIndex.length--;
 		return true;
-	}
+	}*/
 
 	function getAllBalances() public constant returns(address[], uint256[]) {
 		uint256 length = investorsIndex.length;

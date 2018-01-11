@@ -50,14 +50,14 @@ contract WalletDb is FundManagerEnabled, Construct {
     }
 
 	// confirm wallet
-    function confirmWallet(address walletAddress) public returns (bool){
+    function confirmWallet(address walletAddress) public returns (bool) {
         if (!isFundManager() || !isWallet(walletAddress)) return false;
         wallets[walletAddress].confirmed = true;
 
         return true;
     }
 
-    function addSnapshot(address walletAddress, uint balance) public returns (bool){
+    function addSnapshot(address walletAddress, uint balance) public returns (bool) {
         if (!isFundManager()) return false;
         uint timestamp = block.timestamp;
     	Snapshot memory newSnapshot;

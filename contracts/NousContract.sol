@@ -3,22 +3,21 @@ pragma solidity ^0.4.18;
 
 import "./fund/Fund.sol";
 import "./base/Ownable.sol";
+import "./lib/Validator.sol";
+import "./lib/SafeMath.sol";
 
 
 contract NousCreator is Ownable {
 
     struct FundStructure {
     	string fundName;
-		address fundAddress;
     	mapping(bytes32 => address) childFundContracts;
     	bytes32[] indexChild;
 		uint256 index;
     }
 
-    mapping (uint256 => FundStructure) Index_Funds;
-	mapping (address => uint256) Owner_Index;
-	mapping (address => uint256) Fund_Index;
-
+    mapping (address => FundStructure) Funds;
+	mapping (address => uint256) ownerFundIndex; // owner fund index fund.
     address[] fundsIndex;
 
     mapping(bytes32 => address) defaultContracts;
@@ -28,39 +27,46 @@ contract NousCreator is Ownable {
         owner = msg.sender;
     }
 
-	//
     function createNewFund(string _fundName, string _tokenName, string _tokenSymbol, uint256 _initialSupply) external returns(address) {
-		require(Index_Funds[Owner_Index[msg.sender]].fundAddress == 0x0);
+		require(Validator.emptyStringTest(_fundName));
+		require(Validator.emptyStringTest(_tokenName));
+		require(Validator.emptyStringTest(_tokenSymbol));
+		require(_initialSupply > 0);
+		require(!(ownerFundIndex[msg.sender]-1 < ownerFundIndex[msg.sender]));
+
     	address fundAddr = new Fund(msg.sender, _fundName, _tokenName, _tokenSymbol, _initialSupply);
+		ownerFundIndex[msg.sender] = fundsIndex.push(fundAddr); // current length array
 
         FundStructure memory newFund;
         newFund.fundName = _fundName;
-        newFund.fundAddress = fundAddr;
-        newFund.index = fundsIndex.push(fundAddr) - 1;
-		Index_Funds[newFund.index] = newFund;
-		Owner_Index[msg.sender] = newFund.index;
-		Fund_Index[fundAddr] = newFund.index;
-        //createComponents(fundAddr, 1);
+        newFund.index = ownerFundIndex[msg.sender] - 1; // index = lenght - 1
+        Funds[fundAddr] = newFund;
+
         return fundAddr;
     }
 
     function createComponents(uint8 step) public {
-		require(Index_Funds[Owner_Index[msg.sender]].fundAddress != 0x0);
-		//require(fundAddr != 0x0);
-		//require(step == 2 && contractsList.length > 0);
+		require((ownerFundIndex[msg.sender]-1) >= 0);
+		address fundAddr = fundsIndex[ownerFundIndex[msg.sender] - 1];
+
+		require(fundsIndex[Funds[fundAddr].index] == fundAddr);
+		require(!(step == 0 && Funds[fundAddr].indexChild.length > 1));
+		require(!(step > 0 && Funds[fundAddr].indexChild.length == 0));
+		require(!(step > 0 && Funds[fundAddr].indexChild.length == contractsList.length));
 
 		uint256 start;
 		uint256 end;
 
-		if (step == 2) {
-			start = 4;
-			end = contractsList.length;
-		} else {
+		if (step == 0) {
 			start = 0;
 			end = 4;
 		}
-
-		address fundAddr = Index_Funds[Owner_Index[msg.sender]].fundAddress;
+		else if (step == 2) {
+			start = 4;
+			end = contractsList.length;
+		} else {
+			revert();
+		}
 
     	Fund fund = Fund(fundAddr);
 		for (uint i = start; i < end; i++) {
@@ -70,8 +76,8 @@ contract NousCreator is Ownable {
 			bool res = fund.addContract(name, newComp);
 
 			if (res) {
-				Index_Funds[Owner_Index[msg.sender]].childFundContracts[name] = newComp;
-				Index_Funds[Owner_Index[msg.sender]].indexChild.push(name);
+				Funds[fundAddr].childFundContracts[name] = newComp;
+				Funds[fundAddr].indexChild.push(name);
 			}
 		}
     }
@@ -86,7 +92,7 @@ contract NousCreator is Ownable {
 		 DUP1           # [ 0, 0 ]
 		 PUSH20
 		 <address>      # [0,0, address]
-		 DUP1       # [0,0, address ,address]
+		 DUP1       	# [0,0, address ,address]
 		 EXTCODESIZE    # [0,0, address, size ]
 		 DUP1           # [0,0, address, size, size]
 		 SWAP4          # [ size, 0, address, size, 0]
@@ -104,7 +110,7 @@ contract NousCreator is Ownable {
 		 DUP1           # [ 0, 0 ]
 		 PUSH20
 		 <address>      # [0,0, address]
-		 DUP1       # [0,0, address ,address]
+		 DUP1      	 	# [0,0, address ,address]
 		 EXTCODESIZE    # [0,0, address, size ]
 		 DUP1           # [0,0, address, size, size]
 		 SWAP4          # [ size, 0, address, size, 0]
@@ -163,7 +169,7 @@ contract NousCreator is Ownable {
 	}
 
 	function getFundContracts(address faddr) public  constant returns (bytes32[], address[]) {
-		FundStructure storage fs = Index_Funds[Fund_Index[faddr]];
+		FundStructure storage fs = Funds[faddr];
 		uint length = fs.indexChild.length;
 		bytes32[] memory names = new bytes32[](length);
 		address[] memory addr = new address[](length);
