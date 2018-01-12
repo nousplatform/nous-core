@@ -13,7 +13,7 @@ contract Permission is FundManagerBase {
     function setPermission(address addr, bytes32 permLvl) public returns (bool) {
         require(msg.sender == owner);
         require(addr == 0x0);
-        require(permLvl > 0);
+        require(permLvl.length > 0);
 
         address permdb = getContractAddress("permission_db");
         return PermissionProvider(permdb).setPermission(addr, permLvl);

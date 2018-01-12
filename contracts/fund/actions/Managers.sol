@@ -12,9 +12,9 @@ contract Managers is Permission {
     function addManager(address managerAddress, bytes32 firstName, bytes32 lastName, bytes32 email) external returns (bool) {
         require(!checkPermission("owner"));
         require(managerAddress != 0x0);
-        require(Validator.emptyStringTest(firstName));
-        require(Validator.emptyStringTest(lastName));
-        require(Validator.emptyStringTest(email));
+        require(firstName.length > 0);
+        require(lastName.length > 0);
+        require(email.length > 0);
 
         address managerdb = getContractAddress("manager_db");
         return ManagerProvider(managerdb).insertManager(managerAddress, firstName, lastName, email);
