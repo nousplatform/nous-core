@@ -39,7 +39,7 @@ contract Fund {
         fondName = _fundName;
 
         contracts['fund_tokens'] =  new FundToken(_tokenName, _tokenSymbol, _initialSupply);
-        contracts['nous_token_address'] = 0x6Ff4Ac67c80778ad42Ac747b3B89B9EfB4d5BE7B;
+        contracts['nous_token_address'] = 0xc0f09168046c43a64d59dd78bbd503d8f2e9a71d;
 
         allowAddContract = true;
     }

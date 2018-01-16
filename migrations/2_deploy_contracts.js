@@ -112,6 +112,8 @@ module.exports = function(deployer) {
 // (8) 8756302f736e9bf1c0c7a741315b49f8deae2f89acc14b56c0034b80a9dea61f
 // (9) 8346303c36575a6bec5b3a5451a955a338632949fbf23feda0a9ab0e02438e4f
 
+// nousToken 0xc0f09168046c43a64d59dd78bbd503d8f2e9a71d
+
 
 
 
