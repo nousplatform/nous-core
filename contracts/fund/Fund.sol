@@ -45,10 +45,10 @@ contract Fund {
     }
 
     //@dev
-    function bayShares(address _to, uint256 _value) public returns(bool) {
+    /*function bayShares(address _to, uint256 _value) public returns(bool) {
         require (msg.sender == contracts['fund_manager']);
         return ERC20(contracts["fund_tokens"]).transfer(_to, _value);
-    }
+    }*/
 
     /**
      * Add a new contract to Doug. This will overwrite an existing contract.

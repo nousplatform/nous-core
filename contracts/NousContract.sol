@@ -180,4 +180,8 @@ contract NousCreator is Ownable {
 		return (names, addr);
 	}
 
+	function getFundAddress(address userAddress) {
+		contractsList[ownerFundIndex[userAddress]];
+	}
+
 }
