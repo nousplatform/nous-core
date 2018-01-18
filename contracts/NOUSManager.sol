@@ -7,7 +7,7 @@ import "./lib/Validator.sol";
 import "./lib/SafeMath.sol";
 
 
-contract NousCreator is Ownable {
+contract NOUSManager is Ownable {
 
     struct FundStructure {
     	string fundName;

@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
 
-import "./NousContract.sol";
+import "./NOUSManager.sol";
 import "./fund/FundManager.sol";
 import "./fund/Fund.sol";
 
