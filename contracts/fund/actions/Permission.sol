@@ -12,7 +12,8 @@ contract Permission is FundManagerBase {
     // perm_lvl
     function setPermission(address addr, bytes32 permLvl) public returns (bool) {
         require(msg.sender == owner);
-        require(addr == 0x0);
+        require(addr != 0x0);
+        require(addr != nous);
         require(permLvl.length > 0);
 
         address permdb = getContractAddress("permission_db");
@@ -20,8 +21,7 @@ contract Permission is FundManagerBase {
     }
 
     function checkPermission(bytes32 role) internal returns (bool) {
-        if (locked == true) return false;
-        require(role > 0);
+        if (locked == true && role.length > 0) return false;
 
         address permsdb = ContractProvider(DOUG).contracts("permission_db");
         if (permsdb != 0x0) {

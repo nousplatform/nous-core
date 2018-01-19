@@ -1,5 +1,6 @@
 pragma solidity ^0.4.18;
 
+
 import "./Managers.sol";
 import "../interfaces/WalletProvider.sol";
 import "../../lib/Validator.sol";
@@ -9,13 +10,13 @@ contract Wallets is Managers {
 
     // Wallet actions
     //@dev add wallet address
-    function addWallet(bytes32 _type_wallet, address _walletAddress) external returns (bool) {
+    function addWallet(bytes32 _typeWallet, address _walletAddress) external returns (bool) {
         require(!checkPermission("owner") && !checkPermission("manager"));
-        require(_type_wallet.length > 0);
+        require(_typeWallet.length > 0);
         require(_walletAddress != 0x0);
 
         address walletdb = getContractAddress("wallet_db");
-        return  WalletProvider(walletdb).insertWallet(_type_wallet, _walletAddress);
+        return  WalletProvider(walletdb).insertWallet(_typeWallet, _walletAddress);
     }
 
     //@dev Confirmed Wallet

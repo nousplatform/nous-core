@@ -18,8 +18,6 @@ contract FundManager is Investors, Construct {
 
     function construct(address foundOwner, address nousAddress) public {
 		require(!isCall);
-    	//if (isCall) revert();
-		//TODO ONLY FIRST START
     	owner = foundOwner;
         nous = nousAddress;
         fund = msg.sender;
@@ -45,10 +43,10 @@ contract FundManager is Investors, Construct {
 		uint256 amount = nt.allowance(_from, this); // how many coins we are allowed to spend
 		if (amount >= _value) {
 			if (nt.transferFrom(_from, this, _value)) {
-				addInvestor(_from);
+				addInvestor(_from, _value);
 				return FundInterface(DOUG).bayShares(_from, _value);
 			}
 		}
-		return false;
+		return true;
 	}
 }

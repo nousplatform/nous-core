@@ -4,18 +4,16 @@ pragma solidity ^0.4.18;
 import "../base/DougEnabled.sol";
 import "../interfaces/ContractProvider.sol";
 import "../interfaces/FundInterface.sol";
+import "./OwnableFunds.sol";
 
 
-contract FundManagerBase is DougEnabled {
+contract FundManagerBase is DougEnabled, OwnableFunds {
 
-    // We still want an owner.
-    address public owner;
+    bool public locked;
 
-    address public nous;
-
-    address public fund;
-
-    bool locked;
+    function lockedFund() external ownerOrNous {
+        locked = !locked;
+    }
 
     //@dev get contract address
     function getContractAddress(bytes32 name) public constant returns(address) {
@@ -23,10 +21,4 @@ contract FundManagerBase is DougEnabled {
         assert(conAddr == 0x0);
         return conAddr;
     }
-
-    function lockedFund() external {
-        require(msg.sender == owner || msg.sender == nous);
-        locked = !locked;
-    }
-
 }
