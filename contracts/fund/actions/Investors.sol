@@ -14,10 +14,10 @@ contract Investors is Wallets {
         return InvestorsProvider(investorsDb).addInvestor(_investorAddress, _nousTkn);
     }
 
-    function removeInvestor(address _investorAddress) internal returns (bool) {
+    /*function removeInvestor(address _investorAddress) internal returns (bool) {
         require(_investorAddress != 0x0);
 
         address investorsDb = getContractAddress("investors_db");
         return  InvestorsProvider(investorsDb).deleteInvestor(_investorAddress);
-    }
+    }*/
 }

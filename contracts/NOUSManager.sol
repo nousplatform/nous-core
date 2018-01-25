@@ -16,9 +16,10 @@ contract NOUSManager is Ownable {
         uint256 index;
     }
 
-    mapping (address => FundStructure) funds;
+    mapping (address => FundStructure) public funds; // address fund => structure found
 
     mapping (address => uint256) ownerFundIndex; // owner fund index fund.
+
     address[] fundsIndex;
 
     mapping (bytes32 => address) defaultContracts;

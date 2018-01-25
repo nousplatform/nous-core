@@ -30,9 +30,9 @@ contract ManagerDb is FundManagerEnabled, Construct {
         require(!isFundManager() || !isManager(_managerAddress));
 
         ManagerStruct memory newManager;
-        newManager._firstname = _firstname;
-        newManager._lastname = _lastname;
-        newManager._email = _email;
+        newManager.firstname = _firstname;
+        newManager.lastname = _lastname;
+        newManager.email = _email;
         newManager.index = managerIndex.push(_managerAddress) - 1;
         managers[_managerAddress] = newManager;
 

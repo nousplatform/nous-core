@@ -41,7 +41,7 @@ contract OwnableFunds {
 
     /**
      * @dev Allows the current owner to transfer control of the contract to a newOwner.
-     * @param newOwner The address to transfer ownership to.
+     * @param newNous The address to transfer ownership to.
      */
     function transferNous(address newNous) public onlyNous {
         require(newNous != 0x0);

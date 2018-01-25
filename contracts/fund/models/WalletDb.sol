@@ -11,6 +11,7 @@ contract WalletDb is FundManagerEnabled, Construct {
     struct Wallets {
         bytes32 typeWallet;
         bool confirmed;
+        uint256 index;
     }
 
     mapping (address => Wallets) private wallets;
