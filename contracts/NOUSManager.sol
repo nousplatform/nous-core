@@ -6,9 +6,13 @@ import "./base/Ownable.sol";
 import "./lib/Validator.sol";
 import "./lib/SafeMath.sol";
 
-
+/**
+@title Nous Platform Manger
+@author Manchenko Valeriy
+*/
 contract NOUSManager is Ownable {
 
+    /// Structure fund
     struct FundStructure {
         string fundName;
         mapping (bytes32 => address) childFundContracts;
@@ -16,9 +20,11 @@ contract NOUSManager is Ownable {
         uint256 index;
     }
 
-    mapping (address => FundStructure) public funds; // address fund => structure found
+    /// address fund => structure found
+    mapping (address => FundStructure) public funds;
 
-    mapping (address => uint256) ownerFundIndex; // owner fund index fund.
+    /// Owner fund index fund.
+    mapping (address => uint256) ownerFundIndex;
 
     address[] fundsIndex;
 
@@ -28,17 +34,32 @@ contract NOUSManager is Ownable {
 
     address nousTokenAddress;
 
+    event CreateFund(address indexed owner, address indexed fund, string fundName);
+
     function NOUSManager(address _nousTokenAddress) {
         owner = msg.sender;
         setNousTokenAddress(_nousTokenAddress);
     }
 
+    /**
+    @notice Set address NOUS tokens
+    @param _nousTokenAddress Contract address NOUS token
+    */
     function setNousTokenAddress(address _nousTokenAddress) public onlyOwner {
         require(_nousTokenAddress != 0x0);
         nousTokenAddress = _nousTokenAddress;
     }
 
-    function createNewFund(string _fundName, string _tokenName, string _tokenSymbol, uint256 _initialSupply)
+    /**
+    @notice Create new fund
+    @dev Is caused from a user name
+    @param _fundName Name new fund
+    @param _tokenName Name token
+    @param _tokenSymbol abbreviation
+    @param _initialSupply Token initial supply
+    @return { "fundaddress" : "new Fund address" }
+    */
+    function createNewFund(string _fundName, string _tokenName, string _tokenSymbol, uint256 _initialSupply, uint256 _rate)
     external returns (address) {
         require(Validator.emptyStringTest(_fundName));
         require(Validator.emptyStringTest(_tokenName));
@@ -46,17 +67,19 @@ contract NOUSManager is Ownable {
         require(_initialSupply > 0);
         require(!(ownerFundIndex[msg.sender] - 1 < ownerFundIndex[msg.sender]));
 
-        address fundAddr = new Fund(msg.sender, nousTokenAddress, _fundName, _tokenName, _tokenSymbol, _initialSupply);
-        ownerFundIndex[msg.sender] = fundsIndex.push(fundAddr);
+        address _fundAddr = new Fund(msg.sender, nousTokenAddress, _fundName, _tokenName, _tokenSymbol, _initialSupply, _rate);
+
+        ownerFundIndex[msg.sender] = fundsIndex.push(_fundAddr);
         // current length array
+        CreateFund(msg.sender, _fundAddr, _fundName);
 
         FundStructure memory newFund;
         newFund.fundName = _fundName;
         newFund.index = ownerFundIndex[msg.sender] - 1;
         // index = lenght - 1
-        funds[fundAddr] = newFund;
+        funds[_fundAddr] = newFund;
 
-        return fundAddr;
+        return _fundAddr;
     }
 
     function createComponents(uint8 step) public {

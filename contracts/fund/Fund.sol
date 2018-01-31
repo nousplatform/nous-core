@@ -34,13 +34,13 @@ contract Fund is OwnableFunds {
 
     // Construct
     function Fund(address _fundOwn, address _nousTokenAddress, string _fundName,
-    string _tokenName, string _tokenSymbol, uint256 _initialSupply)
+    string _tokenName, string _tokenSymbol, uint256 _initialSupply, uint256 _rate)
     public {
         owner = _fundOwn;
         nous = msg.sender;
         fondName = _fundName;
 
-        contracts["fund_tokens"] = new FundToken(_tokenName, _tokenSymbol, _initialSupply);
+        contracts["fund_tokens"] = new FundToken(_tokenName, _tokenSymbol, _initialSupply, _rate);
         contracts["nous_token_address"] = _nousTokenAddress;
 
         allowAddContract = true;

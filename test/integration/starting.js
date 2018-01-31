@@ -1,22 +1,19 @@
-const NousCreator   = artifacts.require("../contracts/NousCreator.sol");
-const Fund          = artifacts.require("../contracts/fund/Fund.sol");
-const FundManager   = artifacts.require("../contracts/fund/FundManager.sol");
-const Permissions   = artifacts.require("../contracts/fund/components/Permissions.sol");
-const Managers      = artifacts.require("../contracts/fund/components/Managers.sol");
-const Wallets       = artifacts.require("../contracts/fund/components/Wallets.sol");
-const ManagerDb     = artifacts.require("../contracts/fund/models/ManagerDb.sol");
-const PermissionDb = artifacts.require("../contracts/fund/models/PermissionDb.sol");
-const WalletDb     = artifacts.require("../contracts/fund/models/WalletDb.sol");
+var NOUSManager = artifacts.require("./NOUSManager.sol");
+var FundManager = artifacts.require("./FundManager.sol");
+//models
+var InvestorDb = artifacts.require("./InvestorDb.sol");
+var ManagerDb = artifacts.require("./ManagerDb.sol");
+var PermissionDb = artifacts.require("./PermissionDb.sol");
+var WalletDb = artifacts.require("./WalletDb.sol");
 
 const fundContracts= [ 'Permissions', 'PermissionDb', 'FundManager', 'Managers', 'Wallets', 'ManagerDb',  'WalletDb'];
 
-
 const contracts = {};
+
+
 
 const deployedAndWriteInAddressBook = contract =>
     contract.deployed().then(deployedContract => {
-
-
         const name = deployedContract.constructor.toJSON().contract_name;
 
         contracts[name] = {
