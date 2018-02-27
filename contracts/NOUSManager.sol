@@ -61,11 +61,18 @@ contract NOUSManager is Ownable {
         fundCreator = _nousCreator;
     }
 */
-    function createToken(address _newOwner, string _tokenName, string _tokenSymbol, uint256 _initialSupply, uint256 _rate) public returns(address) {
+    function createToken(address _newOwner, string _tokenName, string _tokenSymbol, uint256 _initialSupply, uint256 _rate)
+    public returns(address) {
+        address _fundAddr = fundsIndex[ownerFundIndex[_newOwner]];
+        address _newCompAddr = new FundToken(_newOwner, _tokenName,  _tokenSymbol, _initialSupply, _rate);
+        bytes32 tknSymbol = Util.stringToBytes32(_tokenSymbol);
+        Fund(_fundAddr).addToken(tknSymbol, _newCompAddr);
 
-        address _tkn = new FundToken(_newOwner, _tokenName,  _tokenSymbol, _initialSupply, _rate);
-        CreateToken(_newOwner, _tkn, _tokenName);
-        return _tkn;
+        funds[_fundAddr].childFundContracts[tknSymbol] = _newCompAddr;
+        funds[_fundAddr].indexChild.push(tknSymbol);
+
+        CreateToken(_newOwner, _newCompAddr, _tokenName);
+        return _newCompAddr;
     }
 
     /**
@@ -87,10 +94,7 @@ contract NOUSManager is Ownable {
         //require(!Validator.emptyStringTest(ownerFundIndex[_newOwner]));
         //require(fundsIndex[ownerFundIndex[_newOwner]] == 0x0);
 
-        address _fundToken = createToken(_newOwner, _tokenName, _tokenSymbol, _initialSupply, _rate);
-
         address _fundAddr = new Fund(_newOwner, nousTokenAddress, _fundName);
-        Fund(_fundAddr).addToken(Util.stringToBytes32(_tokenSymbol), _fundToken);
 
         ownerFundIndex[_newOwner] = fundsIndex.push(_fundAddr) - 1;
         // current length array
@@ -101,6 +105,8 @@ contract NOUSManager is Ownable {
         newFund.index = ownerFundIndex[_newOwner];
         // index = lenght - 1
         funds[_fundAddr] = newFund;
+
+        createToken(_newOwner, _tokenName, _tokenSymbol, _initialSupply, _rate);
 
         return _fundAddr;
     }
