@@ -1,6 +1,6 @@
 {
   "name": "foundmanager4",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Pre beta version, only for review.",
   "main": "truffle.js",
   "directories": {
