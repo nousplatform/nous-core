@@ -5,12 +5,16 @@ import "./fund/Fund.sol";
 import "./base/Ownable.sol";
 import "./lib/Validator.sol";
 import "./lib/SafeMath.sol";
+import "./FundToken.sol";
+import "./lib/Util.sol";
 
 /**
 @title Nous Platform Manger
 @author Manchenko Valeriy
 */
 contract NOUSManager is Ownable {
+
+    //address fundCreator;
 
     /// Structure fund
     struct FundStructure {
@@ -28,18 +32,20 @@ contract NOUSManager is Ownable {
 
     address[] fundsIndex;
 
-    mapping (bytes32 => address) defaultContracts;
+    mapping (bytes32 => address) public defaultContracts;
 
     bytes32[] contractsList;
 
-    address nousTokenAddress;
+    address public nousTokenAddress = 0x4dd59912ca031ace5524f22f78226d338bc513aa;
 
     event CreateFund(address indexed owner, address indexed fund, string fundName);
+    event CreateToken(address indexed owner, address indexed token, string TokenName);
 
-    function NOUSManager(address _nousTokenAddress) {
+    /*function NOUSManager(address _nousTokenAddress, address _nousCreator) {
         owner = msg.sender;
         setNousTokenAddress(_nousTokenAddress);
-    }
+        setNousCreator(_nousCreator);
+    }*/
 
     /**
     @notice Set address NOUS tokens
@@ -50,70 +56,78 @@ contract NOUSManager is Ownable {
         nousTokenAddress = _nousTokenAddress;
     }
 
+    /*function setNousCreator(address _nousCreator) public onlyOwner {
+        require(_nousCreator != 0x0);
+        fundCreator = _nousCreator;
+    }
+*/
+    function createToken(address _newOwner, string _tokenName, string _tokenSymbol, uint256 _initialSupply, uint256 _rate) public returns(address) {
+
+        address _tkn = new FundToken(_newOwner, _tokenName,  _tokenSymbol, _initialSupply, _rate);
+        CreateToken(_newOwner, _tkn, _tokenName);
+        return _tkn;
+    }
+
     /**
     @notice Create new fund
     @dev Is caused from a user name
     @param _fundName Name new fund
     @param _tokenName Name token
-    @param _tokenSymbol abbreviation
+    @param _tokenSymbol Abbreviation token
     @param _initialSupply Token initial supply
     @return { "fundaddress" : "new Fund address" }
     */
-    function createNewFund(string _fundName, string _tokenName, string _tokenSymbol, uint256 _initialSupply, uint256 _rate)
+    function createNewFund(address _newOwner, string _fundName, string _tokenName, string _tokenSymbol, uint256 _initialSupply, uint256 _rate)
     external returns (address) {
         require(Validator.emptyStringTest(_fundName));
         require(Validator.emptyStringTest(_tokenName));
         require(Validator.emptyStringTest(_tokenSymbol));
         require(_initialSupply > 0);
-        require(!(ownerFundIndex[msg.sender] - 1 < ownerFundIndex[msg.sender]));
 
-        address _fundAddr = new Fund(msg.sender, nousTokenAddress, _fundName, _tokenName, _tokenSymbol, _initialSupply, _rate);
+        //require(!Validator.emptyStringTest(ownerFundIndex[_newOwner]));
+        //require(fundsIndex[ownerFundIndex[_newOwner]] == 0x0);
 
-        ownerFundIndex[msg.sender] = fundsIndex.push(_fundAddr);
+        address _fundToken = createToken(_newOwner, _tokenName, _tokenSymbol, _initialSupply, _rate);
+
+        address _fundAddr = new Fund(_newOwner, nousTokenAddress, _fundName);
+        Fund(_fundAddr).addToken(_tokenSymbol, _fundToken);
+
+        ownerFundIndex[_newOwner] = fundsIndex.push(_fundAddr) - 1;
         // current length array
-        CreateFund(msg.sender, _fundAddr, _fundName);
+        CreateFund(_newOwner, _fundAddr, _fundName);
 
         FundStructure memory newFund;
         newFund.fundName = _fundName;
-        newFund.index = ownerFundIndex[msg.sender] - 1;
+        newFund.index = ownerFundIndex[_newOwner];
         // index = lenght - 1
         funds[_fundAddr] = newFund;
 
         return _fundAddr;
     }
 
-    function createComponents(uint8 step) public {
-        require((ownerFundIndex[msg.sender] - 1) >= 0);
-        address fundAddr = fundsIndex[ownerFundIndex[msg.sender] - 1];
+    function createComponentsStep(address _owner) public {
+        address _fundAddr = fundsIndex[ownerFundIndex[_owner]];
+        require(fundsIndex[funds[_fundAddr].index] == _fundAddr);
+        require(funds[_fundAddr].indexChild.length != contractsList.length);
 
-        require(fundsIndex[funds[fundAddr].index] == fundAddr);
-        require(!(step == 0 && funds[fundAddr].indexChild.length > 1));
-        require(!(step > 0 && funds[fundAddr].indexChild.length == 0));
-        require(!(step > 0 && funds[fundAddr].indexChild.length == contractsList.length));
-
-        uint256 start;
-        uint256 end;
-
-        if (step == 0) {
-            start = 0;
-            end = 4;
-        } else if (step == 2) {
-            start = 4;
-            end = contractsList.length;
+        if (funds[_fundAddr].indexChild.length == 0) {
+            createComponents(_fundAddr, 0, 4);
         } else {
-            revert();
+            createComponents(_fundAddr, 4, contractsList.length);
         }
+    }
 
-        Fund fund = Fund(fundAddr);
-        for (uint i = start; i < end; i++) {
-            bytes32 name = contractsList[i];
-            address addr = defaultContracts[contractsList[i]];
-            address newCompAddr = clone(addr);
-            bool res = fund.addContract(name, newCompAddr);
+    function createComponents(address _fundAddr, uint256 _start, uint256 _end) internal {
+        Fund fund = Fund(_fundAddr);
+        for (uint i = _start; i < _end; i++) {
+            bytes32 _name = contractsList[i];
+            address _addr = defaultContracts[contractsList[i]];
+            address _newCompAddr = clone(_addr);
+            bool res = fund.addContract(_name, _newCompAddr);
 
             if (res) {
-                funds[fundAddr].childFundContracts[name] = newCompAddr;
-                funds[fundAddr].indexChild.push(name);
+                funds[_fundAddr].childFundContracts[_name] = _newCompAddr;
+                funds[_fundAddr].indexChild.push(_name);
             }
         }
     }
@@ -139,7 +153,7 @@ contract NOUSManager is Ownable {
         return alladdr;
     }
 
-    function getDefaultContracts() public constant returns (bytes32[], address[]) {
+    /*function getDefaultContracts() public constant returns (bytes32[], address[]) {
         uint length = contractsList.length;
         bytes32[] memory names = new bytes32[](length);
         address[] memory addr = new address[](length);
@@ -148,9 +162,9 @@ contract NOUSManager is Ownable {
             addr[i] = defaultContracts[contractsList[i]];
         }
         return (names, addr);
-    }
+    }*/
 
-    function getFundContracts(address faddr) public constant returns (bytes32[], address[]) {
+    /*function getFundContracts(address faddr) public constant returns (bytes32[], address[]) {
         FundStructure storage fs = funds[faddr];
         uint length = fs.indexChild.length;
         bytes32[] memory names = new bytes32[](length);
@@ -160,10 +174,10 @@ contract NOUSManager is Ownable {
             addr[i] = fs.childFundContracts[fs.indexChild[i]];
         }
         return (names, addr);
-    }
+    }*/
 
-    function getFundAddress(address userAddress) public {
-        contractsList[ownerFundIndex[userAddress]];
+    function getFundAddress(address userAddress) public constant returns(address) {
+        return fundsIndex[ownerFundIndex[userAddress]];
     }
 
     /*

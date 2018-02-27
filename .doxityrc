@@ -1,0 +1,20 @@
+{
+  "target": "scripts/doxity",
+  "src": "contracts/*",
+  "dir": "pages/docs",
+  "source": "https://github.com/DigixGlobal/doxity-gatsby-starter-project/archive/a4886b7a7a04c018ac04fed3125d7d4785e74bed.tar.gz",
+  "out": "../../fundmanager.loc",
+  "interaction": {
+      "network": "3",
+      "providerUrl": "https://morden.infura.io/YFD3CGj2bPu8A6GWVSsS"
+  },
+  "whitelist": {
+    "all": {
+      "abi": true,
+      "methods": true,
+      "bytecode": false,
+      "source": false
+    },
+    "NOUSManager": {}
+  }
+}

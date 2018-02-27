@@ -4,7 +4,7 @@ pragma solidity ^0.4.18;
 import "./base/DougEnabled.sol";
 import "./interfaces/Construct.sol";
 import "../token/ERC20.sol";
-import "../token/FundToken.sol";
+import "../FundToken.sol";
 import "./base/OwnableFunds.sol";
 
 
@@ -13,7 +13,16 @@ contract Fund is OwnableFunds {
 
     string public fondName;
 
+    uint256 public rate;
+
     bool public allowAddContract;
+
+    struct Tokens {
+        address addr;
+        string name;
+        string symbol;
+        uint256 rate;
+    }
 
     // all data
     mapping (bytes32 => address) public fundData;
@@ -33,17 +42,21 @@ contract Fund is OwnableFunds {
     }
 
     // Construct
-    function Fund(address _fundOwn, address _nousTokenAddress, string _fundName,
-    string _tokenName, string _tokenSymbol, uint256 _initialSupply, uint256 _rate)
+    function Fund(address _fundOwn, address _nousTokenAddress, string _fundName, address _tokenAddress, bytes32 _tokenSymbol, uint256 _rate)
     public {
         owner = _fundOwn;
         nous = msg.sender;
         fondName = _fundName;
+        rate = _rate;
 
-        contracts["fund_tokens"] = new FundToken(_tokenName, _tokenSymbol, _initialSupply, _rate);
+        addToken(_tokenSymbol, _tokenAddress);
         contracts["nous_token_address"] = _nousTokenAddress;
 
         allowAddContract = true;
+    }
+
+    function addToken(bytes32 _tokenSymbol, address _tokenAddress) public onlyNousContract {
+        contracts[_tokenSymbol] = _tokenAddress;
     }
 
     //todo get contacts test
