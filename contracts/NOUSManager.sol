@@ -90,7 +90,7 @@ contract NOUSManager is Ownable {
         address _fundToken = createToken(_newOwner, _tokenName, _tokenSymbol, _initialSupply, _rate);
 
         address _fundAddr = new Fund(_newOwner, nousTokenAddress, _fundName);
-        Fund(_fundAddr).addToken(_tokenSymbol, _fundToken);
+        Fund(_fundAddr).addToken(Util.stringToBytes32(_tokenSymbol), _fundToken);
 
         ownerFundIndex[_newOwner] = fundsIndex.push(_fundAddr) - 1;
         // current length array

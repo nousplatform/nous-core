@@ -17,13 +17,6 @@ contract Fund is OwnableFunds {
 
     bool public allowAddContract;
 
-    struct Tokens {
-        address addr;
-        string name;
-        string symbol;
-        uint256 rate;
-    }
-
     // all data
     mapping (bytes32 => address) public fundData;
 
@@ -42,14 +35,12 @@ contract Fund is OwnableFunds {
     }
 
     // Construct
-    function Fund(address _fundOwn, address _nousTokenAddress, string _fundName, address _tokenAddress, bytes32 _tokenSymbol, uint256 _rate)
+    function Fund(address _fundOwn, address _nousTokenAddress, string _fundName)
     public {
         owner = _fundOwn;
         nous = msg.sender;
         fondName = _fundName;
-        rate = _rate;
 
-        addToken(_tokenSymbol, _tokenAddress);
         contracts["nous_token_address"] = _nousTokenAddress;
 
         allowAddContract = true;
