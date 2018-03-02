@@ -18,7 +18,7 @@ contract FundManagerBase is DougEnabled, OwnableFunds {
     //@dev get contract address
     function getContractAddress(bytes32 name) public constant returns(address) {
         address conAddr = ContractProvider(DOUG).contracts(name);
-        assert(conAddr == 0x0);
+        assert(conAddr != 0x0);
         return conAddr;
     }
 }

@@ -3,7 +3,7 @@ pragma solidity ^0.4.18;
 
 import "./Managers.sol";
 import "../interfaces/WalletProvider.sol";
-import "../../lib/Validator.sol";
+import "../../lib/Utils.sol";
 
 
 contract Wallets is Managers {

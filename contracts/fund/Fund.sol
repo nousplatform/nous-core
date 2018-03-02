@@ -2,20 +2,22 @@ pragma solidity ^0.4.18;
 
 
 import "./base/DougEnabled.sol";
-import "./interfaces/Construct.sol";
+import "./base/Construct.sol";
 import "../token/ERC20.sol";
 import "../FundToken.sol";
 import "./base/OwnableFunds.sol";
+import "./interfaces/Construct.sol";
 
 
 // The Doug contract.
-contract Fund is OwnableFunds {
+contract Fund is OwnableFunds, Construct {
 
     string public fondName;
 
-    uint256 public rate;
+    //uint256 public rate;
 
     bool public allowAddContract;
+    bool private construct = false;
 
     // all data
     mapping (bytes32 => address) public fundData;
@@ -23,30 +25,35 @@ contract Fund is OwnableFunds {
     // This is where we keep all the contracts.
     mapping (bytes32 => address) public contracts;
 
+    // This is token
+    mapping (bytes32 => address) public tokens;
+
     modifier onlyOwner {//a modifier to reduce code replication
         require(msg.sender == owner); // this ensures that only the owner can access the function
         _;
     }
 
-    modifier onlyNousContract() {
+    modifier onlyNousPlatform() {
         require(msg.sender == nous);
+        _;
+    }
+
+    modifier allowedUpdateContracts() {
         require(allowAddContract == true);
         _;
     }
 
-    // Construct
-    function Fund(address _fundOwn, address _nousTokenAddress, string _fundName)
-    public {
+    function constructor(address _fundOwn, bytes32 _tokenSymbol, address _nousTokenAddress, string _fundName) onConstructor external {
+        super.constructor();
+
+        allowAddContract = true;
         owner = _fundOwn;
         nous = msg.sender;
         fondName = _fundName;
-
-        contracts["nous_token_address"] = _nousTokenAddress;
-
-        allowAddContract = true;
+        addToken(_tokenSymbol, _nousTokenAddress);
     }
 
-    function addToken(bytes32 _tokenSymbol, address _tokenAddress) public onlyNousContract {
+    function addToken(bytes32 _tokenSymbol, address _tokenAddress) public onlyNousPlatform {
         contracts[_tokenSymbol] = _tokenAddress;
     }
 
@@ -60,7 +67,7 @@ contract Fund is OwnableFunds {
      * @dev _addr.call(bytes4(keccak256("constructor()"))); // конструктор срабатывает
      * @dev _addr.call("setDougAddress", address(this));
      */
-    function addContract(bytes32 _name, address _addr) public onlyNousContract returns(bool) {
+    function addContract(bytes32 _name, address _addr) public onlyNousPlatform allowedUpdateContracts returns(bool) {
         DougEnabled de = DougEnabled(_addr);
         if (!de.setDougAddress(this)) {
             return false;

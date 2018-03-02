@@ -9,20 +9,20 @@ pragma solidity ^0.4.18;
 import "./interfaces/FundInterface.sol";
 import "../token/ERC20.sol";
 import "./actions/Investors.sol";
-import "./interfaces/Construct.sol";
+import "./base/Construct.sol";
 import "./interfaces/PermissionProvider.sol";
 
 
 // The fund manager
 contract FundManager is Investors, Construct {
 
-    function construct(address foundOwner, address nousAddress) public {
-		require(!isCall);
+    function constructor(address foundOwner, address nousAddress) onConstructor external {
+		super.constructor();
+
     	owner = foundOwner;
         nous = nousAddress;
         fund = msg.sender;
 
-        isCall = true; // disabled constructor
 		locked = false;
     }
 
@@ -35,7 +35,7 @@ contract FundManager is Investors, Construct {
 	 * @param _extraData SomeExtra Information
 	 */
 	function receiveApproval(address _from, uint256 _value, address _tkn_address, bytes _extraData) external returns (bool) {
-		if (_from == 0x0 || _tkn_address != getContractAddress("nous_token_address") || _value > 0) {
+		if (_from == 0x0 || _tkn_address != getContractAddress("NST") || _value > 0) {
 			return false;
 		}
 

@@ -3,10 +3,10 @@ pragma solidity ^0.4.18;
 
 import "./fund/Fund.sol";
 import "./base/Ownable.sol";
-import "./lib/Validator.sol";
+import "./lib/Utils.sol";
 import "./lib/SafeMath.sol";
 import "./FundToken.sol";
-import "./lib/Util.sol";
+
 
 /**
 @title Nous Platform Manger
@@ -65,7 +65,7 @@ contract NOUSManager is Ownable {
     public returns(address) {
         address _fundAddr = fundsIndex[ownerFundIndex[_newOwner]];
         address _newCompAddr = new FundToken(_newOwner, _tokenName,  _tokenSymbol, _initialSupply, _rate);
-        bytes32 tknSymbol = Util.stringToBytes32(_tokenSymbol);
+        bytes32 tknSymbol = Utils.stringToBytes32(_tokenSymbol);
         Fund(_fundAddr).addToken(tknSymbol, _newCompAddr);
 
         funds[_fundAddr].childFundContracts[tknSymbol] = _newCompAddr;
@@ -86,9 +86,9 @@ contract NOUSManager is Ownable {
     */
     function createNewFund(address _newOwner, string _fundName, string _tokenName, string _tokenSymbol, uint256 _initialSupply, uint256 _rate)
     external returns (address) {
-        require(Validator.emptyStringTest(_fundName));
-        require(Validator.emptyStringTest(_tokenName));
-        require(Validator.emptyStringTest(_tokenSymbol));
+        require(Utils.emptyStringTest(_fundName));
+        require(Utils.emptyStringTest(_tokenName));
+        require(Utils.emptyStringTest(_tokenSymbol));
         require(_initialSupply > 0);
 
         //require(!Validator.emptyStringTest(ownerFundIndex[_newOwner]));
