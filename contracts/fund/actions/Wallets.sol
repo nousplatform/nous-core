@@ -1,17 +1,18 @@
 pragma solidity ^0.4.18;
 
 
-import "./Managers.sol";
+//import "./Managers.sol";
+import "./Permission.sol";
 import "../interfaces/WalletProvider.sol";
 import "../../lib/Utils.sol";
 
 
-contract Wallets is Managers {
+contract Wallets is Permission {
 
     // Wallet actions
     //@dev add wallet address
     function addWallet(bytes32 _typeWallet, address _walletAddress) external returns (bool) {
-        require(!checkPermission("owner") && !checkPermission("manager"));
+        require(checkPermission("owner") || checkPermission("manager"));
         require(_typeWallet.length > 0);
         require(_walletAddress != 0x0);
 

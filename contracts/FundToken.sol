@@ -16,18 +16,16 @@ contract FundToken is StandardToken {
   string public symbol;
   uint8 public constant decimals = 18;
   address public owner;
-  uint256 public rate;
 
   uint256 public INITIAL_SUPPLY;
 
   /**
    * @dev Constructor that gives msg.sender all of existing tokens.
    */
-  function FundToken(address _owner, string _name, string _symbol, uint256 _initialSupply,  uint256 _rate) public {
+  function FundToken(address _owner, string _name, string _symbol, uint256 _initialSupply) public {
     owner = _owner;
     name = _name;
     symbol = _symbol;
-    rate = _rate;
 
     INITIAL_SUPPLY = _initialSupply * (10 ** uint256(decimals));
     balances[msg.sender] = INITIAL_SUPPLY;

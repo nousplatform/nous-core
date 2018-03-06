@@ -4,14 +4,14 @@ pragma solidity ^0.4.18;
 import "../base/DougEnabled.sol";
 import "../interfaces/ContractProvider.sol";
 import "../interfaces/FundInterface.sol";
-import "./OwnableFunds.sol";
+//import "./OwnableFunds.sol";
 
 
-contract FundManagerBase is DougEnabled, OwnableFunds {
+contract FundManagerBase is DougEnabled {
 
-    bool public locked;
+    bool public locked = false;
 
-    function lockedFund() external ownerOrNous {
+    function lockedUnlockFund() external {
         locked = !locked;
     }
 

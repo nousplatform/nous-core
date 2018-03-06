@@ -12,12 +12,7 @@ import "./interfaces/Construct.sol";
 // The Doug contract.
 contract Fund is OwnableFunds, Construct {
 
-    string public fondName;
-
-    //uint256 public rate;
-
-    bool public allowAddContract;
-    bool private construct = false;
+    string public name;
 
     // all data
     mapping (bytes32 => address) public fundData;
@@ -28,25 +23,10 @@ contract Fund is OwnableFunds, Construct {
     // This is token
     mapping (bytes32 => address) public tokens;
 
-    modifier onlyOwner {//a modifier to reduce code replication
-        require(msg.sender == owner); // this ensures that only the owner can access the function
-        _;
-    }
-
-    modifier onlyNousPlatform() {
-        require(msg.sender == nous);
-        _;
-    }
-
-    modifier allowedUpdateContracts() {
-        require(allowAddContract == true);
-        _;
-    }
-
-    function constructor(address _fundOwn, bytes32 _tokenSymbol, address _nousTokenAddress, string _fundName) onConstructor external {
+    function constructor(address _fundOwn, string _fundName, bytes32 _tokenSymbol, address _nousTokenAddress) onConstructor external {
         super.constructor();
 
-        allowAddContract = true;
+        //allowAddContract = true;
         owner = _fundOwn;
         nous = msg.sender;
         fondName = _fundName;
@@ -54,12 +34,7 @@ contract Fund is OwnableFunds, Construct {
     }
 
     function addToken(bytes32 _tokenSymbol, address _tokenAddress) public onlyNousPlatform {
-        contracts[_tokenSymbol] = _tokenAddress;
-    }
-
-    //todo get contacts test
-    function getContract(bytes32 name) public constant returns (address) {
-        return contracts[name];
+        tokens[_tokenSymbol] = _tokenAddress;
     }
 
     /**
@@ -77,20 +52,20 @@ contract Fund is OwnableFunds, Construct {
         return true;
     }
 
-    /**
-    * Update address Contract
-    */
-    function updateDougContract(bytes32 _name, address _addr) public onlyNousContract {
-        contracts[_name] = _addr;
-    }
-
     // Remove a contract from Doug. We could also selfdestruct if we want to.
-    function removeContract(bytes32 name) public onlyOwner returns (bool result) {
+    function removeContract(bytes32 name) public onlyNousPlatform allowedUpdateContracts returns (bool result) {
         if (contracts[name] == 0x0) {
             return false;
         }
+        DougEnabled(cName).remove();
         contracts[name] = 0x0;
         return true;
+    }
+
+    function remove(){
+        if(msg.sender == owner){
+            selfdestruct(owner);
+        }
     }
 
 }

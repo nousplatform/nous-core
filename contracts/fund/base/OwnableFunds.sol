@@ -10,6 +10,8 @@ contract OwnableFunds {
 
     address public fund;
 
+    bool public allowAddContract = true;
+
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
     event NousTransferred(address indexed previousNous, address indexed newNous);
@@ -19,13 +21,18 @@ contract OwnableFunds {
         _;
     }
 
-    modifier onlyNous() {
-        require(msg.sender == owner);
+    modifier onlyNousPlatform() {
+        require(msg.sender == nous);
         _;
     }
 
     modifier ownerOrNous() {
         require(msg.sender == owner || msg.sender == nous);
+        _;
+    }
+
+    modifier allowedUpdateContracts() {
+        require(allowAddContract == true);
         _;
     }
 

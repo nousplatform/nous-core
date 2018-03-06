@@ -8,13 +8,14 @@ pragma solidity ^0.4.18;
 */
 import "./interfaces/FundInterface.sol";
 import "../token/ERC20.sol";
-import "./actions/Investors.sol";
+//import "./actions/Investors.sol";
+import "./Wallets.sol";
 import "./base/Construct.sol";
 import "./interfaces/PermissionProvider.sol";
 
 
 // The fund manager
-contract FundManager is Investors, Construct {
+contract FundManager is Wallets, Construct {
 
     function constructor(address foundOwner, address nousAddress) onConstructor external {
 		super.constructor();
