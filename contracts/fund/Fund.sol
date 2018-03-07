@@ -20,7 +20,7 @@ contract Fund is OwnableFunds, Construct, DougDb {
 
     uint256 public initCapCAP;
 
-    uint256 public receiverTokenAddress;
+    uint256 public receiveTokenAddress;
 
     // When adding a contract.
     event AddContract(address indexed caller, bytes32 indexed name, uint16 indexed code);
@@ -40,9 +40,9 @@ contract Fund is OwnableFunds, Construct, DougDb {
         receiverTokenAddress = _receiverTokenAddress;
     }
 
-    function setReceiverTokenAddress(address _addr) public onlyNousPlatform allowedUpdateContracts {
+    function setReceiveTokenAddress(address _addr) public onlyNousPlatform allowedUpdateContracts {
         require(_addr != 0x0);
-        receiverTokenAddress = _addr;
+        receiveTokenAddress = _addr;
     }
 
     /**
@@ -64,7 +64,6 @@ contract Fund is OwnableFunds, Construct, DougDb {
             // Can't overwrite.
             AddContract(msg.sender, name, 409);
         }
-
         return ae;
     }
 
@@ -73,7 +72,6 @@ contract Fund is OwnableFunds, Construct, DougDb {
         if (list[_name] == 0x0) {
             RemoveContract(msg.sender, _name, 403);
         }
-
         bool re = _removeElement(_name);
         if (re) {
             RemoveContract(msg.sender, _name, 200);
@@ -81,7 +79,6 @@ contract Fund is OwnableFunds, Construct, DougDb {
             // Can't remove, it's already gone.
             RemoveContract(msg.sender, name, 410);
         }
-
         return re;
     }
 

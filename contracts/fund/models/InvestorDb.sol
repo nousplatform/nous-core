@@ -39,14 +39,4 @@ contract InvestorDb is FundManagerEnabled, Construct {
         return (_investors, _balances);
     }
 
-    /*function deleteInvestor(address addr) public returns(bool) {
-            require(isFundManager());
-            //require(investors[addr]);
-            uint256 rowToDelete = investors[addr];
-            address keyToMove = investorsIndex[investorsIndex.length-1];
-            investorsIndex[rowToDelete] = keyToMove;
-            investors[keyToMove] = rowToDelete;
-            investorsIndex.length--;
-            return true;
-    }*/
 }

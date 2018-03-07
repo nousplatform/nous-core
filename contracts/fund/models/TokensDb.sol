@@ -22,14 +22,13 @@ contract TokensDb is FundManagerEnabled, Construct {
         return tokenIndex[tokens[tokenAddress].index] == tokenAddress; // address is exists
     }
 
-    function addToken(address tokenAddress, string tokenSymbol) public {
+    function addToken(address _tokenAddress, string _tokenSymbol) public {
         require(isFundManager());
         require(isToken(tokenAddress));
 
-        Token memory newToken;
-        newToken.tokenSymbol = tokenSymbol;
-        newToken.index = tokenIndex.push(tokenAddress) - 1;
-        wallets[walletAddress] = newWallet;
+        Token token = tokens[_tokenAddress];
+        token.tokenSymbol = tokenSymbol;
+        token.index = tokenIndex.push(tokenAddress) - 1;
         return true;
     }
 
