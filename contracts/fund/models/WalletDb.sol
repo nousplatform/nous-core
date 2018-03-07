@@ -3,7 +3,7 @@ pragma solidity 0.4.18;
 
 import "../base/FundManagerEnabled.sol";
 import "../interfaces/ContractProvider.sol";
-import "../interfaces/Construct.sol";
+import "../../base/Construct.sol";
 
 
 contract WalletDb is FundManagerEnabled, Construct {
@@ -19,14 +19,13 @@ contract WalletDb is FundManagerEnabled, Construct {
     address[] private walletsIndex;
 
     // validate if wallet exists
-    function isWallet(address walletAddress) public returns (bool isIndeed) {
+    function isWallet(address walletAddress) public returns (bool) {
         if (walletsIndex.length == 0) return false;
         return walletsIndex[wallets[walletAddress].index] == walletAddress;
     }
 
     // Add new wallet
-    function insertWallet(bytes32 _typeWallet, address walletAddress) public returns (bool)
-    {
+    function addWallet(bytes32 _typeWallet, address walletAddress) public returns (bool) {
         if (!isFundManager() || isWallet(walletAddress)) return false;
 
         Wallets memory newWallet;

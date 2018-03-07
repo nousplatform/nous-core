@@ -28,7 +28,6 @@ contract Permission is FundManagerBase {
 
         if (userPerm == 0) return false;
 
-
         for (uint256 i = 0; i < role.length; i++) {
             permdb.getUserPerm(msg.sender);
         }

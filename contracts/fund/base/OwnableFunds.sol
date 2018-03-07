@@ -8,8 +8,6 @@ contract OwnableFunds {
 
     address public nous;
 
-    address public fund;
-
     bool public allowAddContract = true;
 
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);

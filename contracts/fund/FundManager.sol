@@ -9,7 +9,7 @@ pragma solidity ^0.4.18;
 import "./interfaces/FundInterface.sol";
 import "../token/ERC20.sol";
 //import "./actions/Investors.sol";
-import "./Wallets.sol";
+import "./actions/Wallets.sol";
 import "./base/Construct.sol";
 import "./interfaces/PermissionProvider.sol";
 

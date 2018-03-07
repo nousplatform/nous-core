@@ -1,40 +1,48 @@
 pragma solidity ^0.4.18;
 
 
+import "./models/DougDb.sol";
 import "./base/DougEnabled.sol";
-import "./base/Construct.sol";
-import "../token/ERC20.sol";
-import "../FundToken.sol";
+import "../base/Construct.sol";
 import "./base/OwnableFunds.sol";
-import "./interfaces/Construct.sol";
 
 
 // The Doug contract.
-contract Fund is OwnableFunds, Construct {
+contract Fund is OwnableFunds, Construct, DougDb {
 
     string public name;
 
-    // all data
-    mapping (bytes32 => address) public fundData;
+    enum TypeFund {Closed_end, Fund}
 
-    // This is where we keep all the contracts.
-    mapping (bytes32 => address) public contracts;
+    TypeFund public fundType; // Type Closed-end Fund
 
-    // This is token
-    mapping (bytes32 => address) public tokens;
+    uint256 public initCapNSU;
 
-    function constructor(address _fundOwn, string _fundName, bytes32 _tokenSymbol, address _nousTokenAddress) onConstructor external {
+    uint256 public initCapCAP;
+
+    uint256 public receiverTokenAddress;
+
+    // When adding a contract.
+    event AddContract(address indexed caller, bytes32 indexed name, uint16 indexed code);
+    // When removing a contract.
+    event RemoveContract(address indexed caller, bytes32 indexed name, uint16 indexed code);
+
+    function constructor(address _fundOwn, string _fundName, TypeFund _fundType, uint256 _initCapNSU, uint256 _initCapCAP, address _receiverTokenAddress)
+    onConstructor external {
         super.constructor();
 
-        //allowAddContract = true;
-        owner = _fundOwn;
         nous = msg.sender;
+        owner = _fundOwn;
         fondName = _fundName;
-        addToken(_tokenSymbol, _nousTokenAddress);
+        fundType = _fundType;
+        initCapNSU = _initCapNSU;
+        initCapCAP = _initCapCAP;
+        receiverTokenAddress = _receiverTokenAddress;
     }
 
-    function addToken(bytes32 _tokenSymbol, address _tokenAddress) public onlyNousPlatform {
-        tokens[_tokenSymbol] = _tokenAddress;
+    function setReceiverTokenAddress(address _addr) public onlyNousPlatform allowedUpdateContracts {
+        require(_addr != 0x0);
+        receiverTokenAddress = _addr;
     }
 
     /**
@@ -42,30 +50,39 @@ contract Fund is OwnableFunds, Construct {
      * @dev _addr.call(bytes4(keccak256("constructor()"))); // конструктор срабатывает
      * @dev _addr.call("setDougAddress", address(this));
      */
-    function addContract(bytes32 _name, address _addr) public onlyNousPlatform allowedUpdateContracts returns(bool) {
-        DougEnabled de = DougEnabled(_addr);
-        if (!de.setDougAddress(this)) {
+    function addContract(bytes32 _name, address _addr, bool _doNotOverwrite)
+    public onlyNousPlatform allowedUpdateContracts returns(bool) {
+        if (!DougEnabled(_addr).setDougAddress(address(this))) {
+            AddContract(msg.sender, name, 403);
             return false;
         }
-        contracts[_name] = _addr;
-        Construct(_addr).construct(owner, nous);
-        return true;
+        bool ae = _addOrUpdateElement(name, addr);
+        if (ae) {
+            AddContract(msg.sender, name, 201);
+            Construct(_addr).construct();
+        } else {
+            // Can't overwrite.
+            AddContract(msg.sender, name, 409);
+        }
+
+        return ae;
     }
 
     // Remove a contract from Doug. We could also selfdestruct if we want to.
-    function removeContract(bytes32 name) public onlyNousPlatform allowedUpdateContracts returns (bool result) {
-        if (contracts[name] == 0x0) {
-            return false;
+    function removeContract(bytes32 _name) public onlyNousPlatform allowedUpdateContracts returns (bool) {
+        if (list[_name] == 0x0) {
+            RemoveContract(msg.sender, _name, 403);
         }
-        DougEnabled(cName).remove();
-        contracts[name] = 0x0;
-        return true;
-    }
 
-    function remove(){
-        if(msg.sender == owner){
-            selfdestruct(owner);
+        bool re = _removeElement(_name);
+        if (re) {
+            RemoveContract(msg.sender, _name, 200);
+        } else {
+            // Can't remove, it's already gone.
+            RemoveContract(msg.sender, name, 410);
         }
+
+        return re;
     }
 
 }

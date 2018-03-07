@@ -12,7 +12,7 @@ contract Construct {
     }
 
     //if constructor call first line must be super.constructor();
-    function constructor() external {
+    function constructor(address foundOwner, address nousaddress) external {
         constructorCall = true;
     }
 }

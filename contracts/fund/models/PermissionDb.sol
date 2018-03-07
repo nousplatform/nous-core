@@ -3,7 +3,7 @@ pragma solidity 0.4.18;
 
 import "../base/FundManagerEnabled.sol";
 import "../interfaces/ContractProvider.sol";
-import "../interfaces/Construct.sol";
+import "../../base/Construct.sol";
 
 
 // Permissions database
