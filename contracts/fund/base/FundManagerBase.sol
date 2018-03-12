@@ -9,14 +9,9 @@ import "../interfaces/FundInterface.sol";
 
 contract FundManagerBase is DougEnabled {
 
-    bool public locked = false;
-
-    function lockedUnlockFund() external {
-        locked = !locked;
-    }
-
     //@dev get contract address
     function getContractAddress(bytes32 name) public constant returns(address) {
+        assert(DOUG != 0x0);
         address conAddr = ContractProvider(DOUG).contracts(name);
         assert(conAddr != 0x0);
         return conAddr;

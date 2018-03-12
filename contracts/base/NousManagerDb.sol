@@ -21,5 +21,5 @@ contract NousManagerDb {
 
     bytes32[] contractsList;
 
-    address public nousTokenAddress = 0x4dd59912ca031ace5524f22f78226d338bc513aa;
+    //address public nousTokenAddress = 0x4dd59912ca031ace5524f22f78226d338bc513aa;
 }

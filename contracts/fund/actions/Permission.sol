@@ -10,33 +10,19 @@ contract Permission is FundManagerBase {
 
     // Set the permissions for a given address.
     // perm_lvl
-    function setPermission(address addr, bytes32 permLvl) public returns (bool) {
-        require(msg.sender == owner);
-        require(addr != 0x0);
-        require(addr != nous);
-        require(permLvl.length > 0);
+    function setPermission(address _address, bytes32 _role, bool _status) public returns (bool) {
+        require(_address != 0x0);
+        require(checkPermission("owner"));
+        require(_role.length > 0);
 
         address permdb = getContractAddress("permission_db");
-        return PermissionProvider(permdb).setPermission(addr, permLvl);
+        return PermissionProvider(permdb).setPermission(_address, _role, _status);
     }
 
-    function checkPermission(bytes32[] role) internal returns (bool) {
-        if (locked == true || role.length == 0) return false;
+    function checkPermission(bytes32 _role) internal returns (bool) {
+        if (ContractProvider(DOUG).fundStatus() == true) return false;
 
         address permdb = getContractAddress("permission_db");
-        uint8 userPerm = permdb.getUserPerm(msg.sender);
-
-        if (userPerm == 0) return false;
-
-        for (uint256 i = 0; i < role.length; i++) {
-            permdb.getUserPerm(msg.sender);
-        }
-
-        address permsdb = ContractProvider(DOUG).contracts("permission_db");
-        if (permsdb != 0x0) {
-            PermissionProvider permComp = PermissionProvider(permsdb);
-            return permComp.getUserPerm(msg.sender) != permComp.getRolePerm(role);
-        }
-        return false;
+        return PermissionProvider(permdb).getPermission(_role, msg.sender);
     }
 }

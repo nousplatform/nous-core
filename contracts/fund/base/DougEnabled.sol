@@ -15,11 +15,11 @@ contract DougEnabled {
     }
 
     // Makes it so that Doug is the only contract that may kill it.
-    function remove() public {
+    /*function remove() public {
         if(msg.sender == DOUG) {
             selfdestruct(DOUG);
         }
-    }
+    }*/
 
     /*function validateDoug() external constant returns (address) {
 		return DOUG;

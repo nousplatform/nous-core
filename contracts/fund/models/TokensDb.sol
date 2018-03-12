@@ -17,18 +17,17 @@ contract TokensDb is FundManagerEnabled, Construct {
     address[] private tokenIndex;
 
     // validate if wallet exists
-    function isToken(address tokenAddress) public returns (bool) {
+    function isToken(address _tokenAddress) public returns (bool) {
         if (tokenIndex.length == 0) return false;
-        return tokenIndex[tokens[tokenAddress].index] == tokenAddress; // address is exists
+        return tokenIndex[tokens[_tokenAddress].index] == _tokenAddress; // address is exists
     }
 
-    function addToken(address _tokenAddress, string _tokenSymbol) public {
-        require(isFundManager());
-        require(isToken(tokenAddress));
+    function addToken(address _tokenAddress, string _tokenSymbol) isFundManager public returns(bool) {
+        require(!isToken(_tokenAddress));
 
         Token token = tokens[_tokenAddress];
-        token.tokenSymbol = tokenSymbol;
-        token.index = tokenIndex.push(tokenAddress) - 1;
+        token.tokenSymbol = _tokenSymbol;
+        token.index = tokenIndex.push(_tokenAddress) - 1;
         return true;
     }
 

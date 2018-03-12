@@ -3,29 +3,19 @@ pragma solidity ^0.4.18;
 /**
 * Found Manager
 * This components check user permission and coll actions on components
-* Permission: (Nous platform = 4, Owner Fund = 3, Manager = 2, Investor = 1, No permission = 0 )
+* Permission: ( )
 *
 */
 import "./interfaces/FundInterface.sol";
 import "../token/ERC20.sol";
 //import "./actions/Investors.sol";
 import "./actions/Wallets.sol";
-import "./base/Construct.sol";
+import "../base/Construct.sol";
 import "./interfaces/PermissionProvider.sol";
 
 
 // The fund manager
 contract FundManager is Wallets, Construct {
-
-    function constructor(address foundOwner, address nousAddress) onConstructor external {
-		super.constructor();
-
-    	owner = foundOwner;
-        nous = nousAddress;
-        fund = msg.sender;
-
-		locked = false;
-    }
 
 	/**
 	 * Get notify in token contracts, only nous token
@@ -44,7 +34,7 @@ contract FundManager is Wallets, Construct {
 		uint256 amount = nt.allowance(_from, this); // how many coins we are allowed to spend
 		if (amount >= _value) {
 			if (nt.transferFrom(_from, this, _value)) {
-				addInvestor(_from, _value);
+				//addInvestor(_from, _value);
 				return FundInterface(DOUG).bayShares(_from, _value);
 			}
 		}

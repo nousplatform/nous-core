@@ -1,5 +1,6 @@
 pragma solidity 0.4.18;
 
+
 contract DougDb {
     // This is where we keep all the contracts.
     struct Element {
@@ -14,7 +15,7 @@ contract DougDb {
 
     function _addOrUpdateElement(bytes32 _name, address _addr, bool _doNotOverwrite) internal returns (bool) {
         Element elem = list[_name];
-        if (elem.doNotOverwrite == true) return false;
+        if (elem.doNotOverwrite == true) return false; //overwrite protection
 
         elem.contractAddress = _addr;
         elem.index = listIndex.push(_name) - 1;

@@ -19,7 +19,7 @@ contract OwnableFunds {
         _;
     }
 
-    modifier onlyNousPlatform() {
+    modifier onlyNous() {
         require(msg.sender == nous);
         _;
     }

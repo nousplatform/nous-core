@@ -9,38 +9,34 @@ import "../../base/Construct.sol";
 // Permissions database
 contract PermissionDb is FundManagerEnabled, Construct {
 
-    mapping (address => uint8) public perms;
+    mapping(bytes32 => mapping(address => bool)) public permissions;
 
-    mapping (bytes32 => uint8) public rolePermission;
+    function construct(address _foundOwner, address _nousAddress) onConstructor external {
+        super.constructor();
 
-    function construct(address foundOwner, address nousaddress) public {
-        if (isCall) revert();
-
-        rolePermission["nous"] = 4;
-        rolePermission["owner"] = 3;
-        rolePermission["manager"] = 2;
-        rolePermission["investor"] = 1;
-
-        perms[foundOwner] = 3;
-        perms[nousaddress] = 4;
-        perms[msg.sender] = 3;
-
-        isCall = true;
+        permissions["owner"][_foundOwner] = true;
+        permissions["nous"][_nousAddress] = true;
     }
 
-    // Set the permissions of an account.
-    function setPermission(address _addr, bytes32 _role) public returns (bool res) {
-        require(isFundManager());
-        perms[_addr] = rolePermission[_role];
-        return true;
+    // Set or update the permissions of an account.
+    // not in owner and nous
+    function setPermission(address _addr, bytes32 _role, bool _status) isFundManager public returns (bool) {
+        require(_addr != 0x0);
+        require(_role != "nous");
+        require(_role != "owner");
+        permissions[_role][_addr] = true;
     }
 
-    function getRolePerm(bytes32 _role) public returns (uint8) {
-        return rolePermission[_role];
+    function getPermission(bytes32 _role, address _addr) public returns (bool) {
+        return permissions[_role][_addr];
     }
 
-    function getUserPerm(address _addr) public returns (uint8) {
-        return perms[_addr];
+    // Transfer address
+    function transferOwnership(bytes32 _role, address _newAddress) public returns (bool) {
+        require(permissions[_role][msg.sender]);
+        require(_newAddress != 0x0);
+        permissions[_role][msg.sender] = false;
+        permissions[_role][_newAddress] = true;
     }
 
 }

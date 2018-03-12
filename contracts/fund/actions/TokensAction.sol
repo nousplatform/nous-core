@@ -2,7 +2,7 @@ pragma solidity 0.4.18;
 
 contract TokensAction {
 
-    function buyTokens(address beneficiary, uint256 tokens) public payable returns (bool) {
+    /*function buyTokens(address beneficiary, uint256 tokens) public payable returns (bool) {
         require(saleState == SaleState.Active);
         // if sale is frozen TODO validate stop sale and send transaction
         require(beneficiary != 0x0);
@@ -39,6 +39,6 @@ contract TokensAction {
         );
 
         return true;
-    }
+    }*/
 
 }

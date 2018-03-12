@@ -10,7 +10,7 @@ import "./base/OwnableFunds.sol";
 // The Doug contract.
 contract Fund is OwnableFunds, Construct, DougDb {
 
-    string public name;
+    string public fundName;
 
     enum TypeFund {Closed_end, Fund}
 
@@ -22,25 +22,27 @@ contract Fund is OwnableFunds, Construct, DougDb {
 
     uint256 public receiveTokenAddress;
 
+    bool public fundLocked = false;
+
     // When adding a contract.
     event AddContract(address indexed caller, bytes32 indexed name, uint16 indexed code);
     // When removing a contract.
     event RemoveContract(address indexed caller, bytes32 indexed name, uint16 indexed code);
 
-    function constructor(address _fundOwn, string _fundName, TypeFund _fundType, uint256 _initCapNSU, uint256 _initCapCAP, address _receiverTokenAddress)
+    function constructor(address _fundOwn, string _fundName, TypeFund _fundType, uint256 _initCapNSU, uint256 _initCapCAP, address _receiveTokenAddress)
     onConstructor external {
         super.constructor();
 
         nous = msg.sender;
         owner = _fundOwn;
-        fondName = _fundName;
+        fundName = _fundName;
         fundType = _fundType;
         initCapNSU = _initCapNSU;
         initCapCAP = _initCapCAP;
-        receiverTokenAddress = _receiverTokenAddress;
+        receiveTokenAddress = _receiveTokenAddress;
     }
 
-    function setReceiveTokenAddress(address _addr) public onlyNousPlatform allowedUpdateContracts {
+    function setReceiveTokenAddress(address _addr) public onlyNous allowedUpdateContracts {
         require(_addr != 0x0);
         receiveTokenAddress = _addr;
     }
@@ -51,24 +53,25 @@ contract Fund is OwnableFunds, Construct, DougDb {
      * @dev _addr.call("setDougAddress", address(this));
      */
     function addContract(bytes32 _name, address _addr, bool _doNotOverwrite)
-    public onlyNousPlatform allowedUpdateContracts returns(bool) {
+    public onlyNous allowedUpdateContracts returns(bool) {
+        require();
         if (!DougEnabled(_addr).setDougAddress(address(this))) {
-            AddContract(msg.sender, name, 403);
+            AddContract(msg.sender, _name, 403);
             return false;
         }
-        bool ae = _addOrUpdateElement(name, addr);
+        bool ae = _addOrUpdateElement(_name, _addr, _doNotOverwrite);
         if (ae) {
-            AddContract(msg.sender, name, 201);
+            AddContract(msg.sender, _name, 201);
             Construct(_addr).construct();
         } else {
             // Can't overwrite.
-            AddContract(msg.sender, name, 409);
+            AddContract(msg.sender, _name, 409);
         }
         return ae;
     }
 
     // Remove a contract from Doug. We could also selfdestruct if we want to.
-    function removeContract(bytes32 _name) public onlyNousPlatform allowedUpdateContracts returns (bool) {
+    function removeContract(bytes32 _name) public onlyNous allowedUpdateContracts returns (bool) {
         if (list[_name] == 0x0) {
             RemoveContract(msg.sender, _name, 403);
         }
@@ -77,9 +80,17 @@ contract Fund is OwnableFunds, Construct, DougDb {
             RemoveContract(msg.sender, _name, 200);
         } else {
             // Can't remove, it's already gone.
-            RemoveContract(msg.sender, name, 410);
+            RemoveContract(msg.sender, _name, 410);
         }
         return re;
+    }
+
+    function fundStatus() external returns(bool) {
+        return fundLocked;
+    }
+
+    function lockUnlockFund() onlyNous external {
+        fundLocked = !fundLocked;
     }
 
 }

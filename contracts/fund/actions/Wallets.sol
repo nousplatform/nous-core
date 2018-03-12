@@ -1,7 +1,6 @@
 pragma solidity ^0.4.18;
 
 
-//import "./Managers.sol";
 import "./Permission.sol";
 import "../interfaces/WalletProvider.sol";
 import "../../lib/Utils.sol";
@@ -23,19 +22,11 @@ contract Wallets is Permission {
     //@dev Confirmed Wallet
     //@dev Only nous platform will be confirm
     function confirmedWallet(address _walletAddress) external returns (bool) {
-        require(!checkPermission("nous"));
+        require(checkPermission("nous"));
         require(_walletAddress != 0x0);
 
-        address walletdb = getContractAddress("wallet_db");
-        return  WalletProvider(walletdb).confirmWallet(_walletAddress);
+        address walletDb = getContractAddress("wallet_db");
+        return  WalletProvider(walletDb).confirmWallet(_walletAddress);
     }
 
-    // Create snapshot can do only Nous platform
-    /*function createSnapshot(address _walletAddress, uint32 _balance) external returns (bool) {
-        require(!checkPermission("nous"));
-        require(_walletAddress != 0x0);
-
-        address walletdb = getContractAddress("wallet_db");
-        return  WalletProvider(walletdb).addSnapshot(_walletAddress, _balance);
-    }*/
 }

@@ -5,8 +5,8 @@ import "./NOUSManager.sol";
 import "./fund/FundManager.sol";
 import "./fund/Fund.sol";
 
-import "./fund/models/InvestorDb.sol";
-import "./fund/models/ManagerDb.sol";
+//import "./fund/models/InvestorDb.sol";
+//import "./fund/models/ManagerDb.sol";
 import "./fund/models/PermissionDb.sol";
 import "./fund/models/WalletDb.sol";
 import "./fund/base/DougEnabled.sol";

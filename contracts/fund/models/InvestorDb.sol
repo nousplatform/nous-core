@@ -17,8 +17,7 @@ contract InvestorDb is FundManagerEnabled, Construct {
     /**
     * Add investor and nous tkn
     */
-    function addInvestor(address _addr, uint256 _nousTkn) public returns (bool) {
-        require(isFundManager());
+    function addInvestor(address _addr, uint256 _nousTkn) isFundManager public returns (bool) {
         investors[_addr] = investors[_addr] + _nousTkn;
         investorsIndex.push(_addr);
         return true;

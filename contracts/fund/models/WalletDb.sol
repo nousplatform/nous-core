@@ -25,8 +25,8 @@ contract WalletDb is FundManagerEnabled, Construct {
     }
 
     // Add new wallet
-    function addWallet(bytes32 _typeWallet, address walletAddress) public returns (bool) {
-        if (!isFundManager() || isWallet(walletAddress)) return false;
+    function addWallet(bytes32 _typeWallet, address walletAddress) isFundManager public returns (bool) {
+        if (isWallet(walletAddress)) return false;
 
         Wallets memory newWallet;
         newWallet.typeWallet = _typeWallet;
@@ -37,8 +37,8 @@ contract WalletDb is FundManagerEnabled, Construct {
     }
 
     // confirm wallet
-    function confirmWallet(address walletAddress) public returns (bool) {
-        if (!isFundManager() || !isWallet(walletAddress)) return false;
+    function confirmWallet(address walletAddress) isFundManager public returns (bool) {
+        if (!isWallet(walletAddress)) return false;
         wallets[walletAddress].confirmed = true;
         return true;
     }
