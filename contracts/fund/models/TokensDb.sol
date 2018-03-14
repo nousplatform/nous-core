@@ -21,7 +21,7 @@ contract TokensDb {
     function _addToken(string _tokenSymbol, address _tokenAddress) internal returns(bool) {
         if (isToken(_tokenAddress)) return false;
 
-        Token token = tokens[_tokenAddress];
+        Token storage token = tokens[_tokenAddress];
         token.tokenSymbol = _tokenSymbol;
         token.index = tokenIndex.push(_tokenAddress) - 1;
         return true;

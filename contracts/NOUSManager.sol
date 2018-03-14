@@ -42,7 +42,7 @@ contract NOUSManager is Ownable {
 
     bytes32[] contractsList;
 
-    address public nousTokenAddress = 0x4dd59912ca031ace5524f22f78226d338bc513aa;
+    address public nousTokenAddress = 0x4dd59912CA031Ace5524f22F78226d338bc513aA;
 
     event CreateFund(address indexed owner, address indexed fund, string fundName);
     event CreateToken(address indexed owner, address indexed token, string tokenName);
@@ -67,11 +67,11 @@ contract NOUSManager is Ownable {
         fundCreator = _nousCreator;
     }
     */
-    function createToken(address _newOwner, string _tokenName, string _tokenSymbol, uint256 _initialSupply, uint256 _rate)
+    function createToken(address _newOwner, string _tokenName, string _tokenSymbol, uint256 _initialSupply)
     public returns(address) {
         address _fundAddr = fundsIndex[ownerFundIndex[_newOwner]];
         assert(_fundAddr != 0x0);
-        address _newCompAddr = new FundToken(_newOwner, _tokenName, _tokenSymbol, _initialSupply, _rate);
+        address _newCompAddr = new FundToken(_newOwner, _tokenName, _tokenSymbol, _initialSupply);
         bytes32 tknSymbol = Utils.stringToBytes32(_tokenSymbol);
 
         FundInterface(_fundAddr).addToken(_tokenSymbol, _newCompAddr);
@@ -120,7 +120,7 @@ contract NOUSManager is Ownable {
         // index = lenght - 1
         funds[_fundAddr] = newFund;
 
-        createToken(_newOwner, _tokenName, _tokenSymbol, _initialSupply, _rate);
+        createToken(_newOwner, _tokenName, _tokenSymbol, _initialSupply);
 
         return _fundAddr;
     }

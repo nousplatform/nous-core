@@ -14,7 +14,7 @@ contract DougDb {
     bytes32[] public listIndex; // Managers
 
     function _addOrUpdateElement(bytes32 _name, address _addr, bool _doNotOverwrite) internal returns (bool) {
-        Element elem = list[_name];
+        Element storage elem = list[_name];
         if (elem.doNotOverwrite == true) return false; //overwrite protection
 
         elem.contractAddress = _addr;
