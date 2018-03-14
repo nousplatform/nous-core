@@ -1,11 +1,7 @@
 pragma solidity 0.4.18;
 
 
-import "../base/FundManagerEnabled.sol";
-import "../../base/Construct.sol";
-
-
-contract TokensDb is FundManagerEnabled, Construct {
+contract TokensDb {
 
     struct Token {
         string tokenSymbol;
@@ -22,14 +18,12 @@ contract TokensDb is FundManagerEnabled, Construct {
         return tokenIndex[tokens[_tokenAddress].index] == _tokenAddress; // address is exists
     }
 
-    function addToken(address _tokenAddress, string _tokenSymbol) isFundManager public returns(bool) {
-        require(!isToken(_tokenAddress));
+    function _addToken(string _tokenSymbol, address _tokenAddress) internal returns(bool) {
+        if (isToken(_tokenAddress)) return false;
 
         Token token = tokens[_tokenAddress];
         token.tokenSymbol = _tokenSymbol;
         token.index = tokenIndex.push(_tokenAddress) - 1;
         return true;
     }
-
-
 }

@@ -1,11 +1,12 @@
 pragma solidity ^0.4.18;
 
 
-import "./fund/Fund.sol";
+//import "./fund/Fund.sol";
 import "./base/Ownable.sol";
 import "./lib/Utils.sol";
 import "./lib/SafeMath.sol";
 import "./FundToken.sol";
+import "./fund/interfaces/FundInterface.sol";
 
 
 /**
@@ -32,14 +33,19 @@ contract NOUSManager is Ownable {
 
     address[] fundsIndex;
 
-    mapping (bytes32 => address) public defaultContracts;
+    struct ContractDetails {
+        address addr;
+        bool overwrite;
+    }
+
+    mapping (bytes32 => ContractDetails) public defaultContracts;
 
     bytes32[] contractsList;
 
     address public nousTokenAddress = 0x4dd59912ca031ace5524f22f78226d338bc513aa;
 
     event CreateFund(address indexed owner, address indexed fund, string fundName);
-    event CreateToken(address indexed owner, address indexed token, string TokenName);
+    event CreateToken(address indexed owner, address indexed token, string tokenName);
 
     /*function NOUSManager(address _nousTokenAddress, address _nousCreator) {
         owner = msg.sender;
@@ -60,13 +66,15 @@ contract NOUSManager is Ownable {
         require(_nousCreator != 0x0);
         fundCreator = _nousCreator;
     }
-*/
+    */
     function createToken(address _newOwner, string _tokenName, string _tokenSymbol, uint256 _initialSupply, uint256 _rate)
     public returns(address) {
         address _fundAddr = fundsIndex[ownerFundIndex[_newOwner]];
-        address _newCompAddr = new FundToken(_newOwner, _tokenName,  _tokenSymbol, _initialSupply, _rate);
+        assert(_fundAddr != 0x0);
+        address _newCompAddr = new FundToken(_newOwner, _tokenName, _tokenSymbol, _initialSupply, _rate);
         bytes32 tknSymbol = Utils.stringToBytes32(_tokenSymbol);
-        Fund(_fundAddr).addToken(tknSymbol, _newCompAddr);
+
+        FundInterface(_fundAddr).addToken(_tokenSymbol, _newCompAddr);
 
         funds[_fundAddr].childFundContracts[tknSymbol] = _newCompAddr;
         funds[_fundAddr].indexChild.push(tknSymbol);
@@ -84,7 +92,7 @@ contract NOUSManager is Ownable {
     @param _initialSupply Token initial supply
     @return { "fundaddress" : "new Fund address" }
     */
-    function createNewFund(address _newOwner, string _fundName, string _tokenName, string _tokenSymbol, uint256 _initialSupply, uint256 _rate)
+    function createNewFund(address _newOwner, string _fundName, bytes32 _fundType, string _tokenName, string _tokenSymbol, uint256 _initialSupply, uint256 _rate)
     external returns (address) {
         require(Utils.emptyStringTest(_fundName));
         require(Utils.emptyStringTest(_tokenName));
@@ -94,7 +102,13 @@ contract NOUSManager is Ownable {
         //require(!Validator.emptyStringTest(ownerFundIndex[_newOwner]));
         //require(fundsIndex[ownerFundIndex[_newOwner]] == 0x0);
 
-        address _fundAddr = new Fund(_newOwner, nousTokenAddress, _fundName);
+        ContractDetails fundClone = defaultContracts["fund_contracts"];
+        address _fundAddr = clone(fundClone.addr);
+
+        FundInterface(_fundAddr).constructor(_newOwner, _fundName, _fundType, nousTokenAddress);
+
+
+        //address _fundAddr = new Fund(_newOwner, nousTokenAddress, _fundName);
 
         ownerFundIndex[_newOwner] = fundsIndex.push(_fundAddr) - 1;
         // current length array
@@ -121,15 +135,17 @@ contract NOUSManager is Ownable {
         } else {
             createComponents(_fundAddr, 4, contractsList.length);
         }
+
     }
 
     function createComponents(address _fundAddr, uint256 _start, uint256 _end) internal {
-        Fund fund = Fund(_fundAddr);
+        FundInterface fund = FundInterface(_fundAddr);
         for (uint i = _start; i < _end; i++) {
             bytes32 _name = contractsList[i];
-            address _addr = defaultContracts[contractsList[i]];
+            bool _doNotOverwrite = defaultContracts[contractsList[i]].overwrite;
+            address _addr = defaultContracts[contractsList[i]].addr;
             address _newCompAddr = clone(_addr);
-            bool res = fund.addContract(_name, _newCompAddr);
+            bool res = fund.addContract(_name, _newCompAddr, _doNotOverwrite);
 
             if (res) {
                 funds[_fundAddr].childFundContracts[_name] = _newCompAddr;
@@ -139,12 +155,14 @@ contract NOUSManager is Ownable {
     }
 
     //add or edit default contracts
-    function addContract(bytes32[] names, address[] addrs) public onlyOwner {
-        for (uint256 i = 0; i < names.length; i++) {
-            if (defaultContracts[names[i]] == 0x0) {
-                contractsList.push(names[i]);
+    function addContract(bytes32[] _names, address[] _addrs, bool[] _overwrite) public onlyOwner {
+        for (uint256 i = 0; i < _names.length; i++) {
+            if (defaultContracts[_names[i]].addr == 0x0) {
+                contractsList.push(_names[i]);
             }
-            defaultContracts[names[i]] = addrs[i];
+            ContractDetails storage contr = defaultContracts[_names[i]];
+            contr.addr = _addrs[i];
+            contr.overwrite = _overwrite[i];
         }
     }
 

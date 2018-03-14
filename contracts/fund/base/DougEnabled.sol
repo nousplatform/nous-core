@@ -1,13 +1,14 @@
 pragma solidity ^0.4.18;
 
+
 // Base class for contracts that are used in a doug system.
 contract DougEnabled {
     address DOUG;
 
-    function setDougAddress(address dougAddr) public returns (bool result){
+    function setDougAddress(address dougAddr) public returns (bool result) {
         // Once the doug address is set, don't allow it to be set again, except by the
         // doug contract itself.
-        if(DOUG != 0x0 && msg.sender != DOUG){
+        if (DOUG != 0x0 && msg.sender != DOUG) {
             return false;
         }
         DOUG = dougAddr;
@@ -22,6 +23,6 @@ contract DougEnabled {
     }*/
 
     /*function validateDoug() external constant returns (address) {
-		return DOUG;
-	}*/
+      return DOUG;
+      }*/
 }

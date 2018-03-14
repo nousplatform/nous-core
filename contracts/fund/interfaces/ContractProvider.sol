@@ -1,8 +1,8 @@
-pragma solidity ^0.4.18;
+pragma solidity 0.4.19;
 
 
 // Interface for getting contracts from Doug
 contract ContractProvider {
     function contracts(bytes32 name) public returns (address addr);
-    function fundStatus() external returns(bool);
+    function fundStatus() public returns(bool);
 }

@@ -14,8 +14,8 @@ import "./fund/base/FundManagerEnabled.sol";
 //import "./investor/Investor.sol";
 
 
-contract forRemix {
-    function forRemix() public {
+contract ForRemix {
+    function ForRemix() public {
 
     }
 }

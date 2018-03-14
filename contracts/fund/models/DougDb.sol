@@ -26,7 +26,7 @@ contract DougDb {
         if (list[_name].doNotOverwrite == true) return false;
 
         uint rowToDelete = list[_name].index;
-        address keyToMove = listIndex[listIndex.length - 1];
+        bytes32 keyToMove = listIndex[listIndex.length - 1];
         listIndex[rowToDelete] = keyToMove;
         list[keyToMove].index = rowToDelete;
         listIndex.length--;

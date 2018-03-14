@@ -11,7 +11,7 @@ contract PermissionDb is FundManagerEnabled, Construct {
 
     mapping(bytes32 => mapping(address => bool)) public permissions;
 
-    function construct(address _foundOwner, address _nousAddress) onConstructor external {
+    function constructor(address _foundOwner, address _nousAddress) onConstructor external {
         super.constructor();
 
         permissions["owner"][_foundOwner] = true;

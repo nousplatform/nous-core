@@ -8,6 +8,17 @@ import "../interfaces/ContractProvider.sol";
 
 contract Permission is FundManagerBase {
 
+    bool public fundLocked = false;
+
+    function fundStatus() external returns(bool) {
+        return fundLocked;
+    }
+
+    function lockUnlockFund() external {
+        require(checkPermission("owner"));
+        fundLocked = !fundLocked;
+    }
+
     // Set the permissions for a given address.
     // perm_lvl
     function setPermission(address _address, bytes32 _role, bool _status) public returns (bool) {
@@ -25,4 +36,5 @@ contract Permission is FundManagerBase {
         address permdb = getContractAddress("permission_db");
         return PermissionProvider(permdb).getPermission(_role, msg.sender);
     }
+
 }

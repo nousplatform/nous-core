@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity 0.4.18;
 
 
 import "./token/StandardToken.sol";
@@ -11,24 +11,23 @@ import "./token/StandardToken.sol";
  * `StandardToken` functions.
  */
 contract FundToken is StandardToken {
+    string public name;
+    string public symbol;
+    uint8 public constant DECIMALS = 18;
+    address public owner;
 
-  string public name;
-  string public symbol;
-  uint8 public constant decimals = 18;
-  address public owner;
-
-  uint256 public INITIAL_SUPPLY;
+    uint256 public initialSupply;
 
   /**
    * @dev Constructor that gives msg.sender all of existing tokens.
    */
-  function FundToken(address _owner, string _name, string _symbol, uint256 _initialSupply) public {
-    owner = _owner;
-    name = _name;
-    symbol = _symbol;
+    function FundToken(address _owner, string _name, string _symbol, uint256 _initialSupply) public {
+        owner = _owner;
+        name = _name;
+        symbol = _symbol;
 
-    INITIAL_SUPPLY = _initialSupply * (10 ** uint256(decimals));
-    balances[msg.sender] = INITIAL_SUPPLY;
-  }
+        initialSupply = _initialSupply * (10 ** uint256(DECIMALS));
+        balances[msg.sender] = initialSupply;
+    }
 
 }

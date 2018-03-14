@@ -1,9 +1,9 @@
-pragma solidity ^0.4.18;
+pragma solidity 0.4.18;
 
 
 contract Construct {
 
-    bool constructorCall = false;
+    bool private constructorCall = false;
 
     modifier onConstructor() {
         require(!constructorCall);

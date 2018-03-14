@@ -2,43 +2,44 @@ pragma solidity ^0.4.18;
 
 
 import "./models/DougDb.sol";
+import "./models/TokensDb.sol";
 import "./base/DougEnabled.sol";
 import "../base/Construct.sol";
 import "./base/OwnableFunds.sol";
 
 
 // The Doug contract.
-contract Fund is OwnableFunds, Construct, DougDb {
+contract Fund is OwnableFunds, Construct, DougDb, TokensDb {
 
     string public fundName;
 
     enum TypeFund {Closed_end, Fund}
 
-    TypeFund public fundType; // Type Closed-end Fund
+    bytes32 public fundType; // Type Closed-end Fund
 
-    uint256 public initCapNSU;
+    //uint256 public initCapNSU;
 
-    uint256 public initCapCAP;
+    //uint256 public initCapCAP;
 
-    uint256 public receiveTokenAddress;
-
-    bool public fundLocked = false;
+    address public receiveTokenAddress;
 
     // When adding a contract.
     event AddContract(address indexed caller, bytes32 indexed name, uint16 indexed code);
     // When removing a contract.
     event RemoveContract(address indexed caller, bytes32 indexed name, uint16 indexed code);
 
-    function constructor(address _fundOwn, string _fundName, TypeFund _fundType, uint256 _initCapNSU, uint256 _initCapCAP, address _receiveTokenAddress)
+    event AddToken(address indexed caller, string name, uint16 indexed code);
+
+    function constructor(address _fundOwn, string _fundName, bytes32 _fundType, address _receiveTokenAddress) //, uint256 _initCapNSU, uint256 _initCapCAP
     onConstructor external {
-        super.constructor();
+    super.constructor();
 
         nous = msg.sender;
         owner = _fundOwn;
         fundName = _fundName;
         fundType = _fundType;
-        initCapNSU = _initCapNSU;
-        initCapCAP = _initCapCAP;
+        //initCapNSU = _initCapNSU;
+        //initCapCAP = _initCapCAP;
         receiveTokenAddress = _receiveTokenAddress;
     }
 
@@ -54,7 +55,7 @@ contract Fund is OwnableFunds, Construct, DougDb {
      */
     function addContract(bytes32 _name, address _addr, bool _doNotOverwrite)
     public onlyNous allowedUpdateContracts returns(bool) {
-        require();
+
         if (!DougEnabled(_addr).setDougAddress(address(this))) {
             AddContract(msg.sender, _name, 403);
             return false;
@@ -62,7 +63,7 @@ contract Fund is OwnableFunds, Construct, DougDb {
         bool ae = _addOrUpdateElement(_name, _addr, _doNotOverwrite);
         if (ae) {
             AddContract(msg.sender, _name, 201);
-            Construct(_addr).construct();
+            Construct(_addr).constructor();
         } else {
             // Can't overwrite.
             AddContract(msg.sender, _name, 409);
@@ -72,7 +73,7 @@ contract Fund is OwnableFunds, Construct, DougDb {
 
     // Remove a contract from Doug. We could also selfdestruct if we want to.
     function removeContract(bytes32 _name) public onlyNous allowedUpdateContracts returns (bool) {
-        if (list[_name] == 0x0) {
+        if (list[_name].contractAddress == 0x0) {
             RemoveContract(msg.sender, _name, 403);
         }
         bool re = _removeElement(_name);
@@ -85,12 +86,14 @@ contract Fund is OwnableFunds, Construct, DougDb {
         return re;
     }
 
-    function fundStatus() external returns(bool) {
-        return fundLocked;
-    }
-
-    function lockUnlockFund() onlyNous external {
-        fundLocked = !fundLocked;
+    function addToken(string _tokenSymbol, address _tokenAddr) onlyNous  {
+        require(_tokenAddr != 0x0);
+        bool res = _addToken(_tokenSymbol, _tokenAddr);
+        if (res) {
+            AddToken(msg.sender, _tokenSymbol, 200);
+        } else {
+            AddToken(msg.sender, _tokenSymbol, 411);
+        }
     }
 
 }
