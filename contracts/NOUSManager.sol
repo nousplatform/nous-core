@@ -92,7 +92,7 @@ contract NOUSManager is Ownable {
     @param _initialSupply Token initial supply
     @return { "fundaddress" : "new Fund address" }
     */
-    function createNewFund(address _newOwner, string _fundName, bytes32 _fundType, string _tokenName, string _tokenSymbol, uint256 _initialSupply, uint256 _rate)
+    function createNewFund(address _newOwner, string _fundName, bytes32 _fundType, string _tokenName, string _tokenSymbol, uint256 _initialSupply)
     external returns (address) {
         require(Utils.emptyStringTest(_fundName));
         require(Utils.emptyStringTest(_tokenName));
@@ -102,7 +102,7 @@ contract NOUSManager is Ownable {
         //require(!Validator.emptyStringTest(ownerFundIndex[_newOwner]));
         //require(fundsIndex[ownerFundIndex[_newOwner]] == 0x0);
 
-        ContractDetails fundClone = defaultContracts["fund_contracts"];
+        ContractDetails memory fundClone = defaultContracts["fund_contracts"];
         address _fundAddr = clone(fundClone.addr);
 
         FundInterface(_fundAddr).constructor(_newOwner, _fundName, _fundType, nousTokenAddress);

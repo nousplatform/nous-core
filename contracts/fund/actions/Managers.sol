@@ -21,7 +21,7 @@ contract Managers is Permission {
         return ManagerProvider(managerDb).insertManager(_managerAddress, _firstName, _lastName, _email);
     }
 
-    function delManager(address managerAddress) external returns (bool) {
+    function deleteManager(address managerAddress) external returns (bool) {
         require(!checkPermission("owner"));
         require(managerAddress != 0x0);
 

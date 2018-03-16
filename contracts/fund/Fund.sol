@@ -86,7 +86,7 @@ contract Fund is OwnableFunds, Construct, DougDb, TokensDb {
         return re;
     }
 
-    function addToken(string _tokenSymbol, address _tokenAddr) onlyNous  {
+    function addToken(string _tokenSymbol, address _tokenAddr) public onlyNous  {
         require(_tokenAddr != 0x0);
         bool res = _addToken(_tokenSymbol, _tokenAddr);
         if (res) {
