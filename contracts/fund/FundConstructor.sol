@@ -9,7 +9,7 @@ import "./base/OwnableFunds.sol";
 
 
 // The Doug contract.
-contract Fund is OwnableFunds, Construct, DougDb, TokensDb {
+contract FundConstructor is OwnableFunds, Construct, DougDb, TokensDb {
 
     string public fundName;
 
@@ -30,10 +30,10 @@ contract Fund is OwnableFunds, Construct, DougDb, TokensDb {
 
     event AddToken(address indexed caller, string name, uint16 indexed code);
 
-    function constructor(address _fundOwn, string _fundName, bytes32 _fundType, address _receiveTokenAddress) //, uint256 _initCapNSU, uint256 _initCapCAP
-    onConstructor external {
-    super.constructor();
-
+    //, uint256 _initCapNSU, uint256 _initCapCAP
+    function constructor(address _fundOwn, string _fundName, bytes32 _fundType, address _receiveTokenAddress) external
+    onConstructor {
+        super.constructor();
         nous = msg.sender;
         owner = _fundOwn;
         fundName = _fundName;
@@ -84,16 +84,6 @@ contract Fund is OwnableFunds, Construct, DougDb, TokensDb {
             RemoveContract(msg.sender, _name, 410);
         }
         return re;
-    }
-
-    function addToken(string _tokenSymbol, address _tokenAddr) public onlyNous  {
-        require(_tokenAddr != 0x0);
-        bool res = _addToken(_tokenSymbol, _tokenAddr);
-        if (res) {
-            AddToken(msg.sender, _tokenSymbol, 200);
-        } else {
-            AddToken(msg.sender, _tokenSymbol, 411);
-        }
     }
 
 }

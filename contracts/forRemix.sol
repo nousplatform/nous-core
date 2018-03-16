@@ -3,7 +3,7 @@ pragma solidity ^0.4.18;
 
 import "./NOUSManager.sol";
 import "./fund/FundManager.sol";
-import "./fund/Fund.sol";
+import "./fund/FundConstructor.sol";
 
 //import "./fund/models/InvestorDb.sol";
 //import "./fund/models/ManagerDb.sol";

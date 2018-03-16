@@ -2,10 +2,10 @@ pragma solidity ^0.4.18;
 
 
 //import "./fund/Fund.sol";
-import "./base/Ownable.sol";
 import "./lib/Utils.sol";
-import "./lib/SafeMath.sol";
-import "./FundToken.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "zeppelin-solidity/contracts/math/SafeMath.sol";
+import "./token/SampleCrowdsale.sol";
 import "./fund/interfaces/FundInterface.sol";
 
 
@@ -67,11 +67,12 @@ contract NOUSManager is Ownable {
         fundCreator = _nousCreator;
     }
     */
-    function createToken(address _newOwner, string _tokenName, string _tokenSymbol, uint256 _initialSupply)
+    function createToken(address _newOwner, string _tokenName, string _tokenSymbol, uint8 _decimals)
     public returns(address) {
         address _fundAddr = fundsIndex[ownerFundIndex[_newOwner]];
         assert(_fundAddr != 0x0);
-        address _newCompAddr = new FundToken(_newOwner, _tokenName, _tokenSymbol, _initialSupply);
+        address _newCompAddr = new SampleCrowdsaleToken(_newOwner, _tokenName, _tokenSymbol, _decimals);
+        //address _newCompAddr = new FundToken(_newOwner, _tokenName, _tokenSymbol, _initialSupply);
         bytes32 tknSymbol = Utils.stringToBytes32(_tokenSymbol);
 
         FundInterface(_fundAddr).addToken(_tokenSymbol, _newCompAddr);
@@ -89,15 +90,14 @@ contract NOUSManager is Ownable {
     @param _fundName Name new fund
     @param _tokenName Name token
     @param _tokenSymbol Abbreviation token
-    @param _initialSupply Token initial supply
+    @param _decimals Token decimals
     @return { "fundaddress" : "new Fund address" }
     */
-    function createNewFund(address _newOwner, string _fundName, bytes32 _fundType, string _tokenName, string _tokenSymbol, uint256 _initialSupply)
+    function createNewFund(address _newOwner, string _fundName, bytes32 _fundType, string _tokenName, string _tokenSymbol, uint8 _decimals)
     external returns (address) {
         require(Utils.emptyStringTest(_fundName));
         require(Utils.emptyStringTest(_tokenName));
         require(Utils.emptyStringTest(_tokenSymbol));
-        require(_initialSupply > 0);
 
         //require(!Validator.emptyStringTest(ownerFundIndex[_newOwner]));
         //require(fundsIndex[ownerFundIndex[_newOwner]] == 0x0);
@@ -106,8 +106,6 @@ contract NOUSManager is Ownable {
         address _fundAddr = clone(fundClone.addr);
 
         FundInterface(_fundAddr).constructor(_newOwner, _fundName, _fundType, nousTokenAddress);
-
-
         //address _fundAddr = new Fund(_newOwner, nousTokenAddress, _fundName);
 
         ownerFundIndex[_newOwner] = fundsIndex.push(_fundAddr) - 1;
@@ -120,8 +118,7 @@ contract NOUSManager is Ownable {
         // index = lenght - 1
         funds[_fundAddr] = newFund;
 
-        createToken(_newOwner, _tokenName, _tokenSymbol, _initialSupply);
-
+        createToken(_newOwner, _tokenName, _tokenSymbol, _decimals);
         return _fundAddr;
     }
 

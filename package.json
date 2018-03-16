@@ -15,7 +15,7 @@
     "truffle": "^4.0.1",
     "vorpal": "^1.12.0",
     "web3": "1.0.0-beta.18",
-    "zeppelin-solidity": "^1.4.0"
+    "zeppelin-solidity": "1.7.0"
   },
   "devDependencies": {
     "@digix/doxity": "^0.5.2"
