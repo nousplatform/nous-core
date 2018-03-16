@@ -64,8 +64,8 @@ contract BaseSaleAgent is Ownable {
 
     //@dev you may redefined this function, but coll method super
     function finalise() public onlyOwner {
-        require(isFinalized == false);
-        isFinalized = true;
+        require(finalizeICO == false);
+        finalizeICO = true;
     }
 
 
