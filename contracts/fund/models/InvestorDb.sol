@@ -4,7 +4,7 @@ pragma solidity ^0.4.18;
 import "../interfaces/ContractProvider.sol";
 import "../../base/Construct.sol";
 import "../base/FundManagerEnabled.sol";
-import "../../token/ERC20.sol";
+import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 
 contract InvestorDb is FundManagerEnabled, Construct {

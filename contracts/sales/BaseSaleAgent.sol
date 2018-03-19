@@ -8,9 +8,17 @@ contract BaseSaleAgent is Ownable {
 
     using SafeMath for uint256;
     uint8 decimals = 18;
-    uint256 internal constant EXPONENT = 10 ** uint256(decimals); // 18
+    uint256 EXPONENT = 10 ** uint256(decimals); // 18
     bool finalizeICO = false;
-    uint256 totalSupply;
+
+    uint256 public totalSupplyCap; // 777 Million tokens Capitalize max count NOUS tokens TODO once
+    uint256 public retainedByCompany; // percent maining tokens TODO once
+    bytes32[] public issuingJurisdiction; // only for qualification investors TODO changed
+    bytes32[] public investorsAccredited; // TODO changed
+    //uint256 public vestingPeriod; // date period blocked tokens
+    uint256 public vestingPeriodOwners; // date period blocked tokens by owner TODO changed to finalize
+
+    //uint256 public percentageOfCompany; // type sequrity
 
     struct SalesAgent {
         uint256 tokensLimit; // The maximum amount of tokens this sale contract is allowed to distribute
