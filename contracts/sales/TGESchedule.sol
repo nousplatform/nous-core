@@ -21,7 +21,7 @@ contract TGESchedule is Ownable {
         uint256 startTimestamp; // in week rate
         uint256 endTimestamp; // in week rate
         TypeBonus _type;
-        mapping(uint256 => BetwinPricingRateStruct) bonuses;
+        mapping(uint256 => BetwinPricingRateStruct) priceBonus;
         uint256[] indexBonus;
     }
 
@@ -47,9 +47,9 @@ contract TGESchedule is Ownable {
         // if price rate id is 0 then create new price perid
         if (_priceRateID == 0) {
             // add last element
-            _priceRate = bonuses[_bonusID-1].bonuses[bonuses[_bonusID-1].indexBonus.length];
+            _priceRate = bonuses[_bonusID-1].priceBonus[bonuses[_bonusID-1].indexBonus.length];
         } else {
-            _priceRate = bonuses[_bonusID-1].bonuses[_priceRateID-1];
+            _priceRate = bonuses[_bonusID-1].priceBonus[_priceRateID-1];
         }
 
         _priceRate.minPrice = _minPrice;
@@ -67,15 +67,15 @@ contract TGESchedule is Ownable {
         uint256 totalAmount = _amount.mul(_rate);
         for (uint256 i = 0; i < bonuses.length; i++) {
             if (now < bonuses[i].endTimestamp && now > bonuses[i].startTimestamp) {
-                for (uint256 j; j < bonuses[i].bonus.length; j++) {
-                    if (_amount >= bonuses[i].bonus[j].minPrice && _amount < bonuses[i].bonus[j].maxPrice) {
+                for (uint256 j; j < bonuses[i].indexBonus.length; j++) {
+                    if (_amount >= bonuses[i].priceBonus[j].minPrice && _amount < bonuses[i].priceBonus[j].maxPrice) {
                         if (bonuses[i]._type == TypeBonus.Bonus) {
-                            totalAmount = totalAmount.add(totalAmount.mul(bonuses[i].bonus[j].bonusRate).div(100));
+                            totalAmount = totalAmount.add(totalAmount.mul(bonuses[i].priceBonus[j].bonusRate).div(100));
                         } else {
                 // скидка высчитывается из rate, потом прибавляется к основному рейту
                 // при этом при высчитывании процента не делиться на 100 так как все числа целые и недопустимы дробные
                 // так же рейт тоже умножаеться на 100. После _amount умножаеться на новый рейт и делиться на 100
-                            uint256 percent = _rate.mul(bonuses[i].bonus[j].bonusRate); // не делим на 100
+                            uint256 percent = _rate.mul(bonuses[i].priceBonus[j].bonusRate); // не делим на 100
                             totalAmount = _amount.mul(_rate.mul(100).add(percent)).div(100);
                         }
                     }
@@ -106,14 +106,14 @@ contract TGESchedule is Ownable {
     */
     function getAllBonusesForPeriod(uint256 periodID) public constant
     returns (uint256[] memory _minPrices, uint256[] memory _maxPrices, uint256[] memory _bonusRates) {
-        uint256 _length =  bonuses[periodID-1].bonus.length;
+        uint256 _length =  bonuses[periodID-1].indexBonus.length;
         _minPrices = new uint256[](_length);
         _maxPrices = new uint256[](_length);
         _bonusRates = new uint256[](_length);
         for (uint i = 0; i < _length; i++) {
-            _minPrices[i] = bonuses[periodID-1].bonus[i].minPrice;
-            _maxPrices[i] = bonuses[periodID-1].bonus[i].maxPrice;
-            _bonusRates[i] = bonuses[periodID-1].bonus[i].bonusRate;
+            _minPrices[i] = bonuses[periodID-1].priceBonus[i].minPrice;
+            _maxPrices[i] = bonuses[periodID-1].priceBonus[i].maxPrice;
+            _bonusRates[i] = bonuses[periodID-1].priceBonus[i].bonusRate;
         }
         return (_minPrices, _maxPrices, _bonusRates);
     }

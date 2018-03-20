@@ -2,6 +2,7 @@ pragma solidity ^0.4.18;
 
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
+//import "../token/SampleCrowdsaleToken.sol";
 
 
 contract BaseSaleAgent is Ownable {
@@ -10,6 +11,10 @@ contract BaseSaleAgent is Ownable {
     uint8 decimals = 18;
     uint256 EXPONENT = 10 ** uint256(decimals); // 18
     bool finalizeICO = false;
+    address public walletAddress; // address for transfer NST token
+    address public nousToken; // NST address
+    address public TGEScheduleAddress;
+    address public sampleCrowdsaleTokenAddress;
 
     uint256 public totalSupplyCap; // 777 Million tokens Capitalize max count NOUS tokens TODO once
     uint256 public retainedByCompany; // percent maining tokens TODO once
@@ -17,12 +22,22 @@ contract BaseSaleAgent is Ownable {
     bytes32[] public investorsAccredited; // TODO changed
     //uint256 public vestingPeriod; // date period blocked tokens
     uint256 public vestingPeriodOwners; // date period blocked tokens by owner TODO changed to finalize
-
     //uint256 public percentageOfCompany; // type sequrity
+
+    function BaseSaleAgent(uint256 _totalSupplyCap, uint256 _retainedByCompany, address _walletAddress, address _nousToken) {
+        require(_totalSupplyCap > 0);
+        require(_retainedByCompany > 0);
+        require(walletAddress != 0x0);
+
+        walletAddress = _walletAddress;
+        totalSupplyCap = _totalSupplyCap;
+        retainedByCompany = _retainedByCompany;
+        nousToken = _nousToken;
+    }
 
     struct SalesAgent {
         uint256 tokensLimit; // The maximum amount of tokens this sale contract is allowed to distribute
-        uint256 minDeposit; // The minimum deposit amount allowed
+        uint256 minDeposit; // TODO какой депозит The minimum deposit amount allowed
         uint256 maxDeposit; // The maximum deposit amount allowed
         uint256 startTime; // The start time (unix format) when allowed to mint tokens
         uint256 endTime; // The end time from unix format when to finish minting tokens
@@ -76,5 +91,12 @@ contract BaseSaleAgent is Ownable {
         finalizeICO = true;
     }
 
+    /*function availabilityCheckPurchase(SalesAgent _saleAgent) public constant returns (bool) {
+        return _saleAgent.isFinalized == false && now > _saleAgent.startTime && now < _saleAgent.endTime;
+    }
+
+    function checkValue(uint256 _value, SalesAgent _saleAgent) internal constant returns (bool) {
+        return _value > 0 && _saleAgent.minDeposit >= _value && _saleAgent.maxDeposit < _value;
+    }*/
 
 }
