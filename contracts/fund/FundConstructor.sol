@@ -13,7 +13,7 @@ contract FundConstructor is OwnableFunds, Construct, DougDb, TokensDb {
 
     string public fundName;
 
-    enum TypeFund {Closed_end, Fund}
+    //enum TypeFund {Closed_end, Fund}
 
     bytes32 public fundType; // Type Closed-end Fund
 
@@ -21,7 +21,7 @@ contract FundConstructor is OwnableFunds, Construct, DougDb, TokensDb {
 
     //uint256 public initCapCAP;
 
-    address public receiveTokenAddress;
+    //address public receiveTokenAddress;
 
     // When adding a contract.
     event AddContract(address indexed caller, bytes32 indexed name, uint16 indexed code);
@@ -31,22 +31,21 @@ contract FundConstructor is OwnableFunds, Construct, DougDb, TokensDb {
     event AddToken(address indexed caller, string name, uint16 indexed code);
 
     //, uint256 _initCapNSU, uint256 _initCapCAP
-    function constructor(address _fundOwn, string _fundName, bytes32 _fundType, address _receiveTokenAddress) external
+    function constructor(address _fundOwn, string _fundName, bytes32 _fundType) external
     onConstructor {
-        super.constructor();
         nous = msg.sender;
         owner = _fundOwn;
         fundName = _fundName;
         fundType = _fundType;
         //initCapNSU = _initCapNSU;
         //initCapCAP = _initCapCAP;
-        receiveTokenAddress = _receiveTokenAddress;
+        //receiveTokenAddress = _receiveTokenAddress;
     }
 
-    function setReceiveTokenAddress(address _addr) public onlyNous allowedUpdateContracts {
+    /*function setReceiveTokenAddress(address _addr) public onlyNous allowedUpdateContracts {
         require(_addr != 0x0);
         receiveTokenAddress = _addr;
-    }
+    }*/
 
     /**
      * Add a new contract to Doug. This will overwrite an existing contract.

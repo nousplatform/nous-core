@@ -5,8 +5,12 @@ pragma solidity ^0.4.18;
 import "./lib/Utils.sol";
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
+
+//import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/ownership/Ownable.sol";
+//import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
 import "./token/SampleCrowdsaleToken.sol";
 import "./fund/interfaces/FundInterface.sol";
+import "./fund/interfaces/ConstructInterface.sol";
 
 
 /**
@@ -67,58 +71,58 @@ contract NOUSManager is Ownable {
         fundCreator = _nousCreator;
     }
     */
-    function createToken(address _newOwner, string _tokenName, string _tokenSymbol, uint8 _decimals)
-    public returns(address) {
-        address _fundAddr = fundsIndex[ownerFundIndex[_newOwner]];
+    function createToken(address _owner, string _tokenName, string _tokenSymbol, uint8 _decimals)
+    public onlyOwner returns(address) {
+        require(_owner != 0x0);
+        require(Utils.emptyStringTest(_tokenName));
+        require(Utils.emptyStringTest(_tokenSymbol));
+
+        address _fundAddr = fundsIndex[ownerFundIndex[_owner]];
         assert(_fundAddr != 0x0);
-        address _newCompAddr = new SampleCrowdsaleToken(_newOwner, _tokenName, _tokenSymbol, _decimals);
-        //address _newCompAddr = new FundToken(_newOwner, _tokenName, _tokenSymbol, _initialSupply);
+
+        address _addr = clone(defaultContracts["sample_tokens"].addr);
+
+        address _newCompAddr = new SampleCrowdsaleToken(_owner, _tokenName, _tokenSymbol, _decimals);
         bytes32 tknSymbol = Utils.stringToBytes32(_tokenSymbol);
 
         FundInterface(_fundAddr).addToken(_tokenSymbol, _newCompAddr);
-
         funds[_fundAddr].childFundContracts[tknSymbol] = _newCompAddr;
         funds[_fundAddr].indexChild.push(tknSymbol);
 
-        CreateToken(_newOwner, _newCompAddr, _tokenName);
+        CreateToken(_owner, _newCompAddr, _tokenName);
         return _newCompAddr;
     }
 
     /**
-    @notice Create new fund
-    @dev Is caused from a user name
-    @param _fundName Name new fund
-    @param _tokenName Name token
-    @param _tokenSymbol Abbreviation token
-    @param _decimals Token decimals
-    @return { "fundaddress" : "new Fund address" }
+    * @notice Create new fund
+    * @dev Is caused from a user name
+    * @param _fundName Name new fund
+    * @return { "fundaddress" : "new Fund address" }
     */
-    function createNewFund(address _newOwner, string _fundName, bytes32 _fundType, string _tokenName, string _tokenSymbol, uint8 _decimals)
-    external returns (address) {
+    function createNewFund(address _owner, string _fundName, bytes32 _fundType) //string _tokenName, string _tokenSymbol, uint8 _decimals
+    public onlyOwner returns (address) {
+        require(_owner != 0x0);
         require(Utils.emptyStringTest(_fundName));
-        require(Utils.emptyStringTest(_tokenName));
-        require(Utils.emptyStringTest(_tokenSymbol));
-
-        //require(!Validator.emptyStringTest(ownerFundIndex[_newOwner]));
+        require(!Utils.emptyStringTest(ownerFundIndex[_owner]));
         //require(fundsIndex[ownerFundIndex[_newOwner]] == 0x0);
 
-        ContractDetails memory fundClone = defaultContracts["fund_contracts"];
+        ContractDetails memory fundClone = defaultContracts["fund_constructor"];
         address _fundAddr = clone(fundClone.addr);
 
-        FundInterface(_fundAddr).constructor(_newOwner, _fundName, _fundType, nousTokenAddress);
+        FundInterface(_fundAddr).constructor(_owner, _fundName, _fundType);
         //address _fundAddr = new Fund(_newOwner, nousTokenAddress, _fundName);
 
-        ownerFundIndex[_newOwner] = fundsIndex.push(_fundAddr) - 1;
+        ownerFundIndex[_owner] = fundsIndex.push(_fundAddr) - 1;
         // current length array
-        CreateFund(_newOwner, _fundAddr, _fundName);
+        CreateFund(_owner, _fundAddr, _fundName);
 
         FundStructure memory newFund;
         newFund.fundName = _fundName;
-        newFund.index = ownerFundIndex[_newOwner];
+        newFund.index = ownerFundIndex[_owner];
         // index = lenght - 1
         funds[_fundAddr] = newFund;
 
-        createToken(_newOwner, _tokenName, _tokenSymbol, _decimals);
+        //createToken(_newOwner, _tokenName, _tokenSymbol, _decimals);
         return _fundAddr;
     }
 

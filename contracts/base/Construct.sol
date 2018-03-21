@@ -7,12 +7,10 @@ contract Construct {
 
     modifier onConstructor() {
         require(!constructorCall);
-        //constructor();
+        constructorCall = true;
         _;
     }
 
     //if constructor call first line must be super.constructor();
-    function constructor() public {
-        constructorCall = true;
-    }
+    function constructor() public {}
 }

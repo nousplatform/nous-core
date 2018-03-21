@@ -1,8 +1,10 @@
 pragma solidity ^0.4.18;
 
 
-import "zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
+import "zeppelin-solidity/contracts/token/ERC20/MintableToken.sol"; //https://github.com/OpenZeppelin/
 import "zeppelin-solidity/contracts/token/ERC20/PausableToken.sol";
+//import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/PausableToken.sol";
+import "../base/Construct.sol";
 
 
 /**
@@ -10,13 +12,13 @@ import "zeppelin-solidity/contracts/token/ERC20/PausableToken.sol";
  * @dev Very simple ERC20 Token that can be minted.
  * It is meant to be used in a crowdsale contract.
  */
-contract SampleCrowdsaleToken is MintableToken, PausableToken {
+contract SampleCrowdsaleToken is MintableToken, PausableToken, Construct {
 
     string public name;
     string public symbol;
     uint8 public decimals;
 
-    function SampleCrowdsaleToken(address _owner, string _name, string _symbol, uint8 _decimals) {
+    function constructor(address _owner, string _name, string _symbol, uint8 _decimals) public onConstructor {
         owner = _owner;
         name = _name;
         symbol = _symbol;
