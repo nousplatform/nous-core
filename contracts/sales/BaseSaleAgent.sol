@@ -26,17 +26,6 @@ contract BaseSaleAgent is Ownable {
     uint256 public vestingPeriodOwners; // date period blocked tokens by owner TODO changed to finalize
     //uint256 public percentageOfCompany; // type sequrity
 
-    function BaseSaleAgent(uint256 _totalSupplyCap, uint256 _retainedByCompany, address _walletAddress, address _nousToken) {
-        require(_totalSupplyCap > 0);
-        require(_retainedByCompany > 0);
-        require(walletAddress != 0x0);
-
-        walletAddress = _walletAddress;
-        totalSupplyCap = _totalSupplyCap;
-        retainedByCompany = _retainedByCompany;
-        nousToken = _nousToken;
-    }
-
     struct SalesAgent {
         uint256 tokensLimit; // The maximum amount of tokens this sale contract is allowed to distribute
         uint256 minDeposit; // TODO какой депозит The minimum deposit amount allowed

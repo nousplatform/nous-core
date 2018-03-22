@@ -5,14 +5,26 @@ import "./BaseSaleAgent.sol";
 import "./TGESchedule.sol";
 import "../token/SampleCrowdsaleToken.sol";
 import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "../base/Construct.sol";
 //import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 //"0x7204b06b4c344bd969457462f4d9e933650049c0"10000,1,3,1518190980,1518196200,7400
 
-contract Sale is BaseSaleAgent {
+contract Sale is BaseSaleAgent, Construct, Doug {
 
-    function Sale(address _sampleCrowdsaleTokenAddress) {
+    modifier(bytes32  uint256)
+
+    function constructor(address _sampleCrowdsaleTokenAddress, uint256 _totalSupplyCap, uint256 _retainedByCompany, address _walletAddress, address _nousToken) onConstructor {
+        require(_totalSupplyCap > 0);
+        require(_retainedByCompany > 0);
+        require(walletAddress != 0x0);
+
         TGEScheduleAddress = new TGESchedule();
         sampleCrowdsaleTokenAddress = _sampleCrowdsaleTokenAddress;
+
+        walletAddress = _walletAddress;
+        totalSupplyCap = _totalSupplyCap;
+        retainedByCompany = _retainedByCompany;
+        nousToken = _nousToken;
     }
 
     function() external payable {

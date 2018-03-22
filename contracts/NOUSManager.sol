@@ -8,7 +8,7 @@ import "zeppelin-solidity/contracts/math/SafeMath.sol";
 
 //import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/ownership/Ownable.sol";
 //import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
-import "./token/SampleCrowdsaleToken.sol";
+import "./fund/interfaces/SampleCrowdsaleTokenInterface.sol";
 import "./fund/interfaces/FundInterface.sol";
 import "./fund/interfaces/ConstructInterface.sol";
 
@@ -80,12 +80,16 @@ contract NOUSManager is Ownable {
         address _fundAddr = fundsIndex[ownerFundIndex[_owner]];
         assert(_fundAddr != 0x0);
 
+        address _saleClone = clone(defaultContracts["sale"].addr);
+
+
         address _addr = clone(defaultContracts["sample_tokens"].addr);
+        SampleCrowdsaleTokenInterface.constructor(_owner, _tokenName, _tokenSymbol, _decimals);
 
-        address _newCompAddr = new SampleCrowdsaleToken(_owner, _tokenName, _tokenSymbol, _decimals);
-        bytes32 tknSymbol = Utils.stringToBytes32(_tokenSymbol);
+        //address _newCompAddr = new SampleCrowdsaleToken(_owner, _tokenName, _tokenSymbol, _decimals);
+        //bytes32 tknSymbol = Utils.stringToBytes32(_tokenSymbol);
 
-        FundInterface(_fundAddr).addToken(_tokenSymbol, _newCompAddr);
+        FundInterface(_fundAddr).addToken(_tokenSymbol, _addr);
         funds[_fundAddr].childFundContracts[tknSymbol] = _newCompAddr;
         funds[_fundAddr].indexChild.push(tknSymbol);
 
@@ -103,7 +107,7 @@ contract NOUSManager is Ownable {
     public onlyOwner returns (address) {
         require(_owner != 0x0);
         require(Utils.emptyStringTest(_fundName));
-        require(!Utils.emptyStringTest(ownerFundIndex[_owner]));
+        //require(!Utils.emptyStringTest(ownerFundIndex[_owner]));
         //require(fundsIndex[ownerFundIndex[_newOwner]] == 0x0);
 
         ContractDetails memory fundClone = defaultContracts["fund_constructor"];
