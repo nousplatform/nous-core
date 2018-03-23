@@ -204,7 +204,7 @@ contract NOUSManager is Ownable {
     *  Assembly of the code that we want to use as init-code in the new contract,
     *  along with stack values:
     */
-    function clone(address a) internal returns (address) {
+    function clone(address a) public returns (address) {
         address retval;
         assembly{
             mstore(0x0, or (0x5880730000000000000000000000000000000000000000803b80938091923cF3, mul(a, 0x1000000000000000000)))
