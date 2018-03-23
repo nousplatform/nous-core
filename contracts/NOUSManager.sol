@@ -3,12 +3,10 @@ pragma solidity ^0.4.18;
 
 //import "./fund/Fund.sol";
 import "./lib/Utils.sol";
-import "zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
-
-//import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/ownership/Ownable.sol";
-//import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
+import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
 import "./fund/interfaces/SampleCrowdsaleTokenInterface.sol";
+import "./fund/interfaces/SaleInterface.sol";
 import "./fund/interfaces/FundInterface.sol";
 import "./fund/interfaces/ConstructInterface.sol";
 
@@ -18,8 +16,6 @@ import "./fund/interfaces/ConstructInterface.sol";
 @author Manchenko Valeriy
 */
 contract NOUSManager is Ownable {
-
-    //address fundCreator;
 
     /// Structure fund
     struct FundStructure {
@@ -47,7 +43,6 @@ contract NOUSManager is Ownable {
     bytes32[] contractsList;
 
     address public nousTokenAddress = 0x4dd59912CA031Ace5524f22F78226d338bc513aA;
-
     event CreateFund(address indexed owner, address indexed fund, string fundName);
     event CreateToken(address indexed owner, address indexed token, string tokenName);
 
@@ -58,21 +53,23 @@ contract NOUSManager is Ownable {
     }*/
 
     /**
-    @notice Set address NOUS tokens
-    @param _nousTokenAddress Contract address NOUS token
+    * @notice Set address NOUS tokens
+    * @param _nousTokenAddress Contract address NOUS token
     */
     function setNousTokenAddress(address _nousTokenAddress) public onlyOwner {
         require(_nousTokenAddress != 0x0);
         nousTokenAddress = _nousTokenAddress;
     }
 
-    /*function setNousCreator(address _nousCreator) public onlyOwner {
-        require(_nousCreator != 0x0);
-        fundCreator = _nousCreator;
-    }
-    */
-    function createToken(address _owner, string _tokenName, string _tokenSymbol, uint8 _decimals)
-    public onlyOwner returns(address) {
+    function createToken(
+        address _owner,
+        string _tokenName,
+        string _tokenSymbol,
+        uint8 _decimals,
+        uint256 _totalSupplyCap,
+        uint256 _retainedByCompany,
+        address _walletAddress
+    ) public onlyOwner returns(address) {
         require(_owner != 0x0);
         require(Utils.emptyStringTest(_tokenName));
         require(Utils.emptyStringTest(_tokenSymbol));
@@ -80,21 +77,20 @@ contract NOUSManager is Ownable {
         address _fundAddr = fundsIndex[ownerFundIndex[_owner]];
         assert(_fundAddr != 0x0);
 
-        address _saleClone = clone(defaultContracts["sale"].addr);
+        address _tokenAddress = clone(defaultContracts["sample_tokens"].addr);
+        address _saleAddress = clone(defaultContracts["sale"].addr);
 
+        SampleCrowdsaleTokenInterface(_tokenAddress).constructor(_saleAddress, _tokenName, _tokenSymbol, _decimals);
+        SaleInterface(_saleAddress).constructor(_owner, _tokenAddress, _totalSupplyCap, _retainedByCompany, _walletAddress, nousTokenAddress);
 
-        address _addr = clone(defaultContracts["sample_tokens"].addr);
-        SampleCrowdsaleTokenInterface.constructor(_owner, _tokenName, _tokenSymbol, _decimals);
+        FundInterface(_fundAddr).addToken(_tokenSymbol, _tokenAddress);
 
-        //address _newCompAddr = new SampleCrowdsaleToken(_owner, _tokenName, _tokenSymbol, _decimals);
-        //bytes32 tknSymbol = Utils.stringToBytes32(_tokenSymbol);
+        bytes32 _tknSymbol = Utils.stringToBytes32(_tokenSymbol);
+        funds[_fundAddr].childFundContracts[_tknSymbol] = _tokenAddress;
+        funds[_fundAddr].indexChild.push(_tknSymbol);
 
-        FundInterface(_fundAddr).addToken(_tokenSymbol, _addr);
-        funds[_fundAddr].childFundContracts[tknSymbol] = _newCompAddr;
-        funds[_fundAddr].indexChild.push(tknSymbol);
-
-        CreateToken(_owner, _newCompAddr, _tokenName);
-        return _newCompAddr;
+        CreateToken(_owner, _tokenAddress, _tokenName);
+        return _tokenAddress;
     }
 
     /**
@@ -114,19 +110,14 @@ contract NOUSManager is Ownable {
         address _fundAddr = clone(fundClone.addr);
 
         FundInterface(_fundAddr).constructor(_owner, _fundName, _fundType);
-        //address _fundAddr = new Fund(_newOwner, nousTokenAddress, _fundName);
-
         ownerFundIndex[_owner] = fundsIndex.push(_fundAddr) - 1;
         // current length array
         CreateFund(_owner, _fundAddr, _fundName);
-
         FundStructure memory newFund;
         newFund.fundName = _fundName;
         newFund.index = ownerFundIndex[_owner];
-        // index = lenght - 1
         funds[_fundAddr] = newFund;
 
-        //createToken(_newOwner, _tokenName, _tokenSymbol, _decimals);
         return _fundAddr;
     }
 

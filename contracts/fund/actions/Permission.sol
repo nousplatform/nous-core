@@ -10,9 +10,9 @@ contract Permission is FundManagerBase {
 
     bool public fundLocked = false;
 
-    function fundStatus() external returns(bool) {
+    /*function fundStatus() public returns(bool) {
         return fundLocked;
-    }
+    }*/
 
     function lockUnlockFund() external {
         require(checkPermission("owner"));
@@ -31,7 +31,7 @@ contract Permission is FundManagerBase {
     }
 
     function checkPermission(bytes32 _role) internal returns (bool) {
-        if (ContractProvider(DOUG).fundStatus() == true) return false;
+        if (fundLocked == true) return false;
 
         address permdb = getContractAddress("permission_db");
         return PermissionProvider(permdb).getPermission(_role, msg.sender);

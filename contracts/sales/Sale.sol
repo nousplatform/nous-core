@@ -4,36 +4,36 @@ pragma solidity ^0.4.18;
 import "./BaseSaleAgent.sol";
 import "./TGESchedule.sol";
 import "../token/SampleCrowdsaleToken.sol";
-import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "../base/Construct.sol";
-//import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 //"0x7204b06b4c344bd969457462f4d9e933650049c0"10000,1,3,1518190980,1518196200,7400
 
-contract Sale is BaseSaleAgent, Construct, Doug {
 
-    modifier(bytes32  uint256)
+contract Sale is BaseSaleAgent, Construct, TGESchedule {
 
-    function constructor(address _sampleCrowdsaleTokenAddress, uint256 _totalSupplyCap, uint256 _retainedByCompany, address _walletAddress, address _nousToken) onConstructor {
+    function constructor(
+        address _owner,
+        address _tokenAddress,
+        uint256 _totalSupplyCap,
+        uint256 _retainedByCompany,
+        address _walletAddress,
+        address _nousToken
+    ) onConstructor {
         require(_totalSupplyCap > 0);
         require(_retainedByCompany > 0);
+        require(owner != 0x0);
         require(walletAddress != 0x0);
 
-        TGEScheduleAddress = new TGESchedule();
-        sampleCrowdsaleTokenAddress = _sampleCrowdsaleTokenAddress;
-
-        walletAddress = _walletAddress;
+        owner = _owner;
+        tokenAddress = _tokenAddress;
         totalSupplyCap = _totalSupplyCap;
         retainedByCompany = _retainedByCompany;
+        walletAddress = _walletAddress;
         nousToken = _nousToken;
     }
 
     function() external payable {
         revert();
-    }
-
-    function bayToken(uint256 _amount, uint256 _rate) internal returns(bool) {
-        uint256 _totalAmount = TGESchedule(TGEScheduleAddress).getBonusRate(_amount, _rate);
-        //assert(totalSupplyCap.add(_totalAmount) <= );
     }
 
     /**
@@ -55,12 +55,12 @@ contract Sale is BaseSaleAgent, Construct, Doug {
         // how many coins we are allowed to spend
         if (amount >= _value) {
             if (nt.transferFrom(_from, this, _value)) {
-                uint256 _totalAmount = TGESchedule(TGEScheduleAddress).getBonusRate(_value, currentSaleAgent.rate);
+                uint256 _totalAmount = getBonusRate(_value, currentSaleAgent.rate);
 
                 assert(nt.totalSupply().add(_totalAmount) <= totalSupplyCap);
                 assert(currentSaleAgent.tokensMinted.add(_totalAmount) <= currentSaleAgent.tokensLimit);
 
-                SampleCrowdsaleToken(sampleCrowdsaleTokenAddress).mint(_from, _totalAmount);
+                SampleCrowdsaleToken(tokenAddress).mint(_from, _totalAmount);
                 currentSaleAgent.tokensMinted = currentSaleAgent.tokensMinted.add(_totalAmount);
 
                 nt.transfer(walletAddress, _value); // send nous token to wallet

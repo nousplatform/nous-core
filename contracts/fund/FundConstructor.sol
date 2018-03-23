@@ -21,8 +21,6 @@ contract FundConstructor is OwnableFunds, Construct, DougDb, TokensDb {
 
     //uint256 public initCapCAP;
 
-    //address public receiveTokenAddress;
-
     // When adding a contract.
     event AddContract(address indexed caller, bytes32 indexed name, uint16 indexed code);
     // When removing a contract.
@@ -42,10 +40,15 @@ contract FundConstructor is OwnableFunds, Construct, DougDb, TokensDb {
         //receiveTokenAddress = _receiveTokenAddress;
     }
 
-    /*function setReceiveTokenAddress(address _addr) public onlyNous allowedUpdateContracts {
-        require(_addr != 0x0);
-        receiveTokenAddress = _addr;
-    }*/
+    function addToken(string _tokenSymbol, address _tokenAddress) public onlyNous returns(bool) {
+        require(_tokenAddress != 0x0);
+        require(!isToken(_tokenAddress));
+
+        Token memory token = tokens[_tokenAddress];
+        token.tokenSymbol = _tokenSymbol;
+        token.index = tokenIndex.push(_tokenAddress) - 1;
+        return true;
+    }
 
     /**
      * Add a new contract to Doug. This will overwrite an existing contract.

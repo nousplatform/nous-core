@@ -1,8 +1,12 @@
 pragma solidity ^0.4.18;
 
 
+import "../interfaces/ContractProvider.sol";
+
+
 // Base class for contracts that are used in a doug system.
 contract DougEnabled {
+
     address DOUG;
 
     function setDougAddress(address dougAddr) public returns (bool result) {

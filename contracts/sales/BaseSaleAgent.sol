@@ -1,11 +1,10 @@
 pragma solidity ^0.4.18;
 
-import "zeppelin-solidity/contracts/ownership/Ownable.sol";
-//import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
-//import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
-//import "../token/SampleCrowdsaleToken.sol";
 
+import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
+import "../fund/base/DougEnabled.sol";
+//import "../token/SampleCrowdsaleToken.sol";
 
 contract BaseSaleAgent is Ownable {
 
@@ -15,8 +14,7 @@ contract BaseSaleAgent is Ownable {
     bool finalizeICO = false;
     address public walletAddress; // address for transfer NST token
     address public nousToken; // NST address
-    address public TGEScheduleAddress;
-    address public sampleCrowdsaleTokenAddress;
+    address public tokenAddress;
 
     uint256 public totalSupplyCap; // 777 Million tokens Capitalize max count NOUS tokens TODO once
     uint256 public retainedByCompany; // percent maining tokens TODO once

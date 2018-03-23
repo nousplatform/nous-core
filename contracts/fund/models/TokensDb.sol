@@ -10,21 +10,12 @@ contract TokensDb {
 
     mapping (address => Token) tokens;
 
-    address[] private tokenIndex;
+    address[] internal tokenIndex;
 
     // validate if wallet exists
-    function isToken(address _tokenAddress) public returns (bool) {
+    function isToken(address _tokenAddress) internal returns (bool) {
         if (tokenIndex.length == 0) return false;
         return tokenIndex[tokens[_tokenAddress].index] == _tokenAddress; // address is exists
     }
 
-    function addToken(string _tokenSymbol, address _tokenAddress) public returns(bool) {
-        require(_tokenAddress != 0x0);
-        require(!isToken(_tokenAddress));
-
-        Token memory token = tokens[_tokenAddress];
-        token.tokenSymbol = _tokenSymbol;
-        token.index = tokenIndex.push(_tokenAddress) - 1;
-        return true;
-    }
 }
