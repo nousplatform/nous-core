@@ -4,7 +4,7 @@ pragma solidity ^0.4.18;
 contract TokensDb {
 
     struct Token {
-        string tokenSymbol;
+        bytes32 tokenSymbol;
         uint256 index;
     }
 

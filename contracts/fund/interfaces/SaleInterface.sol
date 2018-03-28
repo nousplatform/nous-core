@@ -9,5 +9,5 @@ contract SaleInterface {
         uint256 _retainedByCompany,
         address _walletAddress,
         address _nousToken
-    );
+    ) public;
 }

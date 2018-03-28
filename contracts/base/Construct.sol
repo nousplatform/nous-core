@@ -12,5 +12,5 @@ contract Construct {
     }
 
     //if constructor call first line must be super.constructor();
-    function constructor() {}
+    function constructor() onConstructor {}
 }

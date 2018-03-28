@@ -9,27 +9,29 @@ import "../base/Construct.sol";
 //"0x7204b06b4c344bd969457462f4d9e933650049c0"10000,1,3,1518190980,1518196200,7400
 
 
-contract Sale is BaseSaleAgent, Construct, TGESchedule {
+contract Sale is BaseSaleAgent, TGESchedule, Construct {
 
-    function constructor(
+    function Sale(
         address _owner,
-        address _tokenAddress,
         uint256 _totalSupplyCap,
         uint256 _retainedByCompany,
         address _walletAddress,
-        address _nousToken
-    ) onConstructor {
+        address _nousToken,
+        string _name, string _symbol, uint8 _decimals
+    ) {
+        require(_owner != 0x0);
         require(_totalSupplyCap > 0);
         require(_retainedByCompany > 0);
-        require(owner != 0x0);
-        require(walletAddress != 0x0);
+        require(_walletAddress != 0x0);
+        require(_nousToken != 0x0);
 
         owner = _owner;
-        tokenAddress = _tokenAddress;
+        tokenAddress = new SampleCrowdsaleToken(_name, _symbol, _decimals);
         totalSupplyCap = _totalSupplyCap;
         retainedByCompany = _retainedByCompany;
         walletAddress = _walletAddress;
         nousToken = _nousToken;
+
     }
 
     function() external payable {

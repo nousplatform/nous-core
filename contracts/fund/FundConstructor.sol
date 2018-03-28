@@ -40,7 +40,7 @@ contract FundConstructor is OwnableFunds, Construct, DougDb, TokensDb {
         //receiveTokenAddress = _receiveTokenAddress;
     }
 
-    function addToken(string _tokenSymbol, address _tokenAddress) public onlyNous returns(bool) {
+    function addToken(bytes32 _tokenSymbol, address _tokenAddress) public onlyNous returns(bool) {
         require(_tokenAddress != 0x0);
         require(!isToken(_tokenAddress));
 
