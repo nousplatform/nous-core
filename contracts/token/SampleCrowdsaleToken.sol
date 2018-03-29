@@ -5,6 +5,7 @@ import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/
 import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/PausableToken.sol";
 //import "../base/Construct.sol";
 import "../sales/Sale.sol";
+import "./InvestorsCounter.sol";
 
 
 /**
@@ -12,7 +13,7 @@ import "../sales/Sale.sol";
  * @dev Very simple ERC20 Token that can be minted.
  * It is meant to be used in a crowdsale contract.
  */
-contract SampleCrowdsaleToken is MintableToken, PausableToken {
+contract SampleCrowdsaleToken is MintableToken, PausableToken, InvestorsCounter {
 
     bool private constructorCall = false;
     string public name;
@@ -39,6 +40,24 @@ contract SampleCrowdsaleToken is MintableToken, PausableToken {
     function pause() public onlyOwner whenNotPaused {
         require(mintingFinished == false);
         super.pause();
+    }
+
+    function mint(address _to, uint256 _amount) onlyOwner canMint public returns (bool) {
+        super.mint(_to, _amount);
+        investorsCheck(_to);
+        return true;
+    }
+
+    function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
+        super.transferFrom(_from, _to, _value);
+        investorsCheck(_to);
+        return true;
+    }
+
+    function transfer(address _to, uint256 _value) public returns (bool) {
+        super.transfer(_to, _value);
+        investorsCheck(_to);
+        return true;
     }
 
 }
