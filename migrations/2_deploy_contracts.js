@@ -19,36 +19,41 @@ const Sale = artifacts.require("./Sale.sol");
 
 module.exports = async function(deployer) {
 
-  //deployer.deploy(NOUSManager)
+  //deployer.deploy(NOUSManager);
+  let nousManager = await NOUSManager.deployed();
 
-  deployer.then(function () {
-      return NOUSManager.new();
-  })
-    .then(function(NOUSManager) {
 
-      Promise.all(
-        [
-          FundManager.new(),
-          FundConstructor.new(),
-          InvestorDb.new(),
-          TokensDb.new(),
-          PermissionDb.new(),
-          WalletDb.new(),
-        ]
-      )
-        .then(instances => {
-          console.log("NOUSManager", NOUSManager.address);
-          console.log("FundManager:", instances[0].address);
-          console.log("FundConstructor:", instances[1].address);
-          console.log("InvestorDb:", instances[2].address);
-          console.log("TokensDb:", instances[3].address);
-          console.log("PermissionDb:", instances[4].address);
-          console.log("WalletDb:", instances[5].address);
+  console.log("nousManager", nousManager);
 
-          NOUSManager.addContract([,"fund_manager","fund_constructor","investors_db","tokens_db","permission_db","wallet_db"],
-            [instances[0].address, instances[1].address, instances[2].address,instances[3].address, instances[4].address, ]);
-        })
-    })
+
+  // deployer.then(function () {
+  //     return NOUSManager.new();
+  // })
+  //   .then(function(NOUSManager) {
+  //
+  //     Promise.all(
+  //       [
+  //         FundManager.new(),
+  //         FundConstructor.new(),
+  //         InvestorDb.new(),
+  //         TokensDb.new(),
+  //         PermissionDb.new(),
+  //         WalletDb.new(),
+  //       ]
+  //     )
+  //       .then(instances => {
+  //         console.log("NOUSManager", NOUSManager.address);
+  //         console.log("FundManager:", instances[0].address);
+  //         console.log("FundConstructor:", instances[1].address);
+  //         console.log("InvestorDb:", instances[2].address);
+  //         console.log("TokensDb:", instances[3].address);
+  //         console.log("PermissionDb:", instances[4].address);
+  //         console.log("WalletDb:", instances[5].address);
+  //
+  //         NOUSManager.addContract([,"fund_manager","fund_constructor","investors_db","tokens_db","permission_db","wallet_db"],
+  //           [instances[0].address, instances[1].address, instances[2].address,instances[3].address, instances[4].address, ]);
+  //       })
+  //   })
 };
 
 
@@ -59,10 +64,6 @@ module.exports = async function(deployer) {
 // ManagerDb: 0xdd856a77a8c63e0cf31c3ff182f0e09c0fab171d
 // PermissionDb: 0xda6fa3801d5cb61b2f3102baac0e6c86e7500bd8
 // WalletDb: 0xe449e9f0de6e2f83dfd2026bbe304bca4abee1d9
-
-
-
-
 
 // NOUSManager: 0x4ba855172161f598d2a8a1e949f346d10a68a48e
 
@@ -81,16 +82,12 @@ module.exports = async function(deployer) {
 // ["investor_db","manager_db"],["0xef55bfac4228981e850936aaf042951f7b146e41","0xdc04977a2078c8ffdf086d618d1f961b6c546222"]
 
 
-//NOUSManager: 0x41091e367eb324be6880336f80e18a4524f88d6b
-//
+// NOUSManager: 0x41091e367eb324be6880336f80e18a4524f88d6b
 // FundManager: 0xe597a3db61dd2cdf4dbb0e113878fc207e91c5da
 // InvestorDb: 0x98d3bee26c28a820947ec81e1842a8200ebbd3c4
 // ManagerDb: 0x4b1ba8f64de4c15c065aef18774b957facfd0301
 // PermissionDb: 0xd3469e9a982cdb4d85961c4a1b09224652c46d89
 // WalletDb: 0xe386c3845f45a69e0489cf4a0dbe5132bbee8a3d
-//
-//
-
 
 
 //
