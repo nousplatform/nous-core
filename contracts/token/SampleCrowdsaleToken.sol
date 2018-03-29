@@ -20,8 +20,8 @@ contract SampleCrowdsaleToken is MintableToken, PausableToken, InvestorsCounter 
     string public symbol;
     uint8 public decimals;
 
-    function SampleCrowdsaleToken(string _name, string _symbol, uint8 _decimals) {
-        //owner = _owner;
+    function SampleCrowdsaleToken(address _owner, string _name, string _symbol, uint8 _decimals) {
+        owner = _owner;
         name = _name;
         symbol = _symbol;
         decimals = _decimals;

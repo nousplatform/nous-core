@@ -16,8 +16,8 @@ contract Sale is BaseSaleAgent, TGESchedule, Construct {
         uint256 _totalSupplyCap,
         uint256 _retainedByCompany,
         address _walletAddress,
-        address _nousToken,
-        string _name, string _symbol, uint8 _decimals
+        address _nousToken //,
+//        string _name, string _symbol, uint8 _decimals
     ) {
         require(_owner != 0x0);
         require(_totalSupplyCap > 0);
@@ -31,11 +31,15 @@ contract Sale is BaseSaleAgent, TGESchedule, Construct {
         retainedByCompany = _retainedByCompany;
         walletAddress = _walletAddress;
         nousToken = _nousToken;
-
     }
 
     function() external payable {
         revert();
+    }
+
+    function setTokenAddress(address _tokenAddress) public onlyOwner {
+        require(_tokenAddress != address(0));
+        tokenAddress = _tokenAddress;
     }
 
     /**
