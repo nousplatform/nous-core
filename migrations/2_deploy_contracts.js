@@ -3,15 +3,21 @@
 //var ContractProvider = artifacts.require("./ContractProvider.sol");
 
 var NOUSManager = artifacts.require("./NOUSManager.sol");
-var FundManager = artifacts.require("./FundManager.sol");
+var FundConstructor = artifacts.require("./FundConstructor.sol");
+var FundManager = artifacts.require("./FundConstructor.sol");
+
 //models
 var InvestorDb = artifacts.require("./InvestorDb.sol");
-var ManagerDb = artifacts.require("./ManagerDb.sol");
+var TokensDb = artifacts.require("./TokensDb.sol");
 var PermissionDb = artifacts.require("./PermissionDb.sol");
 var WalletDb = artifacts.require("./WalletDb.sol");
 
+//tokens
+const Sale = artifacts.require("./Sale.sol");
+const Sale = artifacts.require("./Sale.sol");
 
-module.exports = function(deployer) {
+
+module.exports = async function(deployer) {
 
   //deployer.deploy(NOUSManager)
 
@@ -23,8 +29,9 @@ module.exports = function(deployer) {
       Promise.all(
         [
           FundManager.new(),
+          FundConstructor.new(),
           InvestorDb.new(),
-          ManagerDb.new(),
+          TokensDb.new(),
           PermissionDb.new(),
           WalletDb.new(),
         ]
@@ -32,13 +39,14 @@ module.exports = function(deployer) {
         .then(instances => {
           console.log("NOUSManager", NOUSManager.address);
           console.log("FundManager:", instances[0].address);
-          console.log("InvestorDb:", instances[1].address);
-          console.log("ManagerDb:", instances[2].address);
-          console.log("PermissionDb:", instances[3].address);
-          console.log("WalletDb:", instances[4].address);
+          console.log("FundConstructor:", instances[1].address);
+          console.log("InvestorDb:", instances[2].address);
+          console.log("TokensDb:", instances[3].address);
+          console.log("PermissionDb:", instances[4].address);
+          console.log("WalletDb:", instances[5].address);
 
-          NOUSManager.addContract(["investors_db","manager_db","permission_db","wallet_db","fund_manager"],
-            [instances[1].address, instances[2].address,instances[3].address, instances[4].address, instances[0].address]);
+          NOUSManager.addContract([,"fund_manager","fund_constructor","investors_db","tokens_db","permission_db","wallet_db"],
+            [instances[0].address, instances[1].address, instances[2].address,instances[3].address, instances[4].address, ]);
         })
     })
 };
