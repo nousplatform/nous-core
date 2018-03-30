@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
-import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
-import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "zeppelin-solidity/contracts/math/SafeMath.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
 
 contract TGESchedule is Ownable {

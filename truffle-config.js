@@ -1,11 +1,12 @@
 module.exports = {
     networks: {
-        development: {
-            //host: "localhost",
+          development: {
             host: "192.168.88.13",
             port: 8545,
-            network_id: "*" // Match any network id
-        },
+            network_id: "*", // Match any network id
+            gas:   4700000,
+            //from: "0xc2Ddda15f8deB297EB4DE39B82ae0750dF693253",
+          },
         ropsten: {
             host: "192.168.88.11",
             port: 8545,

@@ -4,7 +4,7 @@ pragma solidity ^0.4.18;
 import "./BaseSaleAgent.sol";
 import "./TGESchedule.sol";
 import "../token/SampleCrowdsaleToken.sol";
-import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "../base/Construct.sol";
 //"0x7204b06b4c344bd969457462f4d9e933650049c0"10000,1,3,1518190980,1518196200,7400
 
@@ -26,7 +26,7 @@ contract Sale is BaseSaleAgent, TGESchedule, Construct {
         require(_nousToken != 0x0);
 
         owner = _owner;
-        tokenAddress = new SampleCrowdsaleToken(_name, _symbol, _decimals);
+        //tokenAddress = new SampleCrowdsaleToken(_name, _symbol, _decimals);
         totalSupplyCap = _totalSupplyCap;
         retainedByCompany = _retainedByCompany;
         walletAddress = _walletAddress;
@@ -37,8 +37,8 @@ contract Sale is BaseSaleAgent, TGESchedule, Construct {
         revert();
     }
 
-    function setTokenAddress(address _tokenAddress) public onlyOwner {
-        require(_tokenAddress != address(0));
+    function setTokenAddress(address _tokenAddress) public {
+        require(_tokenAddress != address(0) && tokenAddress == address(0));
         tokenAddress = _tokenAddress;
     }
 

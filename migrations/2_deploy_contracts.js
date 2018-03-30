@@ -14,13 +14,14 @@ var WalletDb = artifacts.require("./WalletDb.sol");
 
 //tokens
 const Sale = artifacts.require("./Sale.sol");
-const Sale = artifacts.require("./Sale.sol");
+
 
 
 module.exports = async function(deployer) {
 
   //deployer.deploy(NOUSManager);
   let nousManager = await NOUSManager.deployed();
+  let Sale = await  Sale.deployed();
 
 
   console.log("nousManager", nousManager);

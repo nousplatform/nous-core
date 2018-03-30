@@ -1,8 +1,8 @@
 pragma solidity ^0.4.18;
 
 
-import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/MintableToken.sol"; //https://github.com/OpenZeppelin/
-import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/PausableToken.sol";
+import "zeppelin-solidity/contracts/token/ERC20/MintableToken.sol"; //
+import "zeppelin-solidity/contracts/token/ERC20/PausableToken.sol";
 //import "../base/Construct.sol";
 import "../sales/Sale.sol";
 import "./InvestorsCounter.sol";

@@ -3,8 +3,8 @@ pragma solidity ^0.4.18;
 
 //import "./fund/Fund.sol";
 import "./lib/Utils.sol";
-import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "./fund/interfaces/SampleCrowdsaleTokenInterface.sol";
 import "./fund/interfaces/SaleInterface.sol";
 import "./fund/interfaces/FundInterface.sol";
