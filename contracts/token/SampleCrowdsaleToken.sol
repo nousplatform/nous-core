@@ -42,21 +42,21 @@ contract SampleCrowdsaleToken is MintableToken, PausableToken, InvestorsCounter 
         super.pause();
     }
 
-    function mint(address _to, uint256 _amount) onlyOwner canMint public returns (bool) {
+    function mint(address _to, uint256 _amount) public onlyOwner canMint  returns (bool) {
         super.mint(_to, _amount);
-        investorsCheck(_to);
+        investorsCheck(0x0, _to);
         return true;
     }
 
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
         super.transferFrom(_from, _to, _value);
-        investorsCheck(_to);
+        investorsCheck(_from, _to);
         return true;
     }
 
     function transfer(address _to, uint256 _value) public returns (bool) {
         super.transfer(_to, _value);
-        investorsCheck(_to);
+        investorsCheck(msg.sender, _to);
         return true;
     }
 

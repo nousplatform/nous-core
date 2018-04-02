@@ -21,7 +21,7 @@ module.exports = async function(deployer) {
 
   //deployer.deploy(NOUSManager);
   let nousManager = await NOUSManager.deployed();
-  let Sale = await  Sale.deployed();
+  let Sale = await Sale.deployed();
 
 
   console.log("nousManager", nousManager);
