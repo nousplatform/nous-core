@@ -4,13 +4,40 @@ var SampleCrowdsaleToken = artifacts.require("./SampleCrowdsaleToken.sol");
 const _nousToken = "0x6142836bbc33a159f2503c132f255caa049392e0";
 
 contract('Sale', function (accounts) {
-  const _owner = accounts[0];
-  const _walletAddress = accounts[9];
 
-  const _totalSupplyCap = 100000;
-  const _retainedByCompany = 100;
+  const saleInitialParams = {
+    _owner: accounts[0],
+    _totalSupplyCap: 100000,
+    _retainedByCompany: 100,
+    _walletAddress: accounts[9],
+    _nousToken: _nousToken
+  }
 
-  it("Deploy set sale contract", async function () {
+  const tokenInitialParams = {
+    _name: "FundTKN",
+    _symbol: "FTK",
+    _decimals: 18
+  }
+
+  let saleInstance;
+  let tokenInstance;
+
+  //create new smart contract instance before each test method
+  beforeEach(async function() {
+    saleInstance = await Sale.new(...Object.values(saleInitialParams));
+    tokenInstance = await SampleCrowdsaleToken.new(saleInstance.address, ...Object.values(tokenInitialParams));
+    await saleInstance.setTokenAddress(tokenInstance.address);
+
+  });
+
+  it("Re sets token address for mining tokens.", async function () {
+    await saleInstance.setTokenAddress(tokenInstance.address, {from: accounts[1]});
+    let tknAddress = await saleInstance.tokenAddress.call();
+
+    assert.equal(tknAddress, tokenInstance.address, "Token address sets is ok");
+    console.log("tknAddress", tknAddress);
+
+    //const token = await SampleCrowdsaleToken.deployed(_owner, "Fund Token", "FTK", 18);
     //const sale = await Sale.deployed(_owner, _totalSupplyCap, _retainedByCompany, _walletAddress, _nousToken);
     //console.log(sale.nousToken.call());
 
@@ -21,32 +48,34 @@ contract('Sale', function (accounts) {
 });
 
 
-//
 // Available Accounts
 // ==================
-// (0) 0x58a87d9035d10d9f8638acb238340e5aaf603b97
-// (1) 0xfc38b8249ea93c9151992026d79243aeb953bad9
-// (2) 0xb46382ea5d205b00272dbb6386f7c82204560853
-// (3) 0x4a6942f87a6fa9ab7f420bdb669c084a364f9021
-// (4) 0x4a1ae0314e86e1f880d35cf2683572fdb7e77a9f
-// (5) 0xd4cd77d62982103ce812b44496450eb5b60ec294
-// (6) 0xbfdb2fec59f0501c7df25d4cb13c7f6352a2806f
-// (7) 0x57afd88b88bb55f10ec1a14e4792a3729686aaf3
-// (8) 0x98421399d5ed3098f4369791858daa75b42fa24a
-// (9) 0x62fd5a9dc2a4a99288c8b4d5b24a75b89eeb8070
+// (0) 0x4d49465620a938bc284755f77b42ab35d294f948
+// (1) 0x8506b359b1c1064c65462a2f214ed618b9391c2d
+// (2) 0xbcf1a63ef49dcafcc79fe3f2a64e8f52eb9520d5
+// (3) 0xba00aee74f75bad6bc7892cf383ad0bb637f8a2e
+// (4) 0x605deddfdc65fed3102f007527ae9df5ab3edf87
+// (5) 0xd1a4c31d83f81b1133d642ce4b69771650dc5acd
+// (6) 0x8ed9b5c61844c06122d3ff2be25aecdf04e93561
+// (7) 0x69f89398be181d804b6b9ed5b74a0db1b4ca8d91
+// (8) 0x5a054b99c53b83f5f9164330c8a44039a8f3a671
+// (9) 0x1c9e03b0a5e44ce3e883e1865728beec2bb6f9ed
 //
 // Private Keys
 // ==================
-// (0) 29c395dab016f4fa03500cb3a80fced07d921db05002d8cc95c0c33fa15d9c64
-// (1) 66bfb4543ad18d2c25d6dba5742a002126fb37fae945d573ab6889cd134bfbb1
-// (2) 673bba0b2a569dd54d7a2aa1eaa775157e7c2bd57630905e1c4715fee9f45622
-// (3) 81699e9a7a521eb32b34b153b3be2d29c945ddb65185c3b208e591bd0f003a07
-// (4) 2550b2d2909cb4729589925a5225bba64828cc2a0aa7150fff201429a41eda13
-// (5) dadfac16a46ed386c5a5e3d86c96d3316ebee3116c5165af5a656edf4700de63
-// (6) 1fe49abff9ca9b0e131afa84c39dd93d7729236a1fb5038a6ad8e26f9a06f873
-// (7) 6a99b73d1db6b46cb3d75a150ebeaec1e2a80bedd869d2e098bf00879a7c49fa
-// (8) c85e171651825bd64ab31e902405238efc08a8ccd3e2e0bd7759b137fb5e6913
-// (9) 745fef3ea995947d0a6dccfb4294bef200084c718ceb84e0fa2ed83bb3ac4559
+// (0) 2c2bb17a588be58fba673214291b29153bef093a93b3c472b878ef862e22a455
+// (1) 837b828b91c7bcb57e4dae3dd7695eabdc7831d126909047624bed40cc827929
+// (2) aefb4298d739a62c54ad02537979c1977410044141d1da92749868d9fe9d8258
+// (3) bfb324cb3fd90f793299aed66d315ed87d93966750be8b84b0238b55c8c61fd5
+// (4) be3bfcc5cd1f0b5fcd2a77fa59484467ded58ec6a500231962146fecd5c653c4
+// (5) 2b11000e8a0661f18f9bca522f2c3d83a9f5df972cfb4f126c082c1c8637893c
+// (6) d2ca1ba820613eadc717c4a6981b84e07cdd46a5fddb7daef3b970005402ed54
+// (7) a8232d869d208c128be02ff13959c8611ead44e1d499b73f612fdd6491b74bf8
+// (8) b985977832a682b71a8efaa76a8583f3f30f4d3de902a284a6023b9ceb91370b
+// (9) 6d37333355d4e4e80e82835a0a6b504b2b7ea48eeb42226f6389b0404cb420de
+//
+// HD Wallet
+
 
 
 

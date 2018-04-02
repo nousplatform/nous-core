@@ -3,7 +3,8 @@ pragma solidity ^0.4.18;
 
 import "./BaseSaleAgent.sol";
 import "./TGESchedule.sol";
-import "../token/SampleCrowdsaleToken.sol";
+//import "../token/SampleCrowdsaleToken.sol";
+import "../fund/interfaces/SampleCrowdsaleTokenInterface.sol";
 import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "../base/Construct.sol";
 //"0x7204b06b4c344bd969457462f4d9e933650049c0"10000,1,3,1518190980,1518196200,7400
@@ -17,7 +18,7 @@ contract Sale is BaseSaleAgent, TGESchedule, Construct {
         uint256 _retainedByCompany,
         address _walletAddress,
         address _nousToken //,
-//        string _name, string _symbol, uint8 _decimals
+        //string _name, string _symbol, uint8 _decimals
     ) {
         require(_owner != 0x0);
         require(_totalSupplyCap > 0);
@@ -26,7 +27,7 @@ contract Sale is BaseSaleAgent, TGESchedule, Construct {
         require(_nousToken != 0x0);
 
         owner = _owner;
-        //tokenAddress = new SampleCrowdsaleToken(_name, _symbol, _decimals);
+        //tokenAddress = new SampleCrowdsaleToken(address(this), _name, _symbol, _decimals);
         totalSupplyCap = _totalSupplyCap;
         retainedByCompany = _retainedByCompany;
         walletAddress = _walletAddress;
@@ -66,7 +67,7 @@ contract Sale is BaseSaleAgent, TGESchedule, Construct {
                 assert(nt.totalSupply().add(_totalAmount) <= totalSupplyCap);
                 assert(currentSaleAgent.tokensMinted.add(_totalAmount) <= currentSaleAgent.tokensLimit);
 
-                SampleCrowdsaleToken(tokenAddress).mint(_from, _totalAmount);
+                SampleCrowdsaleTokenInterface(tokenAddress).mint(_from, _totalAmount);
                 currentSaleAgent.tokensMinted = currentSaleAgent.tokensMinted.add(_totalAmount);
 
                 nt.transfer(walletAddress, _value); // send nous token to wallet
