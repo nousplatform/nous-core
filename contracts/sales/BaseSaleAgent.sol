@@ -24,6 +24,8 @@ contract BaseSaleAgent is Ownable {
     uint256 public vestingPeriodOwners; // date period blocked tokens by owner TODO changed to finalize
     //uint256 public percentageOfCompany; // type sequrity
 
+    bool constructorCall = false;
+
     struct SalesAgent {
         uint256 tokensLimit; // The maximum amount of tokens this sale contract is allowed to distribute
         uint256 minDeposit; // TODO какой депозит The minimum deposit amount allowed
