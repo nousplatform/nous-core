@@ -1,6 +1,5 @@
-const web3 = require("web3");
+//const web3 = require("web3");
 
-var Sale = artifacts.require("./Sale.sol");
 var SampleCrowdsaleToken = artifacts.require("./SampleCrowdsaleToken.sol");
 
 const _nousToken = "0x6142836bbc33a159f2503c132f255caa049392e0";

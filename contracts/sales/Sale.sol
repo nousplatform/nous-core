@@ -16,31 +16,26 @@ contract Sale is BaseSaleAgent, TGESchedule {
         uint256 _totalSupplyCap,
         uint256 _retainedByCompany,
         address _walletAddress,
-        address _nousToken
+        address _nousToken,
+        address _tokenAddress
     ) {
         require(_owner != 0x0);
         require(_totalSupplyCap > 0);
         require(_retainedByCompany > 0);
         require(_walletAddress != 0x0);
         require(_nousToken != 0x0);
+        require(_tokenAddress != 0x0);
 
         owner = _owner;
         totalSupplyCap = _totalSupplyCap;
         retainedByCompany = _retainedByCompany;
         walletAddress = _walletAddress;
         nousToken = _nousToken;
+        tokenAddress = _tokenAddress;
     }
 
     function() external payable {
         revert();
-    }
-
-    function constructor(address _tokenAddress) public {
-        require(!constructorCall);
-        require(_tokenAddress != address(0));
-
-        constructorCall = true;
-        tokenAddress = _tokenAddress;
     }
 
     /**
@@ -53,11 +48,11 @@ contract Sale is BaseSaleAgent, TGESchedule {
     function receiveApproval(address _from, uint256 _value, address _tknAddress, bytes _extraData)
     public returns (bool) {
         SalesAgent memory currentSaleAgent = salesAgents[salesAgents.length - 1];
-        require(currentSaleAgent.isFinalized == false && now > currentSaleAgent.startTime && now < currentSaleAgent.endTime);
+        require(finalizeICO == false && now > currentSaleAgent.startTime && now < currentSaleAgent.endTime);
         require(_value > 0 && currentSaleAgent.minDeposit >= _value && currentSaleAgent.maxDeposit < _value);
-        require(_from != 0x0 && _tknAddress == nousToken && _value > 0);
+        require(_from != 0x0 && msg.sender == nousToken);
 
-        ERC20 nt = ERC20(_tknAddress);
+        ERC20 nt = ERC20(nousToken); //_tknAddress
         uint256 amount = nt.allowance(_from, this);
         // how many coins we are allowed to spend
         if (amount >= _value) {

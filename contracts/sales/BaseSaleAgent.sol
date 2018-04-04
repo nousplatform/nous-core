@@ -24,8 +24,6 @@ contract BaseSaleAgent is Ownable {
     uint256 public vestingPeriodOwners; // date period blocked tokens by owner TODO changed to finalize
     //uint256 public percentageOfCompany; // type sequrity
 
-    bool constructorCall = false;
-
     struct SalesAgent {
         uint256 tokensLimit; // The maximum amount of tokens this sale contract is allowed to distribute
         uint256 minDeposit; // TODO какой депозит The minimum deposit amount allowed
@@ -34,7 +32,7 @@ contract BaseSaleAgent is Ownable {
         uint256 endTime; // The end time from unix format when to finish minting tokens
         uint256 rate; // default rate
         uint256 tokensMinted; // The current amount of tokens minted by this agent
-        bool isFinalized; // Has this sales contract been completed and the ether sent to the deposit address?
+        //bool isFinalized; // Has this sales contract been completed and the ether sent to the deposit address?
         bool exists; // Check to see if the mapping exists
     }
 
@@ -64,6 +62,7 @@ contract BaseSaleAgent is Ownable {
         require(_tokensLimit > 0); // Must have some available tokens
         require(_maxDeposit > _minDeposit); // Make sure the min deposit is less than or equal to the max
         require(_endTime > _startTime);
+        require(_rate > 0);
 
         SalesAgent memory newSalesAgent;
         newSalesAgent.tokensLimit = _tokensLimit * EXPONENT;
@@ -74,6 +73,38 @@ contract BaseSaleAgent is Ownable {
         newSalesAgent.rate = _rate;
         newSalesAgent.exists = true;
         salesAgents.push(newSalesAgent);
+    }
+
+    function getSaleAgents() public constant
+    returns(
+        uint256[] memory _tokensLimit,
+        uint256[] memory _minDeposit,
+        uint256[] memory _maxDeposit,
+        uint256[] memory _startTime,
+        uint256[] memory _endTime,
+        uint256[] memory _rate,
+        uint256[] memory _tokensMinted
+    )
+    {
+        uint256 _length = salesAgents.length;
+        _tokensLimit = new uint256[](_length);
+        _minDeposit = new uint256[](_length);
+        _maxDeposit = new uint256[](_length);
+        _startTime = new uint256[](_length);
+        _endTime = new uint256[](_length);
+        _rate = new uint256[](_length);
+        _tokensMinted = new uint256[](_length);
+
+        for (uint256 i; i < _length; i++) {
+            _tokensLimit[i] = salesAgents[i].tokensLimit;
+            _minDeposit[i] = salesAgents[i].minDeposit;
+            _maxDeposit[i] = salesAgents[i].maxDeposit;
+            _startTime[i] = salesAgents[i].startTime;
+            _endTime[i] = salesAgents[i].endTime;
+            _rate[i] = salesAgents[i].rate;
+            _tokensMinted[i] = salesAgents[i].tokensMinted;
+        }
+        //return (_investors, _balances);
     }
 
     //@dev you may redefined this function, but coll method super

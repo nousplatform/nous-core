@@ -2,14 +2,14 @@ pragma solidity ^0.4.18;
 
 
 import "./models/DougDb.sol";
-import "./models/TokensDb.sol";
+import "./models/ICODb.sol";
 import "./base/DougEnabled.sol";
 import "../base/Construct.sol";
 import "./base/OwnableFunds.sol";
 
 
 // The Doug contract.
-contract FundConstructor is OwnableFunds, Construct, DougDb, TokensDb {
+contract FundConstructor is OwnableFunds, Construct, DougDb, ICODb {
 
     string public fundName;
 
@@ -40,13 +40,14 @@ contract FundConstructor is OwnableFunds, Construct, DougDb, TokensDb {
         //receiveTokenAddress = _receiveTokenAddress;
     }
 
-    function addToken(bytes32 _tokenSymbol, address _tokenAddress) public onlyNous returns(bool) {
+    function addIco(bytes32 _tokenSymbol, address _tokenAddress, address _saleAddress) public onlyNous returns(bool) {
         require(_tokenAddress != 0x0);
         require(!isToken(_tokenAddress));
 
-        Token memory token = tokens[_tokenAddress];
-        token.tokenSymbol = _tokenSymbol;
-        token.index = tokenIndex.push(_tokenAddress) - 1;
+        Token memory _ico = ico[_tokenAddress];
+        _ico.sale = _saleAddress;
+        _ico.tokenSymbol = _tokenSymbol;
+        _ico.index = tokenIndex.push(_tokenAddress) - 1;
         return true;
     }
 

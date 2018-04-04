@@ -6,6 +6,7 @@ import "zeppelin-solidity/contracts/token/ERC20/PausableToken.sol";
 //import "../base/Construct.sol";
 import "../sales/Sale.sol";
 import "./InvestorsCounter.sol";
+//import "../base/DougEnabled.sol";
 
 
 /**
@@ -20,8 +21,7 @@ contract SampleCrowdsaleToken is MintableToken, PausableToken, InvestorsCounter 
     string public symbol;
     uint8 public decimals;
 
-    function SampleCrowdsaleToken(address _owner, string _name, string _symbol, uint8 _decimals) {
-        owner = _owner;
+    function SampleCrowdsaleToken(string _name, string _symbol, uint8 _decimals) {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
