@@ -24,7 +24,7 @@ contract('Token', function (accounts) {
 
   //create new smart contract instance before each test method
   beforeEach(async function() {
-    tokenInstance = await SampleCrowdsaleToken.new(owner, ...Object.values(tokenInitialParams));
+    tokenInstance = await SampleCrowdsaleToken.new(...Object.values(tokenInitialParams));
   });
 
   it("Owner Mining tokens. Total supply cap.", async function () {
@@ -75,7 +75,7 @@ contract('Token', function (accounts) {
     try {
       await tokenInstance.transfer(user_3.address, initialBalances[3], {from: user_1.address});
     } catch (e) {
-      console.log("111", 111);
+      //console.log("111", 111);
       assert.ok(true, e);
     }
 

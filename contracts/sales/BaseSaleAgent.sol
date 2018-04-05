@@ -4,14 +4,14 @@ pragma solidity ^0.4.18;
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "../fund/base/DougEnabled.sol";
-//import "../token/SampleCrowdsaleToken.sol";
+import "../fund/interfaces/SampleCrowdsaleTokenInterface.sol";
 
 contract BaseSaleAgent is Ownable {
 
     using SafeMath for uint256;
     uint8 decimals = 18;
     uint256 EXPONENT = 10 ** uint256(decimals); // 18
-    bool finalizeICO = false;
+    bool public finalizeICO = false;
     address public walletAddress; // address for transfer NST token
     address public nousToken; // NST address
     address public tokenAddress;
@@ -111,6 +111,7 @@ contract BaseSaleAgent is Ownable {
     function finalise() public onlyOwner {
         require(finalizeICO == false);
         finalizeICO = true;
+        SampleCrowdsaleTokenInterface(tokenAddress).finishMinting();
     }
 
     /*function availabilityCheckPurchase(SalesAgent _saleAgent) public constant returns (bool) {

@@ -1,5 +1,6 @@
 pragma solidity ^0.4.18;
 
+
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
@@ -27,14 +28,39 @@ contract TGESchedule is Ownable {
 
     BonusStruct[] public bonuses;
 
-    function setBonus(uint256 _startTimestamp, uint256 _endTimestamp, TypeBonus _type) public onlyOwner returns(uint256) {
-        require(_endTimestamp < _startTimestamp);
-
+    /**
+    * @dev add bonuses
+    * @param _startTimestamp : timestamp : start time bonus
+    * @param _endTimestamp : timestamp : end time bonus
+    * @param _type : 0|1 : Type bonus {Bonus, Discount}
+    */
+    function addBonus(uint256 _startTimestamp, uint256 _endTimestamp, TypeBonus _type)
+    public onlyOwner returns(uint256) {
+        require(_startTimestamp < _endTimestamp);
         BonusStruct memory newBonusStruct;
         newBonusStruct.startTimestamp = _startTimestamp;
         newBonusStruct.endTimestamp = _endTimestamp;
         newBonusStruct._type = _type;
         return bonuses.push(newBonusStruct);
+    }
+
+    function updateBonus(uint256 _id, uint256 _startTimestamp, uint256 _endTimestamp, TypeBonus _type)
+    public onlyOwner returns(bool) {
+        require(_id > 0);
+        require(_startTimestamp < _endTimestamp);
+
+        bonuses[_id-1].startTimestamp = _startTimestamp;
+        bonuses[_id-1].endTimestamp = _endTimestamp;
+        bonuses[_id-1]._type = _type;
+    }
+
+    function deleteBonus(uint256 _id) public onlyOwner returns(bool) {
+        require(_id > 0);
+        uint256 _index = _id - 1;
+        BonusStruct memory replacement = bonuses[bonuses.length - 1];
+        bonuses[_index] = replacement;
+        bonuses.length -= 1;
+        return true;
     }
 
     function addUpdateBonusPricing(uint256 _bonusID, uint256 _priceRateID, uint256 _minPrice, uint256 _maxPrice, uint256 _bonusRate)
@@ -85,7 +111,7 @@ contract TGESchedule is Ownable {
         return totalAmount;
     }
 
-    function getAllPeriodsBonuses() public constant
+    function getAllPeriodsBonuses() public view
     returns(uint256[] memory _startTimestamps, uint256[] memory _endTimestamps, TypeBonus[] memory _types, uint256[] _ids) {
         uint256 _length =  bonuses.length;
         _startTimestamps = new uint256[](_length);
