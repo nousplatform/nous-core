@@ -17,7 +17,7 @@ contract BaseSaleAgent is Ownable {
     address public tokenAddress;
 
     uint256 public totalSupplyCap; // 777 Million tokens Capitalize max count NOUS tokens TODO once
-    uint256 public retainedByCompany; // percent maining tokens TODO once
+    uint256 public retainedByCompany; // percent retained tokens by mining  TODO once
     bytes32[] public issuingJurisdiction; // only for qualification investors TODO changed
     bytes32[] public investorsAccredited; // TODO changed
     //uint256 public vestingPeriod; // date period blocked tokens

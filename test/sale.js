@@ -35,7 +35,7 @@ contract('Sale', function (accounts) {
   const bonusInitialParams = [
     {
       _startTimestamp: moment().format("X"),
-      _endTimestamp: moment().add(1, 'days').format("X"),
+      _endTimestamp: moment().add(5, 's').format("X"),
       _type: 0
     },
     {
@@ -43,6 +43,11 @@ contract('Sale', function (accounts) {
       _startTimestamp: moment().add(2, 'days').format("X"),
       _endTimestamp: moment().add(3, 'days').format("X"),
       _type: 0
+    },
+    {
+      _startTimestamp: moment().add(3, 'days').format("X"),
+      _endTimestamp: moment().add(4, 'days').format("X"),
+      _type: 1
     }
   ]
 
@@ -52,18 +57,32 @@ contract('Sale', function (accounts) {
       _priceRateID: 0, // id 1
       _minPrice: 1,
       _maxPrice: 10,
-      _bonusRate: 2
+      _bonusRatePercent: 10
     },{
       _bonusID: 1,
       _priceRateID: 1, // for update id 1
       _minPrice: 1,
-      _maxPrice: 20,
-      _bonusRate: 3
+      _maxPrice: 10,
+      _bonusRatePercent: 20
+    },{
+      _bonusID: 1,
+      _priceRateID: 0, // for update id 1
+      _minPrice: 10,
+      _maxPrice: 30,
+      _bonusRatePercent: 50
     },
+
   ]
 
   let saleInstance;
   let tokenInstance;
+
+  function validate(result, validateParams, num) {
+    for (let i = 0; i < validateParams.length; i++) {
+      //console.log("result[i][num].toNumber()", result[i][num].toNumber());
+      assert.equal( validateParams[i], result[i][num].toNumber());
+    }
+  }
 
   //create new smart contract instance before each test method
   beforeEach(async function () {
@@ -100,57 +119,104 @@ contract('Sale', function (accounts) {
 
   it("Testing CRUD bonuses", async function() {
 
-    function validate(result, validateParams, num) {
-      for (let i = 0; i < validateParams.length; i++) {
-        assert.equal(result[i][num].toNumber(), validateParams[i]);
-      }
-    }
-
+    // add first
     let validateParams = Object.values(bonusInitialParams[0]);
     await saleInstance.addBonus(...validateParams);
     let result = await saleInstance.getAllPeriodsBonuses.call();
     validate(result, validateParams, 0);
 
-     validateParams = Object.values(bonusInitialParams[1]);
-     await saleInstance.updateBonus(...validateParams);
-     result = await saleInstance.getAllPeriodsBonuses.call();
-     validateParams.shift();
+    //update firs
+    validateParams = Object.values(bonusInitialParams[1]);
+    await saleInstance.updateBonus(...validateParams);
+    result = await saleInstance.getAllPeriodsBonuses.call();
+    validateParams.shift();
+    validate(result, validateParams, 0);
 
-     validate(result, validateParams, 0);
-     await saleInstance.deleteBonus(1);
-     result = await saleInstance.getAllPeriodsBonuses.call();
-     assert.equal(result[0].length, 0, "Not Delete");
-     assert.ok(true);
+    //add second
+    validateParams = Object.values(bonusInitialParams[2]);
+    await saleInstance.addBonus(...validateParams);
+    result = await saleInstance.getAllPeriodsBonuses.call();
+    validate(result, validateParams, 1);
+
+    // delete first
+    await saleInstance.deleteBonus(1);
+    result = await saleInstance.getAllPeriodsBonuses.call();
+    assert.equal(result[0].length, 1, "Not Delete");
+
+    assert.ok(true);
   });
 
   it("Add bonus pricing ", async function () {
-    //await saleInstance.addUpdateBonusPricing(...validateParams);
 
+    await saleInstance.addBonus(...Object.values(bonusInitialParams[0]));
+    let validateParams = Object.values(bonusPricingInitialParams[0]);
+
+    //set first percent
+    await saleInstance.addUpdateBonusPricing(...validateParams);
+    let result = await saleInstance.getAllBonusesForPeriod(1);
+    validate(result, validateParams.slice(2), 0);
+
+    //update first params
+    validateParams = Object.values(bonusPricingInitialParams[1]);
+    await saleInstance.addUpdateBonusPricing(...validateParams);
+    result = await saleInstance.getAllBonusesForPeriod(1);
+    validate(result, validateParams.slice(2), 0);
+
+    //add second params
+    validateParams = Object.values(bonusPricingInitialParams[2]);
+    await saleInstance.addUpdateBonusPricing(...validateParams);
+    result = await saleInstance.getAllBonusesForPeriod(1);
+    validate(result, validateParams.slice(2), 1);
+
+    assert.ok(true);
   });
 
-  /*it("Validate token address", async function () {
-    assert.equal(await saleInstance.tokenAddress.call(), tokenInstance.address, "sets is");
-    try {
-      await saleInstance.setParams(accounts[9]);
-      assert.fail();
-    } catch (e) {
-      assert.ok(true);
-    }
-  });*/
+  it("Get bonus rate", async function() {
+    await saleInstance.addBonus(...Object.values(bonusInitialParams[0]));
+    console.log("bonusInitialParams[0]", bonusInitialParams[0]);
 
 
-  /*it("Re sets token address for mining tokens.", async function () {
-    try {
-      await saleInstance.constructor(tokenInstance.address, {from: accounts[1]});
-      return false;
-    } catch(e) {
-      assert.ok(true);
-    }
-  });*/
+    let validateParams = Object.values(bonusPricingInitialParams[0]);
+    console.log("validateParams", validateParams);
 
-  /*it("Sets params for sale agent", async function() {
-    //saleInstance.
-  })*/
+
+    //set first percent
+    await saleInstance.addUpdateBonusPricing(...validateParams);
+    let result = await saleInstance.getAllBonusesForPeriod(1);
+    validate(result, validateParams.slice(2), 0);
+
+    //add second params
+    validateParams = Object.values(bonusPricingInitialParams[2]);
+    await saleInstance.addUpdateBonusPricing(...validateParams);
+    result = await saleInstance.getAllBonusesForPeriod(1);
+    validate(result, validateParams.slice(2), 1);
+
+    const params = [
+      {
+        amount: 20,
+        rate: 5
+      }
+    ];
+
+    let bonuse = new Promise((resolve, reject) => {
+
+      setTimeout(() => {
+        // переведёт промис в состояние fulfilled с результатом "result"
+        resolve(saleInstance.testGetBonusRate(...Object.values(params[0])));
+      }, 2000);
+
+    });
+
+    let b = await bonuse;
+    let summ = params[0].amount * params[0].rate;
+
+    assert.equal(150, b.toNumber(), "Bonus is not correct ");
+    console.log("bonus", b.toNumber());
+
+  })
+
+
+
 
 
 });
