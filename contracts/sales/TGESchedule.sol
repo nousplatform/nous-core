@@ -38,6 +38,11 @@ contract TGESchedule is Ownable {
     function addBonus(uint256 _startTimestamp, uint256 _endTimestamp, TypeBonus _type)
     external onlyOwner returns(uint256) {
         require(_startTimestamp < _endTimestamp);
+
+        if (bonuses.length > 0) {
+            require(bonuses[bonuses.length - 1].endTimestamp >= _startTimestamp);
+        }
+
         BonusStruct memory newBonusStruct;
         newBonusStruct.startTimestamp = _startTimestamp;
         newBonusStruct.endTimestamp = _endTimestamp;
@@ -121,13 +126,13 @@ contract TGESchedule is Ownable {
                 for (uint256 j; j < bonuses[i].indexBonus.length; j++) {
                     if (_amount >= bonuses[i].priceBonus[j].minPrice && _amount < bonuses[i].priceBonus[j].maxPrice) {
                         if (bonuses[i]._type == TypeBonus.Bonus) {
-                            return totalAmount.add(totalAmount.mul(bonuses[i].priceBonus[j].bonusRatePercent).div(100)); // todo умножить на 100
+                            totalAmount = totalAmount.add(totalAmount.mul(bonuses[i].priceBonus[j].bonusRatePercent).div(100)); // todo умножить на 100
                         } else {
                 // скидка высчитывается из rate, потом прибавляется к основному рейту
                 // при этом при высчитывании процента не делиться на 100 так как все числа целые и недопустимы дробные
                 // так же рейт тоже умножаеться на 100. После _amount умножаеться на новый рейт и делиться на 100
                             uint256 percent = _rate.mul(bonuses[i].priceBonus[j].bonusRatePercent); // не делим на 100
-                            return _amount.mul(_rate.mul(100).add(percent)).div(100);
+                            totalAmount = _amount.mul(_rate.mul(100).add(percent)).div(100);
                         }
                     }
                 }
