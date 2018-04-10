@@ -100,6 +100,14 @@ contract TGESchedule is Ownable {
         return getBonusRate(_amount, _rate);
     }
 
+//    function percent(uint numerator, uint denominator, uint precision) public constant returns(uint quotient) {
+//        // caution, check safe-to-multiply here
+//        uint _numerator  = numerator * 10 ** (precision+1);
+//        // with rounding of last digit
+//        uint _quotient =  ((_numerator / denominator) + 5) / 10;
+//        return (_quotient);
+//    }
+
     /**
     * @dev _amount in mul Exponents
     * @param _amount amount tokens Note is big int multiplay to EXPONENT
@@ -107,18 +115,19 @@ contract TGESchedule is Ownable {
     */
     function getBonusRate(uint256 _amount, uint256 _rate) public returns(uint256) {
         uint256 totalAmount = _amount.mul(_rate);
+        //return block.timestamp;
         for (uint256 i = 0; i < bonuses.length; i++) {
             if (now > bonuses[i].startTimestamp && now < bonuses[i].endTimestamp) {
                 for (uint256 j; j < bonuses[i].indexBonus.length; j++) {
                     if (_amount >= bonuses[i].priceBonus[j].minPrice && _amount < bonuses[i].priceBonus[j].maxPrice) {
                         if (bonuses[i]._type == TypeBonus.Bonus) {
-                            totalAmount = totalAmount.add(totalAmount.mul(bonuses[i].priceBonus[j].bonusRatePercent).div(100)); // todo умножить на 100
+                            return totalAmount.add(totalAmount.mul(bonuses[i].priceBonus[j].bonusRatePercent).div(100)); // todo умножить на 100
                         } else {
                 // скидка высчитывается из rate, потом прибавляется к основному рейту
                 // при этом при высчитывании процента не делиться на 100 так как все числа целые и недопустимы дробные
                 // так же рейт тоже умножаеться на 100. После _amount умножаеться на новый рейт и делиться на 100
                             uint256 percent = _rate.mul(bonuses[i].priceBonus[j].bonusRatePercent); // не делим на 100
-                            totalAmount = _amount.mul(_rate.mul(100).add(percent)).div(100);
+                            return _amount.mul(_rate.mul(100).add(percent)).div(100);
                         }
                     }
                 }

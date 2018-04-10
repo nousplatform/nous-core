@@ -45,9 +45,9 @@ contract('Sale', function (accounts) {
       _type: 0
     },
     {
-      _startTimestamp: moment().add(3, 'days').format("X"),
-      _endTimestamp: moment().add(4, 'days').format("X"),
-      _type: 1
+      _startTimestamp: moment().add(5, 's').format("X"),
+      _endTimestamp: moment().add(30, 's').format("X"),
+      _type: 0
     }
   ]
 
@@ -70,6 +70,12 @@ contract('Sale', function (accounts) {
       _minPrice: 10,
       _maxPrice: 30,
       _bonusRatePercent: 50
+    },{
+      _bonusID: 2,
+      _priceRateID: 0,
+      _minPrice: 10,
+      _maxPrice: 30,
+      _bonusRatePercent: 15
     },
 
   ]
@@ -172,12 +178,29 @@ contract('Sale', function (accounts) {
   });
 
   it("Get bonus rate", async function() {
+
+    let indexForFirstValidate = 2;
+    let indexForSecondValidate = 0;
+    let indexForThirdValidate = 3;
+
+    const params = [
+      {
+        amount: 20,
+        rate: 5
+      },
+      {
+        amount: 6,
+        rate: 5
+      }
+    ];
+
     await saleInstance.addBonus(...Object.values(bonusInitialParams[0]));
-    console.log("bonusInitialParams[0]", bonusInitialParams[0]);
+    await saleInstance.addBonus(...Object.values(bonusInitialParams[2]));
 
-
-    let validateParams = Object.values(bonusPricingInitialParams[0]);
-    console.log("validateParams", validateParams);
+    let validateParams = Object.values(bonusPricingInitialParams[indexForSecondValidate]);
+    let test = await saleInstance.getAllPeriodsBonuses();
+    assert.equal(2, test[0].length, "two params period");
+    assert.equal(bonusInitialParams[2]._startTimestamp, test[0][1].toNumber(), "Not valid period");
 
 
     //set first percent
@@ -186,34 +209,60 @@ contract('Sale', function (accounts) {
     validate(result, validateParams.slice(2), 0);
 
     //add second params
-    validateParams = Object.values(bonusPricingInitialParams[2]);
+    validateParams = Object.values(bonusPricingInitialParams[indexForFirstValidate]);
     await saleInstance.addUpdateBonusPricing(...validateParams);
     result = await saleInstance.getAllBonusesForPeriod(1);
     validate(result, validateParams.slice(2), 1);
 
-    const params = [
-      {
-        amount: 20,
-        rate: 5
-      }
-    ];
+    //add third
+    validateParams = Object.values(bonusPricingInitialParams[indexForThirdValidate]);
 
+    await saleInstance.addUpdateBonusPricing(...validateParams);
+    result = await saleInstance.getAllBonusesForPeriod(2);
+
+    validate(result, validateParams.slice(2), 0);
+
+    //// FIRST
     let bonuse = new Promise((resolve, reject) => {
-
       setTimeout(() => {
         // переведёт промис в состояние fulfilled с результатом "result"
         resolve(saleInstance.testGetBonusRate(...Object.values(params[0])));
-      }, 2000);
-
+      }, 1000);
     });
 
     let b = await bonuse;
     let summ = params[0].amount * params[0].rate;
+    let validateSum = ((summ * bonusPricingInitialParams[indexForFirstValidate]._bonusRatePercent) / 100) + summ;
+    assert.equal(validateSum, b.toNumber(), "FIRST Bonus is not correct");
+    //console.log("b.toNumber()", b.toNumber());
 
-    assert.equal(150, b.toNumber(), "Bonus is not correct ");
-    console.log("bonus", b.toNumber());
+    ///// SECOND
+    let b2 = await saleInstance.testGetBonusRate(...Object.values(params[1])); // amount 5
+    summ = params[1].amount * params[1].rate;
+    validateSum = ((summ * bonusPricingInitialParams[indexForSecondValidate]._bonusRatePercent) / 100) + summ;
+    assert.equal(Math.round(validateSum), b2.toNumber(), "Second is not correct");
+    //console.log("b2.toNumber()", b2.toNumber());
 
-  })
+    ///// THIRD
+    let bonuse3 = new Promise((resolve, reject) => {
+      setTimeout(async () => {
+        //console.log("moment().to", moment().format("X"));
+        await saleInstance.addUpdateBonusPricing(...validateParams); // for to
+        resolve(saleInstance.testGetBonusRate(...Object.values(params[0])));
+      }, 6000);
+    });
+
+    //console.log("bonusInitialParams[2]", bonusInitialParams);
+    //console.log("bonusPricingInitialParams[indexForThirdValidate]", bonusPricingInitialParams[indexForThirdValidate]);
+
+    let b3 = await bonuse3;
+    //console.log("b3.toNumber()", b3.toNumber());
+    summ = params[0].amount * params[0].rate;
+    validateSum = ((summ * bonusPricingInitialParams[indexForThirdValidate]._bonusRatePercent) / 100) + summ;
+    //console.log("b3.toNumber()", b3.toNumber());
+    assert.equal(Math.round(validateSum), b3.toNumber(), "Third is not correct");
+
+  });
 
 
 
