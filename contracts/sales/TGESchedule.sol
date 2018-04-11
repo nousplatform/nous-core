@@ -81,7 +81,7 @@ contract TGESchedule is Ownable {
         uint256 _i;
 
         // if price rate id is 0 then create new price perid
-        if (_priceRateID == 0) {
+        if (_priceRateID <= 0) {
             if (bonuses[_bonusIndex].indexBonus.length > 0) {
                 _i = bonuses[_bonusIndex].indexBonus.length;
             } else {
@@ -92,16 +92,35 @@ contract TGESchedule is Ownable {
             _i = _priceRateID - 1;
         }
 
+        require(validateCrossingPricing(_bonusIndex, _minPrice, _maxPrice, _i));
+
         bonuses[_bonusIndex].priceBonus[_i].minPrice = _minPrice;
         bonuses[_bonusIndex].priceBonus[_i].maxPrice = _maxPrice;
         bonuses[_bonusIndex].priceBonus[_i].bonusRatePercent = _bonusRatePercent;
         return true;
     }
 
+    function validateCrossingPricing(uint256 _bonusIndex, uint256 _valueMin, uint256 _valueMax, uint256 iteration)
+    internal returns (bool) {
+        uint256 _length = bonuses[_bonusIndex].indexBonus.length;
+        if (_length > 0) {
+            for (uint256 i = 0; i < _length; i++) {
+                if (iteration != i  && ((bonuses[_bonusIndex].priceBonus[i].minPrice < _valueMin
+                        && _valueMin < bonuses[_bonusIndex].priceBonus[i].maxPrice)
+                    || (bonuses[_bonusIndex].priceBonus[i].minPrice < _valueMax
+                        && _valueMax < bonuses[_bonusIndex].priceBonus[i].maxPrice)
+                    || (bonuses[_bonusIndex].priceBonus[i].minPrice == _valueMin))) {
+                        return false;
+                    }
+            }
+        }
+        return true;
+    }
+
     /**
     * @dev for tests, returns current rate amount
     */
-    function testGetBonusRate(uint256 _amount, uint256 _rate) external constant returns (uint256) {
+    function testGetBonusRate(uint256 _amount, uint256 _rate) external view returns (uint256) {
         return getBonusRate(_amount, _rate);
     }
 
@@ -118,7 +137,7 @@ contract TGESchedule is Ownable {
     * @param _amount amount tokens Note is big int multiplay to EXPONENT
     * @param _rate Rate for token
     */
-    function getBonusRate(uint256 _amount, uint256 _rate) public returns(uint256) {
+    function getBonusRate(uint256 _amount, uint256 _rate) public constant returns(uint256) {
         uint256 totalAmount = _amount.mul(_rate);
         //return block.timestamp;
         for (uint256 i = 0; i < bonuses.length; i++) {

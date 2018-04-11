@@ -42,14 +42,13 @@ contract Sale is BaseSaleAgent, TGESchedule {
     * Get notify in token contracts, only nous token
     * @param _from Sender coins
     * @param _value The max amount they can spend
-    * @param _tknAddress Address token contract, where did the money come from
-    * @param _extraData SomeExtra Information
     */
-    function receiveApproval(address _from, uint256 _value, address _tknAddress, bytes _extraData)
+    function receiveApproval(address _from, uint256 _value)
     public returns (bool) {
         SalesAgent memory currentSaleAgent = salesAgents[salesAgents.length - 1];
         require(finalizeICO == false && now > currentSaleAgent.startTime && now < currentSaleAgent.endTime);
-        require(_value > 0 && currentSaleAgent.minDeposit >= _value && currentSaleAgent.maxDeposit < _value);
+        require(_value > 0 && currentSaleAgent.minDeposit >= _value && currentSaleAgent.maxDeposit <= _value);
+        //return true; todo разабраться с экспонентой
         require(_from != 0x0 && msg.sender == nousToken);
 
         ERC20 nt = ERC20(nousToken); //_tknAddress

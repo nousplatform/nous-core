@@ -1,4 +1,5 @@
 const Sale = artifacts.require("./Sale.sol");
+const NousTokenTest = artifacts.require("./NousTokenTest.sol");
 const SampleCrowdsaleToken = artifacts.require("./SampleCrowdsaleToken.sol");
 const moment = require("moment");
 
@@ -75,6 +76,12 @@ contract('Sale', function (accounts) {
       _priceRateID: 0,
       _minPrice: 10,
       _maxPrice: 30,
+      _bonusRatePercent: 15
+    },{
+      _bonusID: 2,
+      _priceRateID: 0,
+      _minPrice: 30,
+      _maxPrice: 40,
       _bonusRatePercent: 15
     },
 
@@ -247,13 +254,11 @@ contract('Sale', function (accounts) {
     let bonuse3 = new Promise((resolve, reject) => {
       setTimeout(async () => {
         //console.log("moment().to", moment().format("X"));
+        validateParams = Object.values(bonusPricingInitialParams[4]);
         await saleInstance.addUpdateBonusPricing(...validateParams); // for to
         resolve(saleInstance.testGetBonusRate(...Object.values(params[0])));
       }, 6000);
     });
-
-    //console.log("bonusInitialParams[2]", bonusInitialParams);
-    //console.log("bonusPricingInitialParams[indexForThirdValidate]", bonusPricingInitialParams[indexForThirdValidate]);
 
     let b3 = await bonuse3;
     //console.log("b3.toNumber()", b3.toNumber());
@@ -263,6 +268,27 @@ contract('Sale', function (accounts) {
     assert.equal(Math.round(validateSum), b3.toNumber(), "Third is not correct");
 
   });
+
+  it("Test receive approval ", async function () {
+    const nousTokenInstance = await NousTokenTest.new();
+
+    let initialBalances = [1000, 2000, 150, 500];
+
+    const user_1 = {address: accounts[1], balance: 0};
+    const user_2 = {address: accounts[2], balance: 0};
+    const user_3 = {address: accounts[3], balance: 0};
+
+    await nousTokenInstance.mint(user_1.address, initialBalances[0]);
+    user_1.balance = initialBalances[0];
+    await nousTokenInstance.mint(user_2.address, initialBalances[1]);
+    user_2.balance = initialBalances[1];
+    await nousTokenInstance.mint(user_3.address, initialBalances[2]);
+    user_3.balance = initialBalances[2];
+
+    assert.equal(user_1.balance, (await nousTokenInstance.balanceOf(user_1.address)).toNumber(), "Owner is first mining user_1 1000");
+    await nousTokenInstance.approveAndCall(saleInstance.address, 100, {from: user_1.address});
+
+  })
 
 
 
