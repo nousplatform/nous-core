@@ -24,7 +24,6 @@ contract NousTokenTest is MintableToken {
     * @param _value the max amount they can spend in EXPONENTS
     */
     function approveAndCall(address _spender, uint256 _value) public returns (bool) {
-        allowed[msg.sender][_spender] = _value;
         TokenRecipient spender = TokenRecipient(_spender);
         if (approve(_spender, _value)) {
             spender.receiveApproval(msg.sender, _value);

@@ -47,11 +47,10 @@ contract NOUSManager is Ownable {
     event CreateFund(address indexed owner, address indexed fund, string fundName);
     event NewToken(address indexed owner, address indexed token, bytes32 tokenName);
 
-    /*function NOUSManager(address _nousTokenAddress, address _nousCreator) {
-        owner = msg.sender;
+    function NOUSManager(address _nousTokenAddress, address _nousCreator) {
         setNousTokenAddress(_nousTokenAddress);
         setNousCreator(_nousCreator);
-    }*/
+    }
 
     /**
     * @notice Set address NOUS tokens
@@ -102,6 +101,7 @@ contract NOUSManager is Ownable {
         CreateToken(_owner, _tokenAddress, _tokenName);
         return _tokenAddress;
     }*/
+
     /**
     * @notice Create new fund
     * @dev Is caused from a user name
@@ -143,6 +143,7 @@ contract NOUSManager is Ownable {
         }
     }
 
+    // переделать функцию на добавление контрактов пачкой.
     function createComponents(address _fundAddr, uint256 _start, uint256 _end) internal {
         FundInterface fund = FundInterface(_fundAddr);
         for (uint i = _start; i < _end; i++) {

@@ -273,7 +273,7 @@ contract('Sale', function (accounts) {
 
   });
 
-  it("Test receive approval ", async function () {
+  it("Test receive approval bay token as NSU", async function () {
 
     let initialBalances = [1000 * Math.pow(10, 18), 2000 * Math.pow(10, 18) , 150 * Math.pow(10, 18), 500 * Math.pow(10, 18)];
 
@@ -283,8 +283,6 @@ contract('Sale', function (accounts) {
 
     let validateObj = Object.values(saleAgentInitialParams[0]);
     await saleInstance.setParamsSaleAgent(...validateObj);
-    //let _paramsSale = await saleInstance.getSaleAgents();
-    //console.log("_paramsSale", _paramsSale);
 
     await nousTokenInstance.mint(user_1.address, initialBalances[0], {from: accounts[0]});
     user_1.balance = initialBalances[0];

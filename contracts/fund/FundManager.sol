@@ -16,5 +16,4 @@ import "./interfaces/PermissionProvider.sol";
 
 contract FundManager is Wallets, Construct {
 
-
 }

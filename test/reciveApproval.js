@@ -1,18 +1,19 @@
 const moment = require("moment");
 const BigNumber = require('bignumber.js');
+const Web3 = require("web3");
+var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 
 const Sale = artifacts.require("./Sale.sol");
 const NousTokenTest = artifacts.require("./NousTokenTest.sol");
 const SampleCrowdsaleToken = artifacts.require("./SampleCrowdsaleToken.sol");
 
 
-contract('Sale', function (accounts) {
-
-
+contract('Sale', async function (accounts) {
 
   let saleInstance;
   let tokenInstance;
   let nousTokenInstance;
+  console.log('balance', web3.eth.getBalance(accounts[0]));
 
   const saleInitialParams = {
     _owner: accounts[0],
@@ -60,7 +61,7 @@ contract('Sale', function (accounts) {
     let validateObj = Object.values(saleAgentInitialParams[0]);
     await saleInstance.setParamsSaleAgent(...validateObj);
     let _paramsSale = await saleInstance.getSaleAgents();
-    console.log("_paramsSale", _paramsSale);
+    //console.log("_paramsSale", _paramsSale);
 
     await nousTokenInstance.mint(user_1.address, initialBalances[0], {from: accounts[0]});
     user_1.balance = initialBalances[0];

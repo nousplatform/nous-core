@@ -8,7 +8,7 @@ import "./base/OwnableFunds.sol";
 
 
 // The Doug contract.
-contract FundConstructor is OwnableFunds, DougDb, ICODb {
+contract OpenEndedFundConstructor is OwnableFunds, DougDb, ICODb {
 
     string public fundName;
 
@@ -22,15 +22,16 @@ contract FundConstructor is OwnableFunds, DougDb, ICODb {
 
     // When adding a contract.
     event AddContract(address indexed caller, bytes32 indexed name, uint16 indexed code);
+
     // When removing a contract.
     event RemoveContract(address indexed caller, bytes32 indexed name, uint16 indexed code);
 
     event AddToken(address indexed caller, string name, uint16 indexed code);
 
     //, uint256 _initCapNSU, uint256 _initCapCAP
-    function FundConstructor(address _fundOwn, string _fundName, bytes32 _fundType) external
+    function OpenEndedFundConstructor(address _nous, address _fundOwn, string _fundName, bytes32 _fundType) external
     onConstructor {
-        nous = msg.sender;
+        nous = _nous;
         owner = _fundOwn;
         fundName = _fundName;
         fundType = _fundType;
@@ -39,7 +40,7 @@ contract FundConstructor is OwnableFunds, DougDb, ICODb {
         //receiveTokenAddress = _receiveTokenAddress;
     }
 
-    function addIco(bytes32 _tokenSymbol, address _tokenAddress, address _saleAddress) public onlyNous returns(bool) {
+    function addToken(bytes32 _tokenSymbol, address _tokenAddress, address _saleAddress) public onlyNous returns(bool) {
         require(_tokenAddress != 0x0);
         require(!isToken(_tokenAddress));
 
