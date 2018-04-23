@@ -1,39 +1,17 @@
 {
-  "name": "foundmanager4",
+  "name": "nous-core",
   "version": "2.0.0",
-  "description": "Pre beta version, only for review.",
-  "main": "truffle.js",
+  "description": "Nous platform, fund deployer ",
+  "main": "truffle-config.js",
   "directories": {
     "test": "test"
-  },
-  "dependencies": {
-    "bignumber.js": "^6.0.0",
-    "bs58check": "^2.1.0",
-    "doxity": "^1.0.0",
-    "ethereumjs-testrpc": "^6.0.3",
-    "ethereumjs-util": "^5.1.5",
-    "moment": "^2.22.0",
-    "solium": "^1.1.6",
-    "truffle": "^4.1.5",
-    "truffle-contract": "^3.0.4",
-    "vorpal": "^1.12.0",
-    "web3": "^1.0.0-beta.18",
-    "zeppelin-solidity": "1.7.0"
-  },
-  "devDependencies": {
-    "@digix/doxity": "^0.5.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nousplatform/nous-core.git"
-  },
-  "author": "",
+  "author": "Manchenko Valerii",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/nousplatform/nous-core/issues"
-  },
-  "homepage": "https://github.com/nousplatform/nous-core#readme"
+  "dependencies": {
+    "zeppelin-solidity": "^1.8.0"
+  }
 }
