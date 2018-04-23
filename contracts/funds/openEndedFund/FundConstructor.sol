@@ -1,11 +1,11 @@
 pragma solidity ^0.4.18;
 
 
-import "../../doug/models/DougDb.sol";
+import "../../doug/Doug.sol";
 
 
 // The Doug contract.
-contract FundConstructor is DougDb {
+contract FundConstructor is Doug {
 
     address nous;
 

@@ -38,7 +38,7 @@ contract ActionManager is DougEnabled {
     // ever be used. Ever.
     address activeAction;
 
-    uint8 permToLock = 255; // Current max.
+    uint8 permToLock = 255; // Current max. 255
     bool locked;
 
     // Adding a logger here, and not in a separate contract. This is wrong.
@@ -46,12 +46,12 @@ contract ActionManager is DougEnabled {
     uint public nextEntry = 0;
     mapping(uint => ActionLogEntry) public logEntries;
 
-    function ActionManager(){
+    function ActionManager() {
         // permToLock = 255;
     }
 
     function execute(bytes32 actionName, bytes data) returns (bool) {
-        address actionDb = ContractProvider(DOUG).contracts("actiondb");
+        address actionDb = ContractProvider(DOUG).contracts("action_db");
         if (actionDb == 0x0) {
             _log(actionName,false);
             return false;
@@ -60,12 +60,12 @@ contract ActionManager is DougEnabled {
         address actn = ActionDb(actionDb).actions(actionName);
         // If no action with the given name exists - cancel.
         if (actn == 0x0) {
-            _log(actionName,false);
+            _log(actionName, false);
             return false;
         }
 
         // Permissions stuff
-        address pAddr = ContractProvider(DOUG).contracts("perms");
+        address pAddr = ContractProvider(DOUG).contracts("permission_db");
         // Only check permissions if there is a permissions contract.
         if(pAddr != 0x0) {
             PermissionsDb p = PermissionsDb(pAddr);

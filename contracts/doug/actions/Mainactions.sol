@@ -4,17 +4,20 @@ pragma solidity ^0.4.18;
 import "../safety/ActionManagerEnabled.sol";
 import "../safety/Validee.sol";
 import {ActionDbAbstract as ActionDb} from "../models/ActionDb.sol";
-import {DougInterface as Doug} from "../models/DougDb.sol";
+import {DougInterface as Doug} from "../Doug.sol";
 import {ActionManagerInterface as ActionManager} from "../ActionManager.sol";
 import {PermissionsDb as Permissions} from "../models/PermissionsDb.sol";
 
+interface ActionProvider{
+    function setPermission(uint8 permVal) returns (bool);
+}
 
 contract Action is ActionManagerEnabled, Validee {
     // Note auto accessor.
     uint8 public permission;
 
     function setPermission(uint8 permVal) returns (bool) {
-        if(!validate()){
+        if(!validate()) {
             return false;
         }
         permission = permVal;
@@ -41,14 +44,14 @@ contract ActionAddAction is Action {
 contract ActionRemoveAction is Action {
 
     function execute(bytes32 name) returns (bool) {
-        if(!isActionManager()){
+        if(!isActionManager()) {
             return false;
         }
         address adb = ContractProvider(DOUG).contracts("action_db");
-        if(adb == 0x0){
+        if(adb == 0x0) {
             return false;
         }
-        if(name == "add_action"){
+        if(name == "add_action") {
             return false;
         }
         return ActionDb(adb).removeAction(name);
@@ -62,11 +65,11 @@ contract ActionRemoveAction is Action {
 contract ActionLockActions is Action {
 
     function execute() returns (bool) {
-        if(!isActionManager()){
+        if(!isActionManager()) {
             return false;
         }
         address am = ContractProvider(DOUG).contracts("actions");
-        if(am == 0x0){
+        if(am == 0x0) {
             return false;
         }
         return ActionManager(am).lock();
@@ -78,12 +81,12 @@ contract ActionLockActions is Action {
 contract ActionUnlockActions is Action {
 
     function execute() returns (bool) {
-        if(!isActionManager()){
+        if(!isActionManager()) {
             return false;
         }
         ContractProvider dg = ContractProvider(DOUG);
         address am = dg.contracts("actions");
-        if(am == 0x0){
+        if(am == 0x0) {
             return false;
         }
         return ActionManager(am).unlock();
@@ -92,20 +95,20 @@ contract ActionUnlockActions is Action {
 }
 
 // Add contract.
-contract ActionAddContract is Action {
+/*contract ActionAddContract is Action {
 
     function execute(bytes32 name, address addr) returns (bool) {
-        if(!isActionManager()){
+        if(!isActionManager()) {
             return false;
         }
         Doug d = Doug(DOUG);
-        return d.addContract(name,addr);
+        return d.addContract(name, addr);
     }
 
-}
+}*/
 
 // Remove contract.
-contract ActionRemoveContract is Action {
+/*contract ActionRemoveContract is Action {
 
     function execute(bytes32 name) returns (bool) {
         if(!isActionManager()){
@@ -115,21 +118,21 @@ contract ActionRemoveContract is Action {
         return d.removeContract(name);
     }
 
-}
+}*/
 
 // The set user permission action.
 contract ActionSetUserPermission is Action {
 
     function execute(address addr, uint8 perm) returns (bool) {
-        if(!isActionManager()){
+        if(!isActionManager()) {
             return false;
         }
         ContractProvider dg = ContractProvider(DOUG);
-        address perms = dg.contracts("perms");
-        if(perms == 0x0){
+        address perms = dg.contracts("permission_db");
+        if(perms == 0x0) {
             return false;
         }
-        return Permissions(perms).setPermission(addr,perm);
+        return Permissions(perms).setPermission(addr, perm);
     }
 
 }
@@ -138,12 +141,12 @@ contract ActionSetUserPermission is Action {
 contract ActionSetActionPermission is Action {
 
     function execute(bytes32 name, uint8 perm) returns (bool) {
-        if(!isActionManager()){
+        if(!isActionManager()) {
             return false;
         }
         ContractProvider dg = ContractProvider(DOUG);
-        address adb = dg.contracts("actiondb");
-        if(adb == 0x0){
+        address adb = dg.contracts("action_db");
+        if(adb == 0x0) {
             return false;
         }
         var action = ActionDb(adb).actions(name);

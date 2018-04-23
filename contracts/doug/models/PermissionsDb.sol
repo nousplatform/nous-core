@@ -10,8 +10,12 @@ contract PermissionsDb is Validee {
     // This is where we keep all the permissions.
     mapping (address => uint8) public perms;
 
+    /*function PermissionsDb(address _owner) {
+        perms[_owner] = 255;
+    }*/
+
     function setPermission(address addr, uint8 perm) returns (bool) {
-        if (!validate()){
+        if (!validate()) {
             return false;
         }
         perms[addr] = perm;

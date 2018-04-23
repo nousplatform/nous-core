@@ -1,7 +1,6 @@
 pragma solidity ^0.4.4;
 
 
-import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "../interfaces/Validator.sol";
 import "../safety/DougEnabled.sol";
 
@@ -18,14 +17,15 @@ contract DougDb {
     bytes32[] public listIndex; // Managers
 
 
-    // Add a new contract. This will overwrite an existing contract. 'internal' modifier means
+    //@dev Attention Add a new contract Or owerwrite old contract. This will overwrite an existing contract. 'internal' modifier means
     // it has to be called by an implementing class.
     function _addElement(bytes32 _name, address _addr) internal returns (bool result) {
-        Element memory elem = list[_name];
-        if (elem.doNotOverwrite == true) return false; //overwrite protection
+        Element memory elem;
+        //if (elem.doNotOverwrite == true) return false; //overwrite protection
 
         elem.contractAddress = _addr;
         elem.index = listIndex.push(_name) - 1;
+        list[_name] = elem;
         return true;
     }
 

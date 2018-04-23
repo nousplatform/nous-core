@@ -3,15 +3,14 @@ pragma solidity ^0.4.18;
 
 import "../base/FundManagerEnabled.sol";
 import "../interfaces/ContractProvider.sol";
-import "../../base/Construct.sol";
 
 
 // Permissions database
-contract PermissionDb is FundManagerEnabled, Construct {
+contract PermissionDb is FundManagerEnabled {
 
     mapping(bytes32 => mapping(address => bool)) public permissions;
 
-    function constructor(address _foundOwner, address _nousAddress) public onConstructor {
+    function PermissionDb(address _foundOwner, address _nousAddress) public {
         permissions["owner"][_foundOwner] = true;
         permissions["nous"][_nousAddress] = true;
     }

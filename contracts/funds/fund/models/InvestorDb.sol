@@ -2,12 +2,11 @@ pragma solidity ^0.4.18;
 
 
 import "../interfaces/ContractProvider.sol";
-import "../../base/Construct.sol";
 import "../base/FundManagerEnabled.sol";
 import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 
-contract InvestorDb is FundManagerEnabled, Construct {
+contract InvestorDb is FundManagerEnabled {
 
     // address investor to balance nous tkn
     mapping (address => uint256) public investors;

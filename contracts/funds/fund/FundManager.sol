@@ -10,10 +10,9 @@ pragma solidity ^0.4.18;
 import "./interfaces/FundInterface.sol";
 import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "./actions/Wallets.sol";
-import "../base/Construct.sol";
 import "./interfaces/PermissionProvider.sol";
 
 
-contract FundManager is Wallets, Construct {
+contract FundManager is Wallets {
 
 }

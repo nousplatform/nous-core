@@ -28,8 +28,7 @@ contract FundConstructor is OwnableFunds, DougDb, ICODb {
     event AddToken(address indexed caller, string name, uint16 indexed code);
 
     //, uint256 _initCapNSU, uint256 _initCapCAP
-    function FundConstructor(address _fundOwn, string _fundName, bytes32 _fundType) external
-    onConstructor {
+    function FundConstructor(address _fundOwn, string _fundName, bytes32 _fundType) public {
         nous = msg.sender;
         owner = _fundOwn;
         fundName = _fundName;
@@ -65,7 +64,7 @@ contract FundConstructor is OwnableFunds, DougDb, ICODb {
         bool ae = _addOrUpdateElement(_name, _addr, _doNotOverwrite);
         if (ae) {
             AddContract(msg.sender, _name, 201);
-            Construct(_addr).constructor();
+            //Construct(_addr).constructor();
         } else {
             // Can't overwrite.
             AddContract(msg.sender, _name, 409);

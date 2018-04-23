@@ -3,10 +3,9 @@ pragma solidity ^0.4.18;
 
 import "../base/FundManagerEnabled.sol";
 import "../interfaces/ContractProvider.sol";
-import "../../base/Construct.sol";
 
 
-contract WalletDb is FundManagerEnabled, Construct {
+contract WalletDb is FundManagerEnabled {
 
     struct Wallets {
         bytes32 typeWallet;

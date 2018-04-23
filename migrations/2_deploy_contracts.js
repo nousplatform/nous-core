@@ -2,29 +2,29 @@
 //interfaces
 //var ContractProvider = artifacts.require("./ContractProvider.sol");
 
-var NOUSManager = artifacts.require("./NOUSManager.sol");
-var FundConstructor = artifacts.require("./FundConstructor.sol");
-var FundManager = artifacts.require("./FundConstructor.sol");
-
-//models
-var InvestorDb = artifacts.require("./InvestorDb.sol");
-var TokensDb = artifacts.require("./TokensDb.sol");
-var PermissionDb = artifacts.require("./PermissionDb.sol");
-var WalletDb = artifacts.require("./WalletDb.sol");
-
-//tokens
-const Sale = artifacts.require("./Sale.sol");
+//var NOUSManager = artifacts.require("./NOUSManager.sol");
+// var FundConstructor = artifacts.require("./FundConstructor.sol");
+// var FundManager = artifacts.require("./FundConstructor.sol");
+//
+// //models
+// var InvestorDb = artifacts.require("./InvestorDb.sol");
+// var TokensDb = artifacts.require("./TokensDb.sol");
+// var PermissionDb = artifacts.require("./PermissionDb.sol");
+// var WalletDb = artifacts.require("./WalletDb.sol");
+//
+// //tokens
+// const Sale = artifacts.require("./Sale.sol");
 
 
 
 module.exports = async function(deployer) {
 
   //deployer.deploy(NOUSManager);
-  let nousManager = await NOUSManager.deployed();
-  let Sale = await Sale.deployed();
-
-
-  console.log("nousManager", nousManager);
+  // let nousManager = await NOUSManager.deployed();
+  // let Sale = await Sale.deployed();
+  //
+  //
+  // console.log("nousManager", nousManager);
 
 
   // deployer.then(function () {

@@ -3,7 +3,6 @@ pragma solidity ^0.4.18;
 
 import "./Permission.sol";
 import "../interfaces/WalletProvider.sol";
-import "../../lib/Utils.sol";
 
 
 contract Wallets is Permission {

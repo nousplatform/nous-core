@@ -29,16 +29,17 @@ contract ActionDb is ActionManagerEnabled {
 
     // To make sure we have an add action action, we need to auto generate
     // it as soon as we got the DOUG address.
-    function setDougAddress(address dougAddr) returns (bool result) {
-        super.setDougAddress(dougAddr);
+    function setDougAddress(address _dougAddr) returns (bool result) {
+        require(super.setDougAddress(_dougAddr));
 
-        var addaction = new ActionAddAction();
+        address _addAction = new ActionAddAction();
         // If this fails, then something is wrong with the add action contract.
         // Will be events logging these things in later parts.
-        if(!DougEnabled(addaction).setDougAddress(dougAddr)) {
+        if(!DougEnabled(_addAction).setDougAddress(_dougAddr)) {
             return false;
         }
-        actions["addaction"] = address(addaction);
+        actions["add_action"] = _addAction;
+        return true;
     }
 
     function addAction(bytes32 name, address addr) returns (bool) {
@@ -50,7 +51,7 @@ contract ActionDb is ActionManagerEnabled {
         // Normally the Doug contract does this, but actions are never added
         // to Doug - they're instead added to this lower-level CMC.
         bool sda = DougEnabled(addr).setDougAddress(DOUG);
-        if(!sda){
+        if(!sda) {
             return false;
         }
         actions[name] = addr;

@@ -1,10 +1,10 @@
 pragma solidity ^0.4.18;
 
 
-import "../doug/models/DougDb.sol";
+import "../doug/Doug.sol";
 
 
-contract NousCore is DougDb {
+contract NousCore is Doug {
 
     address public nousTokenAddress;
 
@@ -12,7 +12,7 @@ contract NousCore is DougDb {
     * @dev Constructor
     * @param _nousTokenAddress : NSU address for sale token fund
     */
-    function NousCore(address _nousTokenAddress) {
+    function NousCore(address _nousTokenAddress) Doug() {
         setNousTokenAddress(_nousTokenAddress);
     }
 

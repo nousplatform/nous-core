@@ -3,7 +3,6 @@ pragma solidity ^0.4.18;
 
 import "./Permission.sol";
 import "../interfaces/ManagerProvider.sol";
-import "../../lib/Utils.sol";
 
 
 contract Managers is Permission {
