@@ -14,6 +14,8 @@ function callToFunction(param = testInitialParams) {
   web3.utils.hexToBytes('0x000000ea');
 }
 
+
+
 contract('NousCore', async function (accounts) {
 
   let test2Inst;
@@ -27,12 +29,33 @@ contract('NousCore', async function (accounts) {
   });
 
   it("Test Deploy all nous core contracts ", async function () {
-    console.log("test2Inst.addr()", await test2Inst.testAddr());
 
-    let res = await test2Inst.execute(testInst.address, 3);
-    console.log("res", res);
+      let data = await web3.eth.abi.encodeFunctionCall({
+          name: 'test1',
+          type: 'function',
+          inputs: [{
+              type: 'uint256',
+              name: 'num'
+          }]
+      }, ['50']);
 
-    console.log("testInst.getState()", (await testInst.getState()).toNumber());
+      console.log("data", data);
+      console.log("testInst.address", testInst.address)
+
+      let res = await test2Inst.execute(testInst.address, data);
+
+      let data2 = web3.eth.abi.encodeParameters(['uint256'], ['10']);
+
+      let res2 = await test2Inst.getexecute(testInst.address, data2);
+      console.log("res", res2.toNumber());
+
+
+      //console.log("test2Inst.addr()", await test2Inst.testAddr());
+
+      //let res = await test2Inst.execute(testInst.address, data);
+      //console.log("res", res);
+
+      console.log("testInst.getState()", (await testInst.getState()).toNumber());
 
   });
 

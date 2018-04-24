@@ -9,14 +9,14 @@ import {ActionManagerInterface as ActionManager} from "../ActionManager.sol";
 import {PermissionsDb as Permissions} from "../models/PermissionsDb.sol";
 
 interface ActionProvider{
-    function setPermission(uint8 permVal) returns (bool);
+    function setPermission(uint8 permVal) external returns (bool);
 }
 
 contract Action is ActionManagerEnabled, Validee {
     // Note auto accessor.
     uint8 public permission;
 
-    function setPermission(uint8 permVal) returns (bool) {
+    function setPermission(uint8 permVal) external returns (bool) {
         if(!validate()) {
             return false;
         }
@@ -27,7 +27,7 @@ contract Action is ActionManagerEnabled, Validee {
 // Add action. NOTE: Overwrites currently added actions with the same name.
 contract ActionAddAction is Action {
 
-    function execute(bytes32 name, address addr) returns (bool) {
+    function execute(bytes32 name, address addr) external returns (bool) {
         if(!isActionManager()) {
             return false;
         }
@@ -43,7 +43,7 @@ contract ActionAddAction is Action {
 // be done by overwriting this action with one that allows it.
 contract ActionRemoveAction is Action {
 
-    function execute(bytes32 name) returns (bool) {
+    function execute(bytes32 name) external returns (bool) {
         if(!isActionManager()) {
             return false;
         }
@@ -64,7 +64,7 @@ contract ActionRemoveAction is Action {
 // for example.
 contract ActionLockActions is Action {
 
-    function execute() returns (bool) {
+    function execute() external returns (bool) {
         if(!isActionManager()) {
             return false;
         }
@@ -80,7 +80,7 @@ contract ActionLockActions is Action {
 // Unlock actions. Makes it possible for everyone to run actions.
 contract ActionUnlockActions is Action {
 
-    function execute() returns (bool) {
+    function execute() external returns (bool) {
         if(!isActionManager()) {
             return false;
         }
