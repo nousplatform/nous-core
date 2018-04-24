@@ -123,7 +123,7 @@ contract ActionUnlockActions is Action {
 // The set user permission action.
 contract ActionSetUserPermission is Action {
 
-    function execute(address addr, uint8 perm) returns (bool) {
+    function execute(address addr, uint8 perm) external returns (bool) {
         if(!isActionManager()) {
             return false;
         }
@@ -140,7 +140,7 @@ contract ActionSetUserPermission is Action {
 // The set action permission. This is the permission level required to run the action.
 contract ActionSetActionPermission is Action {
 
-    function execute(bytes32 name, uint8 perm) returns (bool) {
+    function execute(bytes32 name, uint8 perm) external returns (bool) {
         if(!isActionManager()) {
             return false;
         }

@@ -9,8 +9,8 @@ import {Action} from "./actions/Mainactions.sol";
 
 
 interface ActionManagerInterface {
-    function lock() returns (bool);
-    function unlock() returns (bool);
+    function lock() public returns (bool);
+    function unlock() public returns (bool);
 }
 
 /*interface Validator {
@@ -46,15 +46,15 @@ contract ActionManager is DougEnabled {
     uint public nextEntry = 0;
     mapping(uint => ActionLogEntry) public logEntries;
 
-    function ActionManager() {
-        // permToLock = 255;
-    }
+    // function ActionManager() {
+    //     // permToLock = 255;
+    // }
 
     function test(address actn, bytes data) public constant returns(address) {
         actn.call(data);
     }
 
-    function execute(bytes32 actionName, bytes data) returns (bool) {
+    function execute(bytes32 actionName, bytes data) public returns (bool) {
         address actionDb = ContractProvider(DOUG).contracts("ActionDb");
         require(actionDb != 0x0);
         /*if (actionDb == 0x0) {
@@ -107,7 +107,7 @@ contract ActionManager is DougEnabled {
         return true;
     }
 
-    function lock() returns (bool) {
+    function lock() public returns (bool) {
         if(msg.sender != activeAction) {
             return false;
         }
@@ -117,7 +117,7 @@ contract ActionManager is DougEnabled {
         locked = true;
     }
 
-    function unlock() returns (bool) {
+    function unlock() public returns (bool) {
         if(msg.sender != activeAction) {
             return false;
         }
@@ -129,7 +129,7 @@ contract ActionManager is DougEnabled {
 
     // Validate can be called by a contract like the bank to check if the
     // contract calling it has permissions to do so.
-    function validate(address addr) constant returns (bool) {
+    function validate(address addr) public constant returns (bool) {
         return addr == activeAction;
     }
 
