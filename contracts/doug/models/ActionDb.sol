@@ -38,7 +38,7 @@ contract ActionDb is ActionManagerEnabled {
         if(!DougEnabled(_addAction).setDougAddress(_dougAddr)) {
             return false;
         }
-        actions["add_action"] = _addAction;
+        actions["ActionAddAction"] = _addAction;
         return true;
     }
 

@@ -50,22 +50,28 @@ contract ActionManager is DougEnabled {
         // permToLock = 255;
     }
 
+    function test(address actn, bytes data) public constant returns(address) {
+        actn.call(data);
+    }
+
     function execute(bytes32 actionName, bytes data) returns (bool) {
-        address actionDb = ContractProvider(DOUG).contracts("action_db");
-        if (actionDb == 0x0) {
+        address actionDb = ContractProvider(DOUG).contracts("ActionDb");
+        require(actionDb != 0x0);
+        /*if (actionDb == 0x0) {
             _log(actionName,false);
             return false;
-        }
+        }*/
 
-        address actn = ActionDb(actionDb).actions(actionName);
         // If no action with the given name exists - cancel.
-        if (actn == 0x0) {
+        address actn = ActionDb(actionDb).actions(actionName);
+        require(actn != 0x0);
+        /*if (actn == 0x0) {
             _log(actionName, false);
             return false;
-        }
+        }*/
 
         // Permissions stuff
-        address pAddr = ContractProvider(DOUG).contracts("permission_db");
+        address pAddr = ContractProvider(DOUG).contracts("PermissionDb");
         // Only check permissions if there is a permissions contract.
         if(pAddr != 0x0) {
             PermissionsDb p = PermissionsDb(pAddr);

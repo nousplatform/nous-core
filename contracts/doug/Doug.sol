@@ -31,14 +31,14 @@ contract Doug is DougDb, Ownable {
 
     function Doug() {
 
-        address am = new ActionManager();
-        require(addContract("action_manager", am));
+        //address am = new ActionManager();
+        //require(addContract("action_manager", am));
 
-        address adb = new ActionDb();
-        require(addContract("action_db", adb));
+        //address adb = new ActionDb();
+        //require(addContract("ActionDb", adb));
 
         //address pdb = new PermissionsDb(msg.sender);
-        //require(addContract("permission_db", adb));
+        //require(addContract("PermissionDb", adb));
     }
 
     /// @notice Add a contract to Doug. This contract should extend DougEnabled, because

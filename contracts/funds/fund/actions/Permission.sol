@@ -26,14 +26,14 @@ contract Permission is FundManagerBase {
         require(checkPermission("owner"));
         require(_role.length > 0);
 
-        address permdb = getContractAddress("permission_db");
+        address permdb = getContractAddress("PermissionDb");
         return PermissionProvider(permdb).setPermission(_address, _role, _status);
     }
 
     function checkPermission(bytes32 _role) internal returns (bool) {
         if (fundLocked == true) return false;
 
-        address permdb = getContractAddress("permission_db");
+        address permdb = getContractAddress("PermissionDb");
         return PermissionProvider(permdb).getPermission(_role, msg.sender);
     }
 

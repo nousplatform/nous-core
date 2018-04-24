@@ -31,7 +31,7 @@ contract ActionAddAction is Action {
         if(!isActionManager()) {
             return false;
         }
-        address adb = ContractProvider(DOUG).contracts("action_db");
+        address adb = ContractProvider(DOUG).contracts("ActionDb");
         if(adb == 0x0) {
             return false;
         }
@@ -47,11 +47,11 @@ contract ActionRemoveAction is Action {
         if(!isActionManager()) {
             return false;
         }
-        address adb = ContractProvider(DOUG).contracts("action_db");
+        address adb = ContractProvider(DOUG).contracts("ActionDb");
         if(adb == 0x0) {
             return false;
         }
-        if(name == "add_action") {
+        if(name == "ActionAddAction") {
             return false;
         }
         return ActionDb(adb).removeAction(name);
@@ -68,7 +68,7 @@ contract ActionLockActions is Action {
         if(!isActionManager()) {
             return false;
         }
-        address am = ContractProvider(DOUG).contracts("actions");
+        address am = ContractProvider(DOUG).contracts("ActionManager");
         if(am == 0x0) {
             return false;
         }
@@ -85,7 +85,7 @@ contract ActionUnlockActions is Action {
             return false;
         }
         ContractProvider dg = ContractProvider(DOUG);
-        address am = dg.contracts("actions");
+        address am = dg.contracts("ActionManager");
         if(am == 0x0) {
             return false;
         }
@@ -128,7 +128,7 @@ contract ActionSetUserPermission is Action {
             return false;
         }
         ContractProvider dg = ContractProvider(DOUG);
-        address perms = dg.contracts("permission_db");
+        address perms = dg.contracts("PermissionDb");
         if(perms == 0x0) {
             return false;
         }
@@ -145,7 +145,7 @@ contract ActionSetActionPermission is Action {
             return false;
         }
         ContractProvider dg = ContractProvider(DOUG);
-        address adb = dg.contracts("action_db");
+        address adb = dg.contracts("ActionDb");
         if(adb == 0x0) {
             return false;
         }
