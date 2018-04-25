@@ -11,6 +11,7 @@ import {Action} from "./actions/Mainactions.sol";
 interface ActionManagerInterface {
     function lock() public returns (bool);
     function unlock() public returns (bool);
+    //function resetActiveAction() public returns(bool);
 }
 
 /*interface Validator {
@@ -36,7 +37,7 @@ contract ActionManager is DougEnabled {
     // careful. Does it revert the tx entirely now, or does it come with some sort
     // of recovery mechanism? Otherwise it is still super dangerous and should never
     // ever be used. Ever.
-    address activeAction;
+    address activeAction = 0x0;
 
     uint8 permToLock = 255; // Current max. 255
     bool locked;
@@ -50,15 +51,12 @@ contract ActionManager is DougEnabled {
     //     // permToLock = 255;
     // }
 
-    function test(address actn, bytes data) public constant returns(address) {
-        actn.call(data);
-    }
-
     function execute(bytes32 actionName, bytes data) public returns (bool) {
+
         address actionDb = ContractProvider(DOUG).contracts("ActionDb");
         require(actionDb != 0x0);
         /*if (actionDb == 0x0) {
-            _log(actionName,false);
+            _log(actionName, false);
             return false;
         }*/
 
@@ -66,9 +64,14 @@ contract ActionManager is DougEnabled {
         address actn = ActionDb(actionDb).actions(actionName);
         require(actn != 0x0);
         /*if (actn == 0x0) {
-            _log(actionName, false);
-            return false;
+            //_log(actionName, false);
+            //return false;
         }*/
+        //todo require security
+        require(activeAction == 0x0);
+
+        // Set this as the currently active action.
+        activeAction = actn;
 
         // Permissions stuff
         address pAddr = ContractProvider(DOUG).contracts("PermissionDb");
@@ -82,8 +85,9 @@ contract ActionManager is DougEnabled {
             // Now we check that the action manager isn't locked down. In that case, special
             // permissions is needed.
             if(locked && perm < permToLock) {
-                _log(actionName, false);
-                return false;
+                revert();
+                //_log(actionName, false);
+                //return false;
             }
 
             // Now we check the permission that is required to execute the action.
@@ -91,16 +95,16 @@ contract ActionManager is DougEnabled {
 
             // Very simple system.
             if (perm < permReq) {
-                _log(actionName,false);
-                return false;
+                revert();
+                //_log(actionName,false);
+                //return false;
             }
         }
 
-        // Set this as the currently active action.
-        activeAction = actn;
+        //activeAction = actn;
         // TODO keep up with return values from generic calls.
         // Just assume it succeeds for now (important for logger).
-        actn.call(data);
+        require(actn.call(data));
         // Now clear it.
         activeAction = 0x0;
         _log(actionName, true);
@@ -131,6 +135,12 @@ contract ActionManager is DougEnabled {
     // contract calling it has permissions to do so.
     function validate(address addr) public constant returns (bool) {
         return addr == activeAction;
+    }
+
+    function resetActiveAction() public returns(bool) {
+        require(msg.sender == DOUG);
+        activeAction = 0x0;
+        return true;
     }
 
     function _log(bytes32 actionName, bool success) internal {

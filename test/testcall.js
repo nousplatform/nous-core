@@ -40,9 +40,9 @@ contract('NousCore', async function (accounts) {
       }, ['50']);
 
       console.log("data", data);
-      console.log("testInst.address", testInst.address)
+      console.log("testInst.address", testInst.address);
 
-      let res = await test2Inst.execute(testInst.address, data);
+      let res = await test2Inst.execute2(testInst.address, data);
 
       let data2 = web3.eth.abi.encodeParameters(['uint256'], ['10']);
 

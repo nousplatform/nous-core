@@ -3,6 +3,7 @@ pragma solidity ^0.4.18;
 
 import "../safety/ActionManagerEnabled.sol";
 import {ActionAddAction} from "../actions/Mainactions.sol";
+import {Validee} from  "../safety/Validee.sol";
 
 
 contract ActionDbAbstract {
@@ -13,7 +14,7 @@ contract ActionDbAbstract {
     function removeAction(bytes32 name) returns (bool);
 }
 
-contract ActionDb is ActionManagerEnabled {
+contract ActionDb is Validee {
 
     // This is where we keep all the actions.
     mapping (bytes32 => address) public actions;
@@ -43,7 +44,7 @@ contract ActionDb is ActionManagerEnabled {
     }
 
     function addAction(bytes32 name, address addr) returns (bool) {
-        if(!isActionManager()) {
+        if (!validate()) {
             return false;
         }
         // Remember we need to set the doug address for the action to be safe -
@@ -59,10 +60,10 @@ contract ActionDb is ActionManagerEnabled {
     }
 
     function removeAction(bytes32 name) returns (bool) {
-        if (actions[name] == 0x0){
+        if (actions[name] == 0x0) {
             return false;
         }
-        if(!isActionManager()){
+        if(!validate()) {
             return false;
         }
         actions[name] = 0x0;

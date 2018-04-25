@@ -12,7 +12,9 @@ contract NousCore is Doug {
     * @dev Constructor
     * @param _nousTokenAddress : NSU address for sale token fund
     */
-    function NousCore(address _nousTokenAddress) Doug() {
+    function NousCore(address _nousTokenAddress, bytes32[] _names, address[] _addrs) public
+    Doug(_names, _addrs)
+    {
         setNousTokenAddress(_nousTokenAddress);
     }
 

@@ -4,10 +4,12 @@ pragma solidity ^0.4.18;
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./safety/DougEnabled.sol";
 import "./models/DougDb.sol";
+//import "./safety/Validee.sol";
 
-import {ActionManager} from "./ActionManager.sol";
-import {ActionDb} from "./models/ActionDb.sol";
-import "./models/PermissionsDb.sol";
+//import {ActionManagerInterface as ActionManager} from "./ActionManager.sol";
+//import {ActionManager} from "./ActionManager.sol";
+//import {ActionDb} from "./models/ActionDb.sol";
+//import "./models/PermissionsDb.sol";
 
 
 interface DougInterface {
@@ -29,16 +31,15 @@ contract Doug is DougDb, Ownable {
     // When removing a contract.
     event RemoveContract(address indexed caller, bytes32 indexed name, uint16 indexed code);
 
-    function Doug() {
-
-        //address am = new ActionManager();
-        //require(addContract("action_manager", am));
-
-        //address adb = new ActionDb();
-        //require(addContract("ActionDb", adb));
-
-        //address pdb = new PermissionsDb(msg.sender);
-        //require(addContract("PermissionDb", adb));
+    function Doug(bytes32[] _names, address[] _addrs) public {
+        require(_names.length == _addrs.length);
+        uint _length = _names.length;
+        for (uint i; i < _length; i++) {
+            require(_addrs[i] != 0x0, "Contract address is empty.");
+            require(_names[i] != bytes32(0), "Contract name is empty.");
+            require(DougEnabled(_addrs[i]).setDougAddress(address(this)), "Could not set doug address in contract");
+            require(_addElement(_names[i], _addrs[i]), "Not added element");
+        }
     }
 
     /// @notice Add a contract to Doug. This contract should extend DougEnabled, because
@@ -52,11 +53,9 @@ contract Doug is DougDb, Ownable {
     function addContract(bytes32 _name, address _addr) public returns (bool result) {
         // Only the owner may add, and the contract has to be DougEnabled and
         // return true when setting the Doug address.
-
         if (msg.sender != owner || !DougEnabled(_addr).setDougAddress(address(this))) {
             // Access denied. Should divide these up into two maybe.
             AddContract(msg.sender, _name, 403);
-            //revert();
             return false;
         }
         // Add to contract.
@@ -67,7 +66,6 @@ contract Doug is DougDb, Ownable {
             // Can't overwrite.
             AddContract(msg.sender, _name, 409);
         }
-        //require(ae);
         return ae;
     }
 
@@ -95,6 +93,10 @@ contract Doug is DougDb, Ownable {
     function contracts(bytes32 _name) public view returns (address addr) {
         return list[_name].contractAddress;
     }
+
+//    function resetActiveAction() onlyOwner {
+//        ActionManager(list["ActionManager"].contractAddress).resetActiveAction();
+//    }
 
     /// @notice Remove (selfdestruct) Doug.
     function remove() public onlyOwner {
