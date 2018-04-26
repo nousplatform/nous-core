@@ -16,15 +16,17 @@ const ActionSetUserPermission = artifacts.require("ActionSetUserPermission.sol")
 const ActionSetActionPermission = artifacts.require("ActionSetActionPermission.sol");
 const ActionCreateOpenEndedFund = artifacts.require("ActionCreateOpenEndedFund.sol");
 const ActionAddTemplates = artifacts.require("ActionAddTemplates.sol");
+const ActionAddAction = artifacts.require("ActionAddAction.sol");
 //temlates
 const TemplateConstructorOpenEndedFund = artifacts.require("TemplateConstructorOpenEndedFund.sol");
 
 
-function getSignature(self) {
+
+/*function getSignature(self) {
   return `${self.function}(${self.params.join()})`;
 }
 
-/*const actionsParams = {
+const actionsParams = {
   "ActionAddAction" : {
     interface: "",
     function: "execute",
@@ -197,13 +199,11 @@ contract('NousCore', async function (accounts) {
   });
 
   async function createAllActions() {
-    await Object.keys(actionsParams).forEach(async item => {
+    for (let item in actionsParams) {
       actionsParams[item].interface = await eval(`${item}.new()`);
-      //console.log("actionsParams[item].interface.address", actionsParams[item].interface.address);
       await createAddAction(item);
-      //console.log("await instanceList[\"ActionDb\"].getAction(item)", await instanceList["ActionDb"].getAction(item));
       assert.equal(actionsParams[item].interface.address, await instanceList["ActionDb"].getAction(item));
-    });
+    }
   }
 
   async function createAddAction(newActionName) {
@@ -215,50 +215,54 @@ contract('NousCore', async function (accounts) {
     await ActionManagerInstance.execute("ActionAddAction", bytes);
   }
 
-  it("Validate Deploy all nous core contracts ", async function () {
+  async function actionManagerQuery(actionNmae, data) {
+    let structure = actionsParams[actionNmae];
+    let bytes = getFunctionCallData(structure, data);
+    await ActionManagerInstance.execute(actionNmae, bytes);
+  }
+
+  it("Validate Deploy all nous core contracts. Add to doug manager. ", async function () {
     Object.keys(instanceList).forEach(async (_name) => {
       assert.equal(instanceList[_name].address,  await NOUSCoreInstance.contracts(_name));
     });
   });
 
-  it("Add contracts to Action Manager", async function() {
-
+  it("Add all action contracts and add to Action Manager", async function() {
     await createAllActions();
-    Object.keys(actionsParams).forEach(async item => {
-      //console.log("item", item);
-      //assert.equal(actionsParams[item].interface.address, await instanceList["ActionDb"].getAction(item));
-    })
-
-    //console.log("ActionAddAction", await instanceList["ActionDb"].actions.call("ActionAddAction"));
-    //console.log("actionsParams[newActionName].signature", actionsParams["ActionAddAction"].signature());
-
-    /*Object.keys(actionsParams).forEach(async item => {
-      actionsParams[item].interface = await eval(`${item}.new()`);
-      //console.log("actionsParams[item].interface.address", actionsParams[item].interface.address);
-      await createAddAction(item);
-      //console.log("await instanceList[\"ActionDb\"].getAction(item)", await instanceList["ActionDb"].getAction(item));
-      assert.equal(actionsParams[item].interface.address, await instanceList["ActionDb"].getAction(item));
-    });*/
-
-    //await createAddAction("ActionSetActionPermission");
+      Object.keys(actionsParams).forEach(async item => {
+    });
   });
 
-  it("Action Create New Fund", async () => {
+  it("Add Action templates. Action Create New Fund", async () => {
     await createAllActions();
+    let tpls = Object.keys(templates);
 
-    await Promise.all(Object.keys(templates).forEach(async (item) => {
+    // create instance templates
+    for ( let item in templates ) {
       templates[item].interface = await eval(`${item}.new()`);
-      console.log("templates[item].interface.address", templates[item].interface.address);
-    }));
+      //console.log("item", templates[item].interface.address);
+    }
 
-    let _tplNames = web3.utils.toHex(Object.keys(templates));
-    let _tplAddrs = Object.keys(templates).forEach(item => item.interface.address);
-    let _tplOwerWr = Object.keys(templates).forEach(item => item.overwrite);
+    // add templates
+    let _tplNames = Object.keys(templates).map(item => web3.utils.toHex(item));
+    let _tplAddrs = Object.keys(templates).map(item => templates[item].interface.address);
+    let _tplOwerWr = Object.keys(templates).map(item => templates[item].overwrite);
 
     let data = [_tplNames, _tplAddrs, _tplOwerWr];
-    let structure = actionsParams["ActionAddTemplates"];
-    let bytes = getFunctionCallData(structure, data);
-    await ActionManagerInstance.execute("ActionAddTemplates", bytes);
+    await actionManagerQuery("ActionAddTemplates", data);
+
+    //console.log("11", await instanceList["TemplatesDb"].template("TemplateConstructorOpenEndedFund", 0));
+
+    //validate add templates
+    for ( let item in templates ) {
+      assert.equal(templates[item].interface.address, (await instanceList["TemplatesDb"].template(item, 0))[0], "Instance list not equal templates Db");
+    }
+
+    //Crate new fund
+    data = [accounts[0], "Test Trast", web3.utils.toHex("Open Ended fund")];
+    await actionManagerQuery("ActionCreateOpenEndedFund", data);
+
+    assert.equal(1, (await instanceList["FundDb"].getAllFunds()).length);
 
     //let bytes = getFunctionCallData(structure, data);
 

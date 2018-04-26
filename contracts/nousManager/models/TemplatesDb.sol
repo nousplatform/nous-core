@@ -5,7 +5,8 @@ import "../../doug/safety/Validee.sol";
 
 
 interface TemplatesDbInterface {
-    function template(bytes32 _name, bytes32 _version) external returns(address, bool, bytes32);
+    function template(bytes32 _name, uint _version) public constant returns(address, bool, uint);
+    ///function template(bytes32 _name) external returns(address);
 }
 
 
@@ -54,7 +55,9 @@ contract TemplatesDb is Validee {
         return true;
     }
 
-    /// return last version contract
+    /**
+    * @notice return last version contract
+    */
     function template(bytes32 _name, uint _version) public constant returns(address, bool, uint) {
         require(isElement(_name));
         if (_version == 0) {
@@ -62,9 +65,14 @@ contract TemplatesDb is Validee {
         }
 
         templateDetails memory contr = defaultTpl[_name][_version];
-        require(contr.addr != 0x0, "Template address empty");
+        //require(contr.addr != 0x0, "Template address empty");
         return (contr.addr, contr.overwrite, contr.index);
     }
+
+    /*function template(bytes32 _name) public constant returns(address) {
+        return defaultTpl[_name][defaultTpl[_name].length - 1].addr;
+    }*/
+
 
     function getDefaultContracts() public constant returns (bytes32[], address[]) {
         uint length = tplList.length;
