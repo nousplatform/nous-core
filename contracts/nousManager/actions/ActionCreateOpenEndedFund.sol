@@ -10,7 +10,7 @@ import "../../doug/interfaces/ContractProvider.sol";
 
 contract ActionCreateOpenEndedFund is Action {
 
-    function test() public constant returns(address) {
+    /*function test() public constant returns(address) {
         address tdb = ContractProvider(DOUG).contracts("TemplatesDb");
         //return tdb;
         address _addr;
@@ -19,7 +19,7 @@ contract ActionCreateOpenEndedFund is Action {
 
         (_addr, _overwrite, _version) = TemplatesDb(tdb).template("TemplateConstructorOpenEndedFund", 0);
         return _addr;
-    }
+    }*/
 
     /**
     * @notice Create new fund

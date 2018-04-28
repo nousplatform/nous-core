@@ -235,7 +235,7 @@ contract('NousCore', async function (accounts) {
 
   it("Add Action templates. Action Create New Fund", async () => {
     await createAllActions();
-    let tpls = Object.keys(templates);
+    //let tpls = Object.keys(templates);
 
     // create instance templates
     for ( let item in templates ) {

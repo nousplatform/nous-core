@@ -13,7 +13,8 @@ module.exports = {
       host: "192.168.88.11",
       port: 8545,
       network_id: "3",
-      gas: 4000000,
+      gas: 4700000,
+      gasPrice: 2,
       from: "0x719a22e179bb49a4596efe3bd6f735b8f3b00af1",
     },
     kovan: {

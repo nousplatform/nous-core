@@ -1,23 +1,240 @@
+const Web3 = require("web3");
+var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 
-//interfaces
-//var ContractProvider = artifacts.require("./ContractProvider.sol");
+const NousCore = artifacts.require("NousCore.sol");
+const NousTokenTest = artifacts.require("NousTokenTest.sol");
+const ActionManager = artifacts.require("ActionManager.sol");
+const ActionDb = artifacts.require("ActionDb.sol");
+const PermissionsDb = artifacts.require("PermissionsDb.sol");
+const TemplatesDb = artifacts.require("TemplatesDb.sol");
+const FundDb = artifacts.require("FundDb.sol");
+//actions
+const ActionRemoveAction = artifacts.require("ActionRemoveAction.sol");
+const ActionLockActions = artifacts.require("ActionLockActions.sol");
+const ActionUnlockActions = artifacts.require("ActionUnlockActions.sol");
+const ActionSetUserPermission = artifacts.require("ActionSetUserPermission.sol");
+const ActionSetActionPermission = artifacts.require("ActionSetActionPermission.sol");
+const ActionCreateOpenEndedFund = artifacts.require("ActionCreateOpenEndedFund.sol");
+const ActionAddTemplates = artifacts.require("ActionAddTemplates.sol");
+const ActionAddAction = artifacts.require("ActionAddAction.sol");
+//temlates
+const TemplateConstructorOpenEndedFund = artifacts.require("TemplateConstructorOpenEndedFund.sol");
 
-//var NOUSManager = artifacts.require("./NOUSManager.sol");
-// var FundConstructor = artifacts.require("./FundConstructor.sol");
-// var FundManager = artifacts.require("./FundConstructor.sol");
-//
-// //models
-// var InvestorDb = artifacts.require("./InvestorDb.sol");
-// var TokensDb = artifacts.require("./TokensDb.sol");
-// var PermissionDb = artifacts.require("./PermissionDb.sol");
-// var WalletDb = artifacts.require("./WalletDb.sol");
-//
-// //tokens
-// const Sale = artifacts.require("./Sale.sol");
+const OWNER = "0x719a22E179bb49a4596eFe3BD6F735b8f3b00AF1";
 
+let contractList = {
+  //"name" : "instance"
+}
 
+let nousTokenInstance;
+let NOUSCoreInstance;
+let ActionManagerInstance;
+
+const actionsParams = {
+  "ActionAddAction" : {
+    interface: "",
+    type: "function",
+    name: "execute",
+    inputs: [
+      {
+        type: "bytes32",
+        name: "name"
+      },
+      {
+        type: "address",
+        name: "addr"
+      }
+    ]
+  },
+  "ActionRemoveAction" : {
+    interface: "",
+    type: "function",
+    name: "execute",
+    inputs: [
+      {
+        type: "bytes32",
+        name: "name"
+      }
+    ]
+  },
+  "ActionLockActions" : {
+    interface: "",
+    type: "function",
+    name: "execute",
+    inputs: []
+  },
+  "ActionUnlockActions" : {
+    interface: "",
+    type: "function",
+    name: "execute",
+    inputs: []
+  },
+  "ActionSetUserPermission" : {
+    interface: "",
+    type: "function",
+    name: "execute",
+    inputs: [
+      {
+        type: "address",
+        name: "addr"
+      },
+      {
+        type: "uint8",
+        name: "perm"
+      },
+    ]
+  },
+  "ActionSetActionPermission" : {
+    interface: "",
+    type: "function",
+    name: "execute",
+    inputs: [
+      {
+        type: "bytes32",
+        name: "name"
+      },
+      {
+        type: "uint8",
+        name: "perm"
+      },
+    ]
+  },
+
+  "ActionCreateOpenEndedFund" : {
+    interface: "",
+    type: "function",
+    name: "execute",
+    inputs: [
+      {
+        type: "address",
+        name: "_owner"
+      },
+      {
+        type: "string",
+        name: "_fundName"
+      },
+      {
+        type: "bytes32",
+        name: "_fundType"
+      },
+    ]
+  },
+  "ActionAddTemplates" : {
+    interface: "",
+    type: "function",
+    name: "execute",
+    inputs: [
+      {
+        type: "bytes32[]",
+        name: "_names"
+      },
+      {
+        type: "address[]",
+        name: "_addrs"
+      },
+      {
+        type: "bool[]",
+        name: "_overwrite"
+      },
+    ]
+  },
+};
+
+const templates = {
+  TemplateConstructorOpenEndedFund: {
+    interface: "",
+    overwrite: false
+  }
+}
+
+function getFunctionCallData({name, inputs = []}, _data = null) {
+  return web3.eth.abi.encodeFunctionCall({
+    name: name,
+    type: 'function',
+    inputs: inputs,
+  }, _data);
+}
+
+async function actionManagerQuery(actionNmae, data) {
+  let structure = actionsParams[actionNmae];
+  let bytes = getFunctionCallData(structure, data);
+  await ActionManagerInstance.execute(actionNmae, bytes);
+}
+
+async function createAddAction(newActionName) {
+  let data = [web3.utils.toHex(newActionName), actionsParams[newActionName].interface.address];
+  await actionManagerQuery("ActionAddAction", data);
+}
 
 module.exports = async function(deployer) {
+
+  nousTokenInstance = await NousTokenTest.new();
+
+  console.log("-----=====DEPLOY NOUS TOKEN CONTRACT=====-----");
+  //deploy
+  ActionManagerInstance = contractList["ActionManager"] =  await ActionManager.new();
+  contractList["ActionDb"] = await ActionDb.new();
+  contractList["PermissionsDb"] = await PermissionsDb.new(OWNER);
+
+  //NOUS
+  contractList["TemplatesDb"] = await TemplatesDb.new();
+  contractList["FundDb"] = await FundDb.new();
+
+  console.log("-----==========ADD FUND CONTRACT TO DOUG==========-----");
+  //Contracts Doug Contract
+  NOUSCoreInstance = await NousCore.new(
+    nousTokenInstance.address,
+    Object.keys(contractList),
+    Object.keys(contractList).map(_name => contractList[_name].address)
+  );
+
+  console.log("-----==========DEPLOY ACTIONS FOR ACTION MANAGER==========-----");
+  //deploy actions
+  for (let item in actionsParams) {
+    actionsParams[item].interface = await eval(`${item}.new()`);
+    await createAddAction(item);
+    //console.log(`${item}: `, actionsParams[item].interface.address);
+  }
+
+  console.log("-----==========CREATE DEPLOY TEMPLATES==========-----");
+  //deploy templates
+  for (let item in templates) {
+    templates[item].interface = await eval(`${item}.new()`);
+    //console.log(`${item}: `, templates[item].interface.address);
+  }
+
+  console.log("-----==========ADD TEMPLATES==========-----");
+  // add templates
+  let _tplNames = Object.keys(templates).map(item => web3.utils.toHex(item));
+  let _tplAddrs = Object.keys(templates).map(item => templates[item].interface.address);
+  let _tplOwerWr = Object.keys(templates).map(item => templates[item].overwrite);
+
+  let data = [_tplNames, _tplAddrs, _tplOwerWr];
+  await actionManagerQuery("ActionAddTemplates", data);
+
+  console.log("\n");
+  console.log("-----==========CONTRACT NOUS CORE==========-----");
+
+  console.log("nousToken: ", nousTokenInstance.address);
+  console.log("ActionManager: ", ActionManagerInstance.address);
+  console.log("ActionDb: ", contractList["ActionDb"].address);
+  console.log("PermissionsDb: ", contractList["PermissionsDb"].address);
+  console.log("TemplatesDb: ", contractList["TemplatesDb"].address);
+  console.log("FundDb: ", contractList["FundDb"].address);
+
+  console.log("");
+  console.log("-----==========ACTION ADDRESSES==========-----");
+  for (let item in actionsParams) {
+    console.log(`${item}: `, actionsParams[item].interface.address);
+  }
+
+  console.log("");
+  console.log("-----==========TEMPLATES ADDRESSES==========-----");
+  for (let item in templates) {
+    console.log(`${item}: `, templates[item].interface.address);
+  }
+
+
 
   //deployer.deploy(NOUSManager);
   // let nousManager = await NOUSManager.deployed();
