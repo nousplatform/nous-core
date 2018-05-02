@@ -1,12 +1,12 @@
 pragma solidity ^0.4.18;
 
 
-import "../../funds/openEndedFund/FundConstructor.sol";
+import "../../projects/openEndedFund/OpenEndedFund.sol";
 
 
 contract TemplateConstructorOpenEndedFund {
-    function create(address _doug, address _fundOwn, string _fundName, bytes32 _fundType) external returns (address) {
-        return new FundConstructor(_doug, _fundOwn, _fundName, _fundType);
-        //return 0x0;
+    function create( address _fundOwn, string _fundName,/* string _fundType,*/ bytes32[] _names, address[] _addrs, bool[] _overWr) external
+    returns (address) {
+        return new OpenEndedFund(_fundOwn, _fundName, /*_fundType, */_names, _addrs, _overWr);
     }
 }

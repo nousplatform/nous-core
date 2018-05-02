@@ -10,34 +10,30 @@ contract DougDb {
     // List element
     struct Element {
         address contractAddress;
-        bool lockOverwriting;
         uint256 index;
     }
 
-    mapping (bytes32 => Element) public list;
-    bytes32[] public listIndex; // Managers
+    mapping (bytes32 => bool) notOverWrite;
 
-    function isElement(bytes32 _elementName) internal returns(bool) {
-        if (listIndex.length == 0) return false;
-        return listIndex[list[_elementAddress].index] == _elementAddress;
-    }
+    mapping (bytes32 => Element) public list;
+
+    bytes32[] public listIndex;
 
     //@dev Attention Add a new contract Or owerwrite old contract. This will overwrite an existing contract. 'internal' modifier means
     // it has to be called by an implementing class.
-    function _addElement(bytes32 _name, address _addr, bool _overWr) internal returns (bool result) {
-        Element memory elem;
-        if (elem.lockOverwriting == true) return false; //overwrite protection
+    function _addElement(bytes32 _name, address _addr) internal returns (bool result) {
+        Element memory _elem;
 
-        elem.contractAddress = _addr;
-        elem.index = listIndex.push(_name) - 1;
-        elem.lockOverwriting = _overWr;
-        list[_name] = elem;
+        _elem.contractAddress = _addr;
+        _elem.index = listIndex.push(_name) - 1;
+        list[_name] = _elem;
         return true;
     }
 
     // Remove a contract from Doug (we could also selfdestruct the contract if we want to).
     function _removeElement(bytes32 _name) internal returns(bool result) {
-        if (elem.lockOverwriting == true) return false; //overwrite protection
+        Element memory _elem = list[_name];
+
         if (listIndex[list[_name].index] != _name) return false;
 
         uint rowToDelete = list[_name].index;
@@ -49,15 +45,14 @@ contract DougDb {
     }
 
     // Should be safe to update to returning 'Element' instead
-    function getAllElement(bytes32 name) public constant returns (bytes32 contractName, address contractAddress, bool contractLockOverwriting) {
+    function getAllElement(bytes32 name) public constant returns (bytes32 contractName, address contractAddress) {
 
-        Element elem = list[name];
-        if(elem.contractName == "") {
+        Element memory _elem = list[name];
+        if(_elem.contractAddress == 0x0) {
             return;
         }
-        contractName = elem.contractName;
-        contractAddress = elem.contractAddress;
-        contractLockOverwriting = elem.lockOverwriting;
+        contractName = name;
+        contractAddress = _elem.contractAddress;
     }
 
 }

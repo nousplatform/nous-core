@@ -28,11 +28,17 @@ contract ActionCreateOpenEndedFund is Action {
     * @return { "fundaddress" : "new Fund address" }
     */
     //string _tokenName, string _tokenSymbol, uint8 _decimals
-    function execute(address _owner, string _fundName, bytes32 _fundType) public returns (bool) {
+    function execute(
+        address _owner,
+        string _fundName,
+//        string _fundType,
+        bytes32[] _names,
+        address[] _addrs,
+        bool[] _overWr
+    ) public returns (bool) {
 
         require(isActionManager());
         require(_owner != 0x0);
-        require(_fundType != bytes32(0));
 
         //require(Utils.emptyStringTest(_fundName));
         //require(!Utils.emptyStringTest(ownerFundIndex[_owner]));
@@ -44,7 +50,7 @@ contract ActionCreateOpenEndedFund is Action {
         var (_addr,) = TemplatesDb(tdb).template("TemplateConstructorOpenEndedFund", 0);
         require(_addr != 0x0, "Template 'TemplateConstructorOpenEndedFund = 0x0' not set.");
 
-        address _fundAddr = TemplateConstructorOpenEndedFund(_addr).create(DOUG, _owner, _fundName, _fundType);
+        address _fundAddr = TemplateConstructorOpenEndedFund(_addr).create(_owner, _fundName, /*_fundType,*/ _names, _addrs, _overWr);
         address fdb =  ContractProvider(DOUG).contracts("FundDb");
         assert(FundDb(fdb).addFund(_owner, _fundAddr, _fundName));
         return true;

@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
 
-import "../FundConstructor.sol";
+import "../commonFunctions/FundConstructor.sol";
 
 
 contract OpenEndedFund is FundConstructor {
@@ -12,16 +12,10 @@ contract OpenEndedFund is FundConstructor {
 
     string public tokenSymbol;
 
-    /*function OpenEndedFund(
-        address _fundOwn,
-        string _fundName,
-        string _fundType,
-        bytes32[] _names,
-        address[] _addrs
-    ) FundConstructor(_fundOwn, _fundName, _fundType, _names, _addrs)
-    {
+    constructor(address _fundOwn, string _fundName, bytes32[] _cNames, address[] _cAddrs, bool[] _cOverWr)
+    FundConstructor(_fundOwn, _fundName, _cNames, _cAddrs, _cOverWr) {
 
-    }*/
+    }
 
     function addToken(address _tokenAddress, string _tokenName, string _tokenSymbol) public onlyOwner {
         require(tokenAddress == 0x0);

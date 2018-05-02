@@ -19,6 +19,7 @@ interface ActionManagerInterface {
 }*/
 
 
+
 contract ActionManager is DougEnabled {
 
     struct ActionLogEntry {
@@ -50,8 +51,6 @@ contract ActionManager is DougEnabled {
     function execute(bytes32 actionName, bytes data) public returns (bool) {
         //todo require security
         require(activeAction == 0x0);
-        // Set this as the currently active action.
-        activeAction = actn;
 
         address actionDb = ContractProvider(DOUG).contracts("ActionDb");
         require(actionDb != 0x0);
@@ -68,6 +67,31 @@ contract ActionManager is DougEnabled {
             //return false;
         }*/
 
+        // Set this as the currently active action.
+        activeAction = actn;
+
+        // Permissions stuff
+        address pAddr = ContractProvider(DOUG).contracts("PermissionDb");
+        // Only check permissions if there is a permissions contract.
+        require(pAddr != 0x0);
+
+        PermissionsDb p = PermissionsDb(pAddr);
+        // First we check the permissions of the account that's trying to execute the action.
+        uint8 perm = p.perms(msg.sender);
+
+        // Now we check that the action manager isn't locked down. In that case, special
+        // permissions is needed.
+        if (locked && perm < permToLock) {
+            revert();
+        }
+
+        uint8 permReq = Action(actn).permission();
+
+        // Very simple system.
+        if (perm < permReq) {
+            revert();
+        }
+
         // TODO keep up with return values from generic calls.
         // Just assume it succeeds for now (important for logger).
         require(actn.call(data));
@@ -78,20 +102,20 @@ contract ActionManager is DougEnabled {
     }
 
     function lock() public returns (bool) {
-        if(msg.sender != activeAction) {
+        if (msg.sender != activeAction) {
             return false;
         }
-        if(locked) {
+        if (locked) {
             return false;
         }
         locked = true;
     }
 
     function unlock() public returns (bool) {
-        if(msg.sender != activeAction) {
+        if (msg.sender != activeAction) {
             return false;
         }
-        if(!locked) {
+        if (!locked) {
             return false;
         }
         locked = false;
@@ -111,7 +135,7 @@ contract ActionManager is DougEnabled {
 
     function _log(bytes32 actionName, bool success) internal {
         // TODO check if this is really necessary in an internal function.
-        if(msg.sender != address(this)) {
+        if (msg.sender != address(this)) {
             return;
         }
         ActionLogEntry memory le = logEntries[nextEntry++];

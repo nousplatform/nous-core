@@ -14,7 +14,7 @@ import "./models/DougDb.sol";
 
 interface DougInterface {
     function contracts(bytes32 _name) public view returns (address addr);
-    function addContract(bytes32 name, address addr) public returns (bool result);
+    function addContract(bytes32 name, address addr, bool _overWr) public returns (bool result);
     function removeContract(bytes32 name) public returns (bool result);
 }
 
@@ -31,14 +31,16 @@ contract Doug is DougDb, Ownable {
     // When removing a contract.
     event RemoveContract(address indexed caller, bytes32 indexed name, uint16 indexed code);
 
-    function Doug(bytes32[] _names, address[] _addrs, bool[] _overWr) public {
+    constructor(bytes32[] _names, address[] _addrs) public {
         require(_names.length == _addrs.length);
         uint _length = _names.length;
         for (uint i; i < _length; i++) {
             require(_addrs[i] != 0x0, "Contract address is empty.");
             require(_names[i] != bytes32(0), "Contract name is empty.");
-            require(DougEnabled(_addrs[i]).setDougAddress(address(this)), "Could not set doug address in contract");
-            require(_addElement(_names[i], _addrs[i], _overWr[i]), "Not added element");
+            this.addContract(_names[i], _addrs[i]);
+
+            //require(DougEnabled(_addrs[i]).setDougAddress(address(this)), "Could not set doug address in contract");
+            //require(_addElement(_names[i], _addrs[i]), "Not added element");
         }
     }
 
@@ -59,7 +61,7 @@ contract Doug is DougDb, Ownable {
             return false;
         }
         // Add to contract.
-        bool ae = _addElement(_name, _addr);
+        bool ae = _addElement(_name, _addr/*, _overWr*/);
         if (ae) {
             AddContract(msg.sender, _name, 201);
         } else {

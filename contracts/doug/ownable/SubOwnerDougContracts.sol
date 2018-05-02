@@ -17,7 +17,7 @@ contract SubOwnerDougContracts is Doug {
         _;
     }
 
-    function SubOwnerDougContracts(address _subOwner) {
+    constructor(address _subOwner) {
         subOwner = _subOwner;
     }
 
