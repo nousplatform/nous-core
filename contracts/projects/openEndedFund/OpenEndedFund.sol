@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
 
-import "../commonFunctions/FundConstructor.sol";
+import "../commonFunctions/ProjectConstructor.sol";
 
 
 contract OpenEndedFund is FundConstructor {

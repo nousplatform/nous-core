@@ -1,14 +1,12 @@
 pragma solidity ^0.4.18;
 
 
-import "zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
-import "../fund/base/DougEnabled.sol";
-import "../fund/interfaces/SampleCrowdsaleTokenInterface.sol";
+//import "zeppelin-solidity/contracts/math/SafeMath.sol";
 
-contract BaseSaleAgent is Ownable {
 
-    using SafeMath for uint256;
+contract SaleDb {
+
+    //using SafeMath for uint256;
     uint8 decimals = 18;
     uint256 EXPONENT = 10 ** uint256(decimals); // 18
     bool public finalizeICO = false;
@@ -40,6 +38,29 @@ contract BaseSaleAgent is Ownable {
 
     event FinaliseSale(uint256 tokensMinted, uint256 weiAmount, uint256 dateFinalize);
     event TokenPurchase(address indexed beneficiary, uint256 value, uint256 tokens);
+
+    constructor(
+        address _owner,
+        uint256 _totalSupplyCap,
+        uint256 _retainedByCompany,
+        address _walletAddress,
+        address _nousToken,
+        address _tokenAddress
+    ) public {
+        require(_owner != 0x0);
+        require(_totalSupplyCap > 0);
+        require(_retainedByCompany > 0);
+        require(_walletAddress != 0x0);
+        require(_nousToken != 0x0);
+        require(_tokenAddress != 0x0);
+
+        owner = _owner;
+        totalSupplyCap = _totalSupplyCap * EXPONENT;
+        retainedByCompany = _retainedByCompany * EXPONENT;
+        walletAddress = _walletAddress;
+        nousToken = _nousToken;
+        tokenAddress = _tokenAddress;
+    }
 
     /**
       @notice Set the address of a new crowdsale/presale contract agent if needed, usefull for upgrading
@@ -113,12 +134,5 @@ contract BaseSaleAgent is Ownable {
         SampleCrowdsaleTokenInterface(tokenAddress).finishMinting();
     }
 
-    /*function availabilityCheckPurchase(SalesAgent _saleAgent) public constant returns (bool) {
-        return _saleAgent.isFinalized == false && now > _saleAgent.startTime && now < _saleAgent.endTime;
-    }
-
-    function checkValue(uint256 _value, SalesAgent _saleAgent) internal constant returns (bool) {
-        return _value > 0 && _saleAgent.minDeposit >= _value && _saleAgent.maxDeposit < _value;
-    }*/
 
 }

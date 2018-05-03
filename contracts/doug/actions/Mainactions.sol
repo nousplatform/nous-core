@@ -8,31 +8,33 @@ import {DougInterface as Doug} from "../Doug.sol";
 import {ActionManagerInterface as ActionManager} from "../ActionManager.sol";
 import {PermissionsDb as Permissions} from "../models/PermissionsDb.sol";
 
-interface ActionProvider{
+interface ActionProvider {
     function setPermission(uint8 permVal) external returns (bool);
 }
 
 contract Action is ActionManagerEnabled, Validee {
+
     // Note auto accessor.
     uint8 public permission;
 
     function setPermission(uint8 permVal) external returns (bool) {
-        if(!validate()) {
+        if (!validate()) {
             return false;
         }
         permission = permVal;
     }
 }
 
+
 // Add action. NOTE: Overwrites currently added actions with the same name.
 contract ActionAddAction is Action {
 
     function execute(bytes32 name, address addr) external returns (bool) {
-        if(!isActionManager()) {
+        if (!isActionManager()) {
             return false;
         }
         address adb = ContractProvider(DOUG).contracts("ActionDb");
-        if(adb == 0x0) {
+        if (adb == 0x0) {
             return false;
         }
         return ActionDb(adb).addAction(name, addr);

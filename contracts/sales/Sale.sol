@@ -5,7 +5,7 @@ import "./BaseSaleAgent.sol";
 import "./TGESchedule.sol";
 //import "../token/SampleCrowdsaleToken.sol";
 import "../fund/interfaces/SampleCrowdsaleTokenInterface.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 //import "../base/Construct.sol";
 
 

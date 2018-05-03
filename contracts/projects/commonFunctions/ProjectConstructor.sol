@@ -12,9 +12,13 @@ contract FundConstructor is SubOwnerDougContracts, DougProtectionRewriting {
 
     string public fundName;
 
-    string public fundType;
-
-    constructor(address _fundOwn, string _fundName, bytes32[] _cNames, address[] _cAddrs, bool[] _cOverWr) public
+    constructor(
+        address _fundOwn,
+        string _fundName,
+        bytes32[] _cNames,
+        address[] _cAddrs,
+        bool[] _cOverWr
+    ) public
         SubOwnerDougContracts(_fundOwn)
         DougProtectionRewriting(_cNames, _cOverWr)
         Doug(_cNames, _cAddrs)
