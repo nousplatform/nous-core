@@ -12,53 +12,45 @@ interface ActionProvider {
     function setPermission(uint8 permVal) external returns (bool);
 }
 
+/**
+* @notice Attention do not set permission
+* @dev
+* @param
+* @return
+*/
 contract Action is ActionManagerEnabled, Validee {
 
-    // Note auto accessor.
-    uint8 public permission;
+    // role => level
+    mapping(bytes32 => bool) permission;
 
-    function setPermission(uint8 permVal) external returns (bool) {
-        if (!validate()) {
-            return false;
-        }
-        permission = permVal;
+    function setPermission(bytes32 _role, bool _permVal) external returns (bool) {
+        require(validate());
+        permission[_role] = _permVal;
     }
+
 }
 
 
 // Add action. NOTE: Overwrites currently added actions with the same name.
 contract ActionAddAction is Action {
 
-    function execute(bytes32 name, address addr) external returns (bool) {
-        if (!isActionManager()) {
-            return false;
-        }
-        address adb = ContractProvider(DOUG).contracts("ActionDb");
-        if (adb == 0x0) {
-            return false;
-        }
-        return ActionDb(adb).addAction(name, addr);
+    function execute(bytes32 _name, address _addr) external {
+        require(isActionManager(), "Access denied");
+        address _adb = getContract("ActionDb");
+        require(ActionDb(_adb).addAction(_name, _addr), "Error query");
     }
 }
 
-// Remove action. Does not allow 'addaction' to be removed, though that it can still
+// Remove action. Does not allow 'ActionAddAction' to be removed, though that it can still
 // be done by overwriting this action with one that allows it.
 contract ActionRemoveAction is Action {
 
-    function execute(bytes32 name) external returns (bool) {
-        if(!isActionManager()) {
-            return false;
-        }
-        address adb = ContractProvider(DOUG).contracts("ActionDb");
-        if(adb == 0x0) {
-            return false;
-        }
-        if(name == "ActionAddAction") {
-            return false;
-        }
-        return ActionDb(adb).removeAction(name);
+    function execute(bytes32 _name) external {
+        require(isActionManager(), "Access denied");
+        require(_name != "ActionAddAction");
+        address _adb = getContract("ActionDb");
+        require(ActionDb(_adb).removeAction(_name), "Error query");
     }
-
 }
 
 // Lock actions. Makes it impossible to run actions for everyone but the owner.
@@ -66,15 +58,10 @@ contract ActionRemoveAction is Action {
 // for example.
 contract ActionLockActions is Action {
 
-    function execute() external returns (bool) {
-        if(!isActionManager()) {
-            return false;
-        }
-        address am = ContractProvider(DOUG).contracts("ActionManager");
-        if(am == 0x0) {
-            return false;
-        }
-        return ActionManager(am).lock();
+    function execute() external {
+        require(isActionManager(), "Access denied");
+        address _am = getContract("ActionManager");
+        require(ActionManager(_am).lock());
     }
 
 }
@@ -82,16 +69,34 @@ contract ActionLockActions is Action {
 // Unlock actions. Makes it possible for everyone to run actions.
 contract ActionUnlockActions is Action {
 
-    function execute() external returns (bool) {
-        if(!isActionManager()) {
-            return false;
-        }
-        ContractProvider dg = ContractProvider(DOUG);
-        address am = dg.contracts("ActionManager");
-        if(am == 0x0) {
-            return false;
-        }
-        return ActionManager(am).unlock();
+    function execute() external {
+        require(isActionManager(), "Access denied");
+        address _am = getContract("ActionManager");
+        require(ActionManager(_am).unlock());
+    }
+
+}
+
+// The set user permission action.
+contract ActionSetUserPermission is Action {
+
+    function execute(address _addr, bytes32 _role, uint8 _perm) external {
+        require(isActionManager(), "Access denied");
+        address _perms = getContract("PermissionDb");
+        require(Permissions(_perms).setPermission(_addr, _role, _perm));
+    }
+
+}
+
+// The set action permission. This is the permission level required to run the action.
+contract ActionSetActionPermission is Action {
+
+    function execute(string _name, uint8 _perm) external {
+        require(isActionManager(), "Access denied");
+        address _adb = getContract("ActionDb");
+        address _action = ActionDb(_adb).actions(_name);
+        require(_action != 0x0);
+        require(Action(_action).setPermission(_role, _perm));
     }
 
 }
@@ -122,37 +127,4 @@ contract ActionUnlockActions is Action {
 
 }*/
 
-// The set user permission action.
-contract ActionSetUserPermission is Action {
 
-    function execute(address addr, uint8 perm) external returns (bool) {
-        if(!isActionManager()) {
-            return false;
-        }
-        ContractProvider dg = ContractProvider(DOUG);
-        address perms = dg.contracts("PermissionDb");
-        if(perms == 0x0) {
-            return false;
-        }
-        return Permissions(perms).setPermission(addr, perm);
-    }
-
-}
-
-// The set action permission. This is the permission level required to run the action.
-contract ActionSetActionPermission is Action {
-
-    function execute(bytes32 name, uint8 perm) external returns (bool) {
-        if(!isActionManager()) {
-            return false;
-        }
-        ContractProvider dg = ContractProvider(DOUG);
-        address adb = dg.contracts("ActionDb");
-        if(adb == 0x0) {
-            return false;
-        }
-        var action = ActionDb(adb).actions(name);
-        Action(action).setPermission(perm);
-    }
-
-}

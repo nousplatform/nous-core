@@ -1,24 +1,25 @@
 pragma solidity ^0.4.18;
 
 
-import "../safety/Validee.sol";
+import "../../../doug/models/PermissionsDb.sol";
 
 
-contract ProjectPermissionDb {
+contract ProjectPermissionDb is PermissionsDb {
 
-    // user address => role
-    mapping(address => bytes32) public permission;
-
-    constructor(address _nous) {
+    constructor(address _nous, address _owner)
+    PermissionsDb(_owner) {
         permission[_nous] = "nous";
     }
 
-    function setPermission(address _addr, bytes32 _role) returns (bool) {
-        require(_role != "owner" && _role != "nous");
-
-        if (!validate()) {
-            return false;
-        }
-        perms[_addr] = _role;
+    /**
+    * @notice
+    * @dev Permission (nous) is not overwrite
+    * @param _addr User address
+    * @param _role User role
+    * @return
+    */
+    function setPermission(address _addr, string _role) returns (bool) {
+        require(_role != "nous");
+        return super.setPermission(_addr, _role);
     }
 }

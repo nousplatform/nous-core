@@ -7,6 +7,12 @@ import "./models/ProjectPermissionDb.sol";
 
 contract ProjectManager is ActionManager {
 
+    uint8 specialPerm = 0;
+
+    constructor() {
+        permToLock = 100;
+    }
+
     function execute(bytes32 actionName, bytes data) public returns (bool) {
 
         address actionDb = ContractProvider(DOUG).contracts("ActionDb");
@@ -23,31 +29,38 @@ contract ProjectManager is ActionManager {
 
         ProjectPermissionDb p = ProjectPermissionDb(pAddr);
         // First we check the permissions of the account that's trying to execute the action.
-        byte32 _role = p.perms(msg.sender);
+        bool perm = p.perms(msg.sender);
 
         // Now we check that the action manager isn't locked down. In that case, special
         // permissions is needed.
-        if (locked && _role != "owner" && _role != "nous") {
+        if (locked && !(perm == "owner" || perm == "nous")) {
             revert();
         }
 
-        uint8 permReq = Action(actn).permission(_role);
+        // First we check the permissions of the account that's trying to execute the action.
+        uint8 permReqMin = Action(actn).permissionMin();
+        uint8 permReqMax = Action(actn).permissionMax();
 
         // Very simple system.
-        if (!permReq) {
-            revert();
+        if ((perm > permReqMin) && (perm < permReqMax)) {
+            revert("Permission denied.");
         }
 
-        require(activeAction == 0x0);
+        // locked process
+        require(activeAction == 0x0, "Process busy at the moment.");
+        // TODO keep up with return values from generic calls.
         // Set this as the currently active action.
         activeAction = actn;
 
-        // TODO keep up with return values from generic calls.
         // Just assume it succeeds for now (important for logger).
-        require(actn.call(data));
+        require(actn.call(data), "Query rejected.");
         // Now clear it.
         activeAction = 0x0;
         _log(actionName, true);
         return true;
+    }
+
+    function setSpecialPerms() {
+        specialPerm = 10;
     }
 }

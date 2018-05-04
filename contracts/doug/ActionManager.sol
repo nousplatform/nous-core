@@ -29,6 +29,11 @@ contract ActionManager is DougEnabled {
         bool success;
     }
 
+    struct User {
+        bytes32 role;
+        uint8 perm;
+    }
+
     bool LOGGING = true;
 
     // This is where we keep the "active action".
@@ -43,58 +48,50 @@ contract ActionManager is DougEnabled {
     uint8 permToLock = 255; // Current max. 255
     bool locked;
 
+    constructor() {
+        permToLock = 255;
+    }
+
     // Adding a logger here, and not in a separate contract. This is wrong.
     // Will replace with array once that's confirmed to work with structs etc.
     uint public nextEntry = 0;
     mapping(uint => ActionLogEntry) public logEntries;
 
     function execute(bytes32 actionName, bytes data) public returns (bool) {
-        //todo require security
-        require(activeAction == 0x0);
 
-        address actionDb = ContractProvider(DOUG).contracts("ActionDb");
-        require(actionDb != 0x0);
-        /*if (actionDb == 0x0) {
-            _log(actionName, false);
-            return false;
-        }*/
+        address actionDb = getContract("ActionDb");
 
         // If no action with the given name exists - cancel.
         address actn = ActionDb(actionDb).actions(actionName);
         require(actn != 0x0);
-        /*if (actn == 0x0) {
-            //_log(actionName, false);
-            //return false;
-        }*/
-
-        // Set this as the currently active action.
-        activeAction = actn;
 
         // Permissions stuff
-        address pAddr = ContractProvider(DOUG).contracts("PermissionDb");
-        // Only check permissions if there is a permissions contract.
-        require(pAddr != 0x0);
+        address pAddr = getContract("PermissionDb");
 
         PermissionsDb p = PermissionsDb(pAddr);
         // First we check the permissions of the account that's trying to execute the action.
-        uint8 perm = p.perms(msg.sender);
+        uint8 _perm = p.perms[msg.sender].perm;
 
         // Now we check that the action manager isn't locked down. In that case, special
         // permissions is needed.
-        if (locked && perm < permToLock) {
+        if (locked && _perm < permToLock) {
             revert();
         }
 
-        uint8 permReq = Action(actn).permission();
+        uint8 _permReq = Action(actn).permission(p.perms[msg.sender].role);
 
         // Very simple system.
-        if (perm < permReq) {
-            revert();
-        }
+        require(_perm > _permReq);
+
+        // todo locked process
+        require(activeAction == 0x0, "Process busy at the moment.");
 
         // TODO keep up with return values from generic calls.
+        // Set this as the currently active action.
+        activeAction = actn;
+
         // Just assume it succeeds for now (important for logger).
-        require(actn.call(data));
+        require(actn.call(data), "Query rejected.");
         // Now clear it.
         activeAction = 0x0;
         _log(actionName, true);

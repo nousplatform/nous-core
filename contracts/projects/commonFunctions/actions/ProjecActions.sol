@@ -1,28 +1,26 @@
 pragma solidity ^0.4.18;
 
 
-import "../../../doug/safety/ActionManagerEnabled.sol";
-import "../../../doug/safety/Validee.sol";
+import {Action} from "../../../doug/actions/Mainactions.sol";
 
 
-contract ActionProject is ActionManagerEnabled, Validee {
+contract ProjectAction {
 
-    // role => level
-    mapping(bytes32 => bool) public permission;
+    // special allow for execute nous manager
+    bool public specialAllow = false;
 
-    function setPermission(bytes32 _role, bool _level) external returns (bool) {
-        if (!validate()) {
-            return false;
-        }
-        permission[_role] = permVal;
+    function setSpecialAllow() {
+        require(validate());
+        specialAllow = true;
     }
+
 }
 
 // Add action. NOTE: Overwrites currently added actions with the same name.
-contract ActionAddActionProject is ActionProject {
+contract ProjectActionAddAction is ActionAddAction, ProjectAction {
 
     constructor() {
-        permission["nous", true];
+        permissions["nous"] = true;
     }
 
     function execute(bytes32 name, address addr) external returns (bool) {
