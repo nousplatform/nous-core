@@ -12,7 +12,7 @@ contract OpenEndedFund is FundConstructor {
 
     string public tokenSymbol;
 
-    constructor(address _fundOwn, string _fundName, bytes32[] _cNames, address[] _cAddrs, bool[] _cOverWr)
+    constructor(address _fundOwn, string _fundName, bytes32[] _cNames, address[] _cAddrs, bool[] _cOverWr) public
     FundConstructor(_fundOwn, _fundName, _cNames, _cAddrs, _cOverWr) {
 
     }

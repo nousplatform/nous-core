@@ -70,7 +70,7 @@ contract ActionManager is DougEnabled {
 
         PermissionsDb p = PermissionsDb(pAddr);
         // First we check the permissions of the account that's trying to execute the action.
-        uint8 _perm = p.perms[msg.sender].perm;
+        uint8 _perm = p.users[msg.sender];
 
         // Now we check that the action manager isn't locked down. In that case, special
         // permissions is needed.

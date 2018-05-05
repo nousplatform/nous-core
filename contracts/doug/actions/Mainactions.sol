@@ -30,7 +30,6 @@ contract Action is ActionManagerEnabled, Validee {
 
 }
 
-
 // Add action. NOTE: Overwrites currently added actions with the same name.
 contract ActionAddAction is Action {
 
