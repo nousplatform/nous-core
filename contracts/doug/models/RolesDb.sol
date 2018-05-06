@@ -4,33 +4,46 @@ pragma solidity ^0.4.18;
 contract RolesDb {
 
     struct Role {
-        uint8 perm;
-        bool notOverwrite;
-        uint index;
+        uint8 permLvl;
+        uint256 index;
     }
 
+    // @dev role name <to> structure Role
     mapping(bytes32 => Role) public roles;
 
-    bytes32[] public indexRoles;
+    bytes32[] public rolesIndex;
 
-    function isRole(bytes32 _role) public constant returns(bool) {
-        if (indexRoles.length == 0) return false;
-        return indexRoles[roles[_role].index] == _role;
+    constructor() public {
+        roles["none"] = Role({permLvl: 0, index: rolesIndex.push("none")});
+        roles["owner"] = Role({permLvl: 0, index: rolesIndex.push("owner")});
     }
 
-    function addRole(bytes32 _newRole, uint8 _perm, bool _notOverwrite) external returns (uint) {
-        if (!validate()/* || isRole(_newRole)*/) {
-            return 0;
-        }
-        Role memory _role;
-        _role.perm = _perm;
-        _role.notOverwrite = _notOverwrite;
-        _role.index = roles.push(_newRole) - 1;
-        roles[_newRole] = _role;
-        return _role.index;
+    function isRole(bytes32 _roleName) public returns(bool) {
+        if (rolesIndex.length == 0) return false;
+        return rolesIndex[roles[_roleName].index] == _roleName;
     }
 
-    function removeRole() {
-
+    /*
+    * @dev Notice: Do not overwrite role permission if _permLvl more 200 points
+    */
+    function addUpdateRole(bytes32 _role, uint8 _permLvl) external returns(bool) {
+        if (!validate()) return false;
+        if (isRole(_role)) return false;
+        roles[_role] = Role({
+            permLvl: _permLvl,
+            index: rolesIndex.push(_role) - 1
+        });
+        return true;
     }
+
+    function updateRole(bytes32 _role, uint8 _permLvl) public returns(bool) {
+        if (!validate()) return false;
+        if (!isRole(_role)) return false;
+        if (roles[_role].permLvl > 200) return false;
+        roles[_role] = Role({
+            permLvl: _permLvl
+        });
+        return true;
+    }
+
 }
