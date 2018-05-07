@@ -1,12 +1,13 @@
 pragma solidity ^0.4.18;
 
 
-import "../../doug/ownable/SubOwnerDougContracts.sol";
+//import "../../doug/ownable/SubOwnerDougContracts.sol";
+import "../../doug/Doug.sol";
 import "../../doug/safety/DougProtectionRewriting.sol";
 
 
 // The Doug contract.
-contract FundConstructor is SubOwnerDougContracts, DougProtectionRewriting {
+contract ProjectConstructor is Doug, DougProtectionRewriting {
 
     address public fundOwner;
 
@@ -19,7 +20,7 @@ contract FundConstructor is SubOwnerDougContracts, DougProtectionRewriting {
         address[] _cAddrs,
         bool[] _cOverWr
     ) public
-        SubOwnerDougContracts(_fundOwn)
+        //SubOwnerDougContracts(_fundOwn)
         DougProtectionRewriting(_cNames, _cOverWr)
         Doug(_cNames, _cAddrs)
     {

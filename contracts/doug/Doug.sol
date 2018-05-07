@@ -4,6 +4,7 @@ pragma solidity ^0.4.18;
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./safety/DougEnabled.sol";
 import "./models/DougDb.sol";
+import "./interfaces/Validator.sol";
 //import "./safety/Validee.sol";
 
 //import {ActionManagerInterface as ActionManager} from "./ActionManager.sol";
@@ -13,7 +14,7 @@ import "./models/DougDb.sol";
 
 
 interface DougInterface {
-    function contracts(bytes32 _name) public view returns (address addr);
+    function contracts(bytes32 _name) public constant returns (address addr);
     function addContract(bytes32 name, address addr, bool _overWr) public returns (bool result);
     function removeContract(bytes32 name) public returns (bool result);
 }
@@ -24,7 +25,7 @@ interface DougInterface {
 /// @notice This contract is used to register other contracts by name.
 /// @dev Stores the contracts as entries in a doubly linked list, so that
 /// the list of elements can be gotten.
-contract Doug is DougDb, Ownable {
+contract Doug is DougDb {
 
     // When adding a contract.
     event AddContract(address indexed caller, bytes32 indexed name, uint16 indexed code);
@@ -33,14 +34,10 @@ contract Doug is DougDb, Ownable {
 
     constructor(bytes32[] _names, address[] _addrs) public {
         require(_names.length == _addrs.length);
-        uint _length = _names.length;
-        for (uint i; i < _length; i++) {
+        for (uint i; i < _names.length; i++) {
             require(_addrs[i] != 0x0, "Contract address is empty.");
             require(_names[i] != bytes32(0), "Contract name is empty.");
-            this.addContract(_names[i], _addrs[i]);
-
-            //require(DougEnabled(_addrs[i]).setDougAddress(address(this)), "Could not set doug address in contract");
-            //require(_addElement(_names[i], _addrs[i]), "Not added element");
+            _addElement(_names[i],_addrs[i]);
         }
     }
 
@@ -55,13 +52,14 @@ contract Doug is DougDb, Ownable {
     function addContract(bytes32 _name, address _addr) public returns (bool result) {
         // Only the owner may add, and the contract has to be DougEnabled and
         // return true when setting the Doug address.
-        if (msg.sender != owner || !DougEnabled(_addr).setDougAddress(address(this))) {
+        address am = contracts("ActionManager");
+        if (Validator(am).validate(msg.sender) || !DougEnabled(_addr).setDougAddress(address(this))) {
             // Access denied. Should divide these up into two maybe.
             AddContract(msg.sender, _name, 403);
             return false;
         }
         // Add to contract.
-        bool ae = _addElement(_name, _addr/*, _overWr*/);
+        bool ae = _addElement(_name, _addr);
         if (ae) {
             AddContract(msg.sender, _name, 201);
         } else {
@@ -75,7 +73,8 @@ contract Doug is DougDb, Ownable {
     /// @param _name The bytes32 name of the contract.
     /// @return { "result": "showing if the adding succeeded or failed." }
     function removeContract(bytes32 _name) public returns (bool result) {
-        if(msg.sender != owner) {
+        address am = contracts("ActionManager");
+        if(Validator(am).validate(msg.sender)) {
             RemoveContract(msg.sender, _name, 403);
             return false;
         }
@@ -89,16 +88,32 @@ contract Doug is DougDb, Ownable {
         return re;
     }
 
-    /// @notice Gets a contract from Doug.
-    /// @param _name The bytes32 name of the contract.
-    /// @return { "addr": "The address of the contract." } If no contract with that name exists, it will
-    function contracts(bytes32 _name) public view returns (address addr) {
-        return list[_name].contractAddress;
+    function contracts(bytes32 _name) public constant returns(address) {
+        if (!isElement(_name)) revert(); //return 0x0;
+        return contractList[_name].addr;
     }
 
-    /// @notice Remove (selfdestruct) Doug.
-    function remove() public onlyOwner {
-        selfdestruct(owner);
+    // Should be safe to update to returning 'Element' instead
+    function getAllContracts() public constant returns (bytes32[] memory contractName, address[] memory contractAddress) {
+
+        uint length = listIndex.length;
+        contractName = new bytes32[](length);
+        contractAddress = new address[](length);
+        for (uint i = 0; i < length; i++) {
+            contractName[i] = listIndex[i];
+            contractAddress[i] = contractList[listIndex[i]];
+        }
+        return (contractName, contractAddress);
     }
+
+    function countContracts() public constant returns(uint) {
+        return listIndex.length;
+    }
+
+
+    /// @notice Remove (selfdestruct) Doug.
+//    function remove() public onlyOwner {
+//        selfdestruct(owner);
+//    }
 
 }

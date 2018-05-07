@@ -21,7 +21,7 @@ interface ActionProvider {
 contract Action is ActionManagerEnabled, Validee {
 
     // role => level
-    mapping(bytes32 => bool) permission;
+    mapping(bytes32 => bool) public permission;
 
     function setPermission(bytes32 _role, bool _permVal) external returns (bool) {
         require(validate());
@@ -33,6 +33,10 @@ contract Action is ActionManagerEnabled, Validee {
 // Add action. NOTE: Overwrites currently added actions with the same name.
 contract ActionAddAction is Action {
 
+    constructor() public {
+        permission["owner"] = true;
+    }
+
     function execute(bytes32 _name, address _addr) external {
         require(isActionManager(), "Access denied");
         address _adb = getContract("ActionDb");
@@ -43,6 +47,10 @@ contract ActionAddAction is Action {
 // Remove action. Does not allow 'ActionAddAction' to be removed, though that it can still
 // be done by overwriting this action with one that allows it.
 contract ActionRemoveAction is Action {
+
+    constructor() public {
+        permission["owner"] = true;
+    }
 
     function execute(bytes32 _name) external {
         require(isActionManager(), "Access denied");
@@ -57,6 +65,10 @@ contract ActionRemoveAction is Action {
 // for example.
 contract ActionLockActions is Action {
 
+    constructor() public {
+        permission["owner"] = true;
+    }
+
     function execute() external {
         require(isActionManager(), "Access denied");
         address _am = getContract("ActionManager");
@@ -67,6 +79,10 @@ contract ActionLockActions is Action {
 
 // Unlock actions. Makes it possible for everyone to run actions.
 contract ActionUnlockActions is Action {
+
+    constructor() public {
+        permission["owner"] = true;
+    }
 
     function execute() external {
         require(isActionManager(), "Access denied");
@@ -79,6 +95,10 @@ contract ActionUnlockActions is Action {
 // The set user permission action.
 contract ActionSetUserPermission is Action {
 
+    constructor() public {
+        permission["owner"] = true;
+    }
+
     function execute(address _addr, bytes32 _role, uint8 _perm) external {
         require(isActionManager(), "Access denied");
         address _perms = getContract("PermissionDb");
@@ -90,7 +110,11 @@ contract ActionSetUserPermission is Action {
 // The set action permission. This is the permission level required to run the action.
 contract ActionSetActionPermission is Action {
 
-    function execute(string _name, uint8 _perm) external {
+    constructor() public {
+        permission["owner"] = true;
+    }
+
+    function execute(string _name, bool _perm) external {
         require(isActionManager(), "Access denied");
         address _adb = getContract("ActionDb");
         address _action = ActionDb(_adb).actions(_name);

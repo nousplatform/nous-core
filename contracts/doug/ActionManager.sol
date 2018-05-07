@@ -6,6 +6,8 @@ import "./models/PermissionsDb.sol";
 import "./interfaces/ContractProvider.sol";
 import {ActionDbAbstract as ActionDb} from "./models/ActionDb.sol";
 import {Action} from "./actions/Mainactions.sol";
+import {/*UsersDbInterface as*/UserDb} from "./models/UserDb.sol";
+import {/*UsersDbInterface as*/RoleDb} from "./models/RoleDb.sol";
 
 
 interface ActionManagerInterface {
@@ -29,10 +31,6 @@ contract ActionManager is DougEnabled {
         bool success;
     }
 
-    struct User {
-        bytes32 role;
-        uint8 perm;
-    }
 
     bool LOGGING = true;
 
@@ -62,26 +60,28 @@ contract ActionManager is DougEnabled {
         address actionDb = getContract("ActionDb");
 
         // If no action with the given name exists - cancel.
-        address actn = ActionDb(actionDb).actions(actionName);
+        var(actn, _permReq) = ActionDb(actionDb).getAction(actionName);
         require(actn != 0x0);
 
         // Permissions stuff
-        address pAddr = getContract("PermissionDb");
+        address uAddr = getContract("UserDb");
+        UserDb _u = UserDb(uAddr);
 
-        PermissionsDb p = PermissionsDb(pAddr);
         // First we check the permissions of the account that's trying to execute the action.
-        uint8 _perm = p.users[msg.sender];
+        ( ,_userRole) = _u.user(msg.sender);
+        // Verify action role perm
+        require(Action(actn).permission(_userRole));
+
+        uint256 permLvl = RoleDb(getContract("RoleDb")).role(_userRole);
 
         // Now we check that the action manager isn't locked down. In that case, special
         // permissions is needed.
-        if (locked && _perm < permToLock) {
+        if (locked && permLvl < permToLock) {
             revert();
         }
 
-        uint8 _permReq = Action(actn).permission(p.perms[msg.sender].role);
-
         // Very simple system.
-        require(_perm > _permReq);
+        require(permLvl > _permReq);
 
         // todo locked process
         require(activeAction == 0x0, "Process busy at the moment.");

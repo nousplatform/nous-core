@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
 
-import {Action} from "../../../doug/actions/Mainactions.sol";
+import {ActionAddAction} from "../../../doug/actions/Mainactions.sol";
 
 
 contract ProjectAction {
@@ -21,17 +21,13 @@ contract ProjectActionAddAction is ActionAddAction, ProjectAction {
 
     constructor() {
         permissions["nous"] = true;
+        specialAllow = false;
     }
 
-    function execute(bytes32 name, address addr) external returns (bool) {
-        if (!isActionManager()) {
-            return false;
-        }
-        address adb = ContractProvider(DOUG).contracts("ActionDb");
-        if (adb == 0x0) {
-            return false;
-        }
-        return ActionDb(adb).addAction(name, addr);
+    function execute(bytes32 _name, address _addr) external {
+        require(specialAllow);
+        super.execute(_name, _addr);
     }
+
 }
 
