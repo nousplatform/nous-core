@@ -21,6 +21,7 @@ contract ProjectActionAddAction is ActionAddAction, ProjectAction {
 
     constructor() {
         permissions["nous"] = true;
+        permissions["owner"] = false;
         specialAllow = false;
     }
 

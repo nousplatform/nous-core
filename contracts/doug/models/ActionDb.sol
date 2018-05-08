@@ -18,7 +18,7 @@ contract ActionDb is Validee {
 
     struct Action {
         address addr;
-        uint8 perm;
+        //uint8 perm;
         uint index;
         //bytes32[] permRole;
     }
@@ -38,8 +38,8 @@ contract ActionDb is Validee {
     * @param _name action name
     * @return address action
     */
-    function getAction(bytes32 _name) public constant returns (address, uint8) {
-        return (actionStruct[_name].addr, actions[_name].perm);
+    function getAction(bytes32 _name) public constant returns (address/*, uint8*/) {
+        return (actionStruct[_name].addr/*, actions[_name].perm*/);
     }
 
     // To make sure we have an add action action, we need to auto generate
@@ -53,11 +53,11 @@ contract ActionDb is Validee {
         if(!DougEnabled(_addAction).setDougAddress(_dougAddr)) {
             return false;
         }
-        actionStruct["ActionAddAction"] = Action({addr: _addrAction, perm: 255, index: actionIndex.push(_addrAction) - 1});
+        actionStruct["ActionAddAction"] = Action({addr: _addrAction, /*perm: 255,*/ index: actionIndex.push(_addrAction) - 1});
         return true;
     }
 
-    function addAction(bytes32 _name, address _addr, uint8 _permVal) returns (bool) {
+    function addAction(bytes32 _name, address _addr/*, uint8 _permVal*/) returns (bool) {
         if (!validate()) return false;
         // Remember we need to set the doug address for the action to be safe -
         // or someone could use a false doug to do damage to the system.
@@ -68,7 +68,7 @@ contract ActionDb is Validee {
             return false;
         }
         actionStruct[_name].addr = _addr;
-        actionStruct[_name].perm = _permVal;
+        //actionStruct[_name].perm = _permVal;
         actionStruct[_name].index = actionIndex.push(_addr) - 1;
 
         return true;
@@ -83,10 +83,10 @@ contract ActionDb is Validee {
 //        return true;
 //    }
 
-    function setPermission(bytes32 _name, uint8 _permVal) external returns (bool) {
+    /*function setPermission(bytes32 _name, uint8 _permVal) external returns (bool) {
         require(validate());
         actionStruct[_name].perm = _permVal;
-    }
+    }*/
 
     function actions(bytes32 _name) public constant returns(address) {
         if (!isAction(_name)) revert();

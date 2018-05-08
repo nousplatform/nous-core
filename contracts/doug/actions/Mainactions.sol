@@ -20,8 +20,11 @@ interface ActionProvider {
 */
 contract Action is ActionManagerEnabled, Validee {
 
-    // role => level
+    // role => level Role permissions
     mapping(bytes32 => bool) public permission;
+
+    //permission lvl
+    uint8 public permReq = 255;
 
     function setPermission(bytes32 _role, bool _permVal) external returns (bool) {
         require(validate());

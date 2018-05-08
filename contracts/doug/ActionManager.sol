@@ -60,7 +60,7 @@ contract ActionManager is DougEnabled {
         address actionDb = getContract("ActionDb");
 
         // If no action with the given name exists - cancel.
-        var(actn, _permReq) = ActionDb(actionDb).getAction(actionName);
+        address actn = ActionDb(actionDb).actions(actionName);
         require(actn != 0x0);
 
         // Permissions stuff
@@ -68,9 +68,11 @@ contract ActionManager is DougEnabled {
         UserDb _u = UserDb(uAddr);
 
         // First we check the permissions of the account that's trying to execute the action.
-        ( ,_userRole) = _u.user(msg.sender);
+        ( , _userRole) = _u.user(msg.sender);
         // Verify action role perm
-        require(Action(actn).permission(_userRole));
+
+        Action _a = Action(actn);
+        require(_a.permission(_userRole), "Access denied. Not permissions for action.");
 
         uint256 permLvl = RoleDb(getContract("RoleDb")).role(_userRole);
 
@@ -81,7 +83,7 @@ contract ActionManager is DougEnabled {
         }
 
         // Very simple system.
-        require(permLvl > _permReq);
+        require(permLvl > _a.permReq);
 
         // todo locked process
         require(activeAction == 0x0, "Process busy at the moment.");
