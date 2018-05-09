@@ -12,10 +12,17 @@ contract OpenEndedSaleDb is Validee {
 
     uint256 managementFee;
 
-    uint256 maxInvestors;
+    // Amount of nous token raised
+    uint256 public NSURaised;
 
-    constructor(uint256 _entryFee, uint256 _exitFee, uint256 _managementFee, uint256 _maxInvestors) public {
+    //uint256 maxInvestors;
 
+
+    function setParams(uint256 _entryFee, uint256 _exitFee, uint256 _managementFee/*, uint256 _maxInvestors*/) public {
+        entryFee = _entryFee;
+        exitFee = _exitFee;
+        managementFee = _managementFee;
+        //maxInvestors = _maxInvestors;
     }
 
 }

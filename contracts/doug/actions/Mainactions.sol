@@ -6,7 +6,7 @@ import "../safety/Validee.sol";
 import {ActionDbAbstract as ActionDb} from "../models/ActionDb.sol";
 import {DougInterface as Doug} from "../Doug.sol";
 import {ActionManagerInterface as ActionManager} from "../ActionManager.sol";
-import {PermissionsDb as Permissions} from "../models/PermissionsDb.sol";
+import {PermissionsDb as Permissions} from "../models/UserDb.sol";
 
 interface ActionProvider {
     function setPermission(uint8 permVal) external returns (bool);
@@ -24,7 +24,7 @@ contract Action is ActionManagerEnabled, Validee {
     mapping(bytes32 => bool) public permission;
 
     //permission lvl
-    uint8 public permReq = 255;
+    uint8 public locked = false;
 
     function setPermission(bytes32 _role, bool _permVal) external returns (bool) {
         require(validate());

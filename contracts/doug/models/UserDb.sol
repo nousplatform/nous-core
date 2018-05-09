@@ -1,65 +1,84 @@
-pragma solidity ^0.4.0;
+pragma solidity ^0.4.18;
 
 
 import "../safety/Validee.sol";
+import "./RoleDb.sol";
 
 
-contract UserDb  is Validee {
+// The Permissions contract
+contract UserDb is Validee {
 
     struct User {
-        uint256 index; // userId
-        bytes32 name;
         bytes32 role;
+        bytes32 name;
+        bool owned;
+        uint256 index;
     }
 
-    // @dev account address <to> permission
-    mapping(address => User) private userList;
-
+    mapping(address => User) userList;
     address[] public userIndexes;
 
-    constructor(address[] _userAddr, bytes32[] _name, bytes32[] _role) public {
-        for (uint i = 0; i < _userAddr.length; i++ ) {
-            _addUser(_userAddr[i], _name[i], _role[i]);
-        }
+    // constructor for owner
+    constructor(address _owner) public {
+        _addUser(_owner, "Owner", "owner", true);
     }
 
-    function isUser(address _user) internal returns(bool) {
+    function isUser(address _account) internal returns(bool) {
         if (userIndexes.length == 0) return false;
-        userIndexes[userList[_user].index] == _user;
+        userIndexes[userList[_account].index] == _account;
     }
 
-    function _addUser(address _userAddr, bytes32 _name, bytes32 _role) internal {
+    function _addUser(address _userAddr, bytes32 _name, bytes32 _role, bool _owned) internal {
         userList[_userAddr] = User({
             name: _name,
-            index: userIndexes.push(_userAddr) - 1,
-            role: _role
+            role: _role,
+            owned: _owned,
+            index: userIndexes.push(_userAddr) - 1
         });
     }
 
-    // @dev Do not overwrite user, only add.
-    function addUser(address _userAddr, bytes32 _name, bytes32 _role) external returns(bool) {
-        if (!validate() || isUser(_userAddr)) return false;
-        _addUser(_userAddr, _name, _role);
+    function validateRole(bytes32 _role) internal returns(bool) {
+        address rdb_ = getContract("RoleDb");
+        return RoleDb(rdb_).allowToAssign(_role);
+    }
+
+    function setOwned(address _addr, bool _owned) external returns (bool) {
+        if (!validate()) return false;
+        userList[_addr].owned = _owned;
         return true;
     }
 
-    function setRole(address _user, bytes32 _role) external returns(bool) {
-        if (!validate() || !isUser(_userAddr)) return false;
-        userList[_user].role = _role;
+    function setRole(address _addr, bytes32 _role) external returns (bool) {
+        if (!validate()) return false;
+        if (!isUser(_account)) return false;
+        if (!validateRole(_role)) return false;
+
+        userList[_addr].role = _role;
+        return true;
     }
 
-    function user(address _userAddr) public constant returns(bytes32 _name, bytes32 _role) {
-        if (!isUser(_userAddr)) revert("User not found.");
-        return (userList[_userAddr].name, userList[_userAddr].role);
+    function addUser(address _account, bytes32 _name, bytes32 _role) external returns (bool) {
+        if (!validate()) return false;
+        if (isUser(_account)) return false;
+        if (!validateRole(_role)) return false;
+
+        _addUser(_account, _name, _role, false);
+        return true;
     }
 
-    function getUserFormIndex(uint _index) public constant returns(bytes32 _name, bytes32 _role) {
-        if (!isUser(userIndexes[_index])) revert("User not found.");
-        return (userList[userIndexes[_index]].name, userList[userIndexes[_index]].role);
+    function count() public constant returns(uint256) {
+        return userIndexes.length();
     }
 
-    function count() public constant returns(uint) {
-        return userIndexes.length;
+    function getUserFromIndex(uint256 _index) public constant returns(address _account, bytes32 _name, bytes32 _role, bool _owned) {
+        User _user = userList[userIndexes[_index]];
+        return (userIndexes[_index], _user.name, _user.role, _user.owned);
+    }
+
+    function getUser(address _account) public constant returns(bytes32 _name, bytes32 _role, bool _owned) {
+        require(!isUser(_account), "User not exist");
+        User _user = userList[_account];
+        return (_user.name, _user.role, _user.owned);
     }
 
 }

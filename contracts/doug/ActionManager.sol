@@ -2,7 +2,7 @@ pragma solidity ^0.4.18;
 
 
 import "./safety/DougEnabled.sol";
-import "./models/PermissionsDb.sol";
+import "./models/UserDb.sol";
 import "./interfaces/ContractProvider.sol";
 import {ActionDbAbstract as ActionDb} from "./models/ActionDb.sol";
 import {Action} from "./actions/Mainactions.sol";
@@ -68,22 +68,18 @@ contract ActionManager is DougEnabled {
         UserDb _u = UserDb(uAddr);
 
         // First we check the permissions of the account that's trying to execute the action.
-        ( , _userRole) = _u.user(msg.sender);
-        // Verify action role perm
-
-        Action _a = Action(actn);
-        require(_a.permission(_userRole), "Access denied. Not permissions for action.");
-
-        uint256 permLvl = RoleDb(getContract("RoleDb")).role(_userRole);
+        var ( , _userRole, _owned) = _u.getUser(msg.sender);
 
         // Now we check that the action manager isn't locked down. In that case, special
         // permissions is needed.
-        if (locked && permLvl < permToLock) {
+        if (locked && !_owned) {
             revert();
         }
 
         // Very simple system.
-        require(permLvl > _a.permReq);
+        Action _a = Action(actn);
+        require(_a.permission(_userRole), "Access denied. Not permissions for action.");
+        require(!_a.locked, "Action locked.");
 
         // todo locked process
         require(activeAction == 0x0, "Process busy at the moment.");
