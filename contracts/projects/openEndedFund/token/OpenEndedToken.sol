@@ -26,14 +26,17 @@ contract OpenEndedToken is Validee, PurchaseToken, PausableToken, SaleToken, Inv
     string public symbol;
     uint8 public decimals;
 
-    function OpenEndedToken(string _name, string _symbol, uint8 _decimals) {
+    // @dev Constructor only nous token can mint.
+    function OpenEndedToken(address _nousToken, string _name, string _symbol, uint8 _decimals)
+    SubOwner(_nousToken)
+    {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
         paused = true;
     }
 
-    function mint(address _to, uint256 _amount) public onlyOwner canMint returns (bool) {
+    function mint(address _to, uint256 _amount) public returns (bool) {
         super.mint(_to, _amount);
         addInvestor(_to);
         return true;
@@ -55,28 +58,11 @@ contract OpenEndedToken is Validee, PurchaseToken, PausableToken, SaleToken, Inv
         return true;
     }
 
-    function burn(uint256 _value) public {
-        super.burn(_value);
+    function _burn(address _who, uint256 _value) internal {
+        super._burn(msg.sender, _value);
         if (balances[msg.sender] == 0) {
             removeInvestor(msg.sender);
         }
     }
-
-    // after finish mining auto paused
-    function finishMinting() public onlyOwner canMint returns (bool) {
-        super.finishMinting();
-        paused = true;
-        return true;
-    }
-
-    /**
-    * @dev Not paused token after ended mining
-    */
-    function pause() public onlyOwner whenNotPaused {
-        require(mintingFinished == false);
-        super.pause();
-    }
-
-
 
 }

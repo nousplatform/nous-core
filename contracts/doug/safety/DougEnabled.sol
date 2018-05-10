@@ -17,7 +17,7 @@ contract DougEnabled {
         return true;
     }
 
-    function getContract(bytes32 _name) public constant returns(address) {
+    function getContractAddress(bytes32 _name) public constant returns(address) {
         address _contract;
         if (DOUG != 0x0) {
             _contract = ContractProvider(DOUG).contracts(_name);

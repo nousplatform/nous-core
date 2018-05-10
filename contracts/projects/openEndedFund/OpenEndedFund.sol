@@ -12,7 +12,7 @@ contract OpenEndedFund is ProjectConstructor {
 
     string public tokenSymbol;
 
-    constructor(address _fundOwn, string _fundName, bytes32[] _cNames, address[] _cAddrs, bool[] _cOverWr) public
+    constructor(address _fundOwn, string _fundName, bytes32[] _cNames, address[] _cAddrs, bool[] _cOverWr)
     ProjectConstructor(_fundOwn, _fundName, _cNames, _cAddrs, _cOverWr) {
 
     }

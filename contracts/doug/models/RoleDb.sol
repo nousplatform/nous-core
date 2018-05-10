@@ -4,6 +4,14 @@ pragma solidity ^0.4.18;
 import "../safety/Validee.sol";
 
 
+interface RoleDbInterface {
+    function addRole(bytes32 _role) external returns(bool);
+    function removeRole(bytes32 _role) external returns(bool);
+    function isLocked(bytes32 _role) public constant returns(bool);
+    function allowToAssign(bytes32 _role) public constant returns(bool);
+}
+
+
 contract RoleDb is Validee {
 
     struct Role {
@@ -53,6 +61,7 @@ contract RoleDb is Validee {
         return roleList[_role].locked;
     }
 
+    // @dev function carries out check of permission to add a role to the new user
     function allowToAssign(bytes32 _role) public constant returns(bool) {
         if (!isRole(_role)) return false;
         return !roleList[_role].locked;

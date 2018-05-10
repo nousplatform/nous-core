@@ -7,8 +7,5 @@ import "./models/ProjectUserDb.sol";
 
 contract ProjectManager is ActionManager {
 
-    constructor() {
-        permToLock = 255;
-    }
 
 }

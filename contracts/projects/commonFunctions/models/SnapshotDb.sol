@@ -4,20 +4,25 @@ pragma solidity ^0.4.18;
 import "../../../doug/safety/Validee.sol";
 
 
+interface SnapshotDbInterface {
+    function last() external constant returns(bytes32 hash, uint256 rate);
+}
+
+
 contract SnapshotDb is Validee {
 
     struct Snapshot {
-        uint256 totalUSD;
-        uint256 course;
+        bytes32 hash;
+        uint256 rate;
     }
 
     mapping(uint256 => Snapshot) public snapshot;
     uint256[] public timestampSnapshot;
 
-    function addSnapshot(uint256 _timestamp, uint256 _total, uint256 _course) external returns(bool) {
+    function addSnapshot(uint256 _timestamp, string _hash, uint256 _rate) external returns(bool) {
         if (!validate()) return false;
-        snapshot[_timestamp].totalUSD = _total;
-        snapshot[_timestamp].course = _course;
+        snapshot[_timestamp].hash = bytes8(_hash);
+        snapshot[_timestamp].rate = _rate;
         return true;
     }
 
@@ -25,18 +30,27 @@ contract SnapshotDb is Validee {
         return timestampSnapshot.length;
     }
 
-    function getFromIndex(uint256 _index) external constant returns(uint256 totalUsd, uint256 course) {
+    function getFromIndex(uint256 _index) external constant returns(bytes32 hash, uint256 rate) {
         Snapshot memory _last = snapshot[timestampSnapshot[_index]];
-        return (_last.totalUSD, _last.course);
+        return (_last.hash, _last.rate);
+    }
+
+    /**
+    * @notice gets snapshot from date
+    * @param _date format YYYYMMDD
+    */
+    function getFromDate(uint256 _date) external constant returns(bytes32 hash, uint256 rate) {
+        Snapshot memory _last = snapshot[timestampSnapshot[_index]];
+        return (_last.hash, _last.rate);
     }
 
     /**
     * @notice gets last snapshot
     * @return {}
     */
-    function last() external constant returns(uint256 _totalUsd, uint256 course) {
+    function last() external constant returns(bytes32 hash, uint256 rate) {
         Snapshot memory _last = snapshot[timestampSnapshot.length - 1];
-        return (_last.totalUSD, _last.course);
+        return (_last.hash, _last.rate);
     }
 
 }

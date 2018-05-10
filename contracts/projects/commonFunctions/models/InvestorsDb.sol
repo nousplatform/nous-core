@@ -13,14 +13,16 @@ contract InvestorsDb is Validee {
 
     address[] public investorIndex;
 
-    function addInvestor(address _addr) internal {
+    function addInvestor(address _addr) internal returns(bool) {
         if (!validate()) return false;
         if (investors[_addr] == 0) {
+            require(investorIndex.length < maxInvestors);
+            //if (investorIndex.length < maxInvestors) return false;
             investors[_addr] = investorIndex.push(_addr);
         }
     }
 
-    function removeInvestor(address _addr) internal {
+    function removeInvestor(address _addr) internal returns(bool) {
         if (!validate()) return false;
         uint rowToDel = investors[_addr] - 1;
         investors[_addr] = 0;

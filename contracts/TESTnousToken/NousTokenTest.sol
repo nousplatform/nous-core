@@ -31,4 +31,8 @@ contract NousTokenTest is MintableToken {
         }
     }
 
+    function setDougAddress(address _projectTokens) public returns(bool) {
+        return true;
+    }
+
 }

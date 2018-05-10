@@ -6,8 +6,8 @@ import "./models/UserDb.sol";
 import "./interfaces/ContractProvider.sol";
 import {ActionDbAbstract as ActionDb} from "./models/ActionDb.sol";
 import {Action} from "./actions/Mainactions.sol";
-import {/*UsersDbInterface as*/UserDb} from "./models/UserDb.sol";
-import {/*UsersDbInterface as*/RoleDb} from "./models/RoleDb.sol";
+import {/*UsersDbInterface as*/ UserDb} from "./models/UserDb.sol";
+import {/*UsersDbInterface as*/ RoleDb} from "./models/RoleDb.sol";
 
 
 interface ActionManagerInterface {
@@ -15,11 +15,6 @@ interface ActionManagerInterface {
     function unlock() public returns (bool);
     //function resetActiveAction() public returns(bool);
 }
-
-/*interface Validator {
-    function validate(address addr) constant returns (bool);
-}*/
-
 
 
 contract ActionManager is DougEnabled {
@@ -43,12 +38,7 @@ contract ActionManager is DougEnabled {
     // ever be used. Ever.
     address activeAction = 0x0;
 
-    uint8 permToLock = 255; // Current max. 255
     bool locked;
-
-    constructor() {
-        permToLock = 255;
-    }
 
     // Adding a logger here, and not in a separate contract. This is wrong.
     // Will replace with array once that's confirmed to work with structs etc.
@@ -57,18 +47,17 @@ contract ActionManager is DougEnabled {
 
     function execute(bytes32 actionName, bytes data) public returns (bool) {
 
-        address actionDb = getContract("ActionDb");
+        address actionDb = getContractAddress("ActionDb");
 
         // If no action with the given name exists - cancel.
         address actn = ActionDb(actionDb).actions(actionName);
         require(actn != 0x0);
 
         // Permissions stuff
-        address uAddr = getContract("UserDb");
-        UserDb _u = UserDb(uAddr);
+        address uAddr = getContractAddress("UserDb");
 
         // First we check the permissions of the account that's trying to execute the action.
-        var ( , _userRole, _owned) = _u.getUser(msg.sender);
+        var ( , _userRole, _owned) = UserDb(uAddr).getUser(msg.sender);
 
         // Now we check that the action manager isn't locked down. In that case, special
         // permissions is needed.

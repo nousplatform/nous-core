@@ -2,7 +2,14 @@ pragma solidity ^0.4.18;
 
 
 import "../safety/Validee.sol";
-import "./RoleDb.sol";
+import {RoleDbInterface} from "./RoleDb.sol";
+
+
+interface UserDbInterface {
+    function setOwned(address _addr, bool _owned) external returns (bool);
+    function setRole(address _addr, bytes32 _role) external returns (bool);
+    function addUser(address _account, bytes32 _name, bytes32 _role) external returns (bool);
+}
 
 
 // The Permissions contract
@@ -38,7 +45,7 @@ contract UserDb is Validee {
     }
 
     function validateRole(bytes32 _role) internal returns(bool) {
-        address rdb_ = getContract("RoleDb");
+        address rdb_ = getContractAddress("RoleDb");
         return RoleDb(rdb_).allowToAssign(_role);
     }
 

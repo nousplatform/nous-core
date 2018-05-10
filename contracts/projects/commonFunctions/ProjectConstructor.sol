@@ -2,12 +2,12 @@ pragma solidity ^0.4.18;
 
 
 //import "../../doug/ownable/SubOwnerDougContracts.sol";
-import "../../doug/Doug.sol";
+//import "../../doug/Doug.sol";
 import "../../doug/safety/DougProtectionRewriting.sol";
 
 
 // The Doug contract.
-contract ProjectConstructor is Doug, DougProtectionRewriting {
+contract ProjectConstructor is DougProtectionRewriting {
 
     address public fundOwner;
 
@@ -16,6 +16,7 @@ contract ProjectConstructor is Doug, DougProtectionRewriting {
     constructor(
         address _fundOwn,
         string _fundName,
+        //address _nousToken,
         bytes32[] _cNames,
         address[] _cAddrs,
         bool[] _cOverWr
@@ -26,10 +27,9 @@ contract ProjectConstructor is Doug, DougProtectionRewriting {
     {
         fundOwner = _fundOwn;
         fundName = _fundName;
+        //_addElement("NousToken", _nousToken);
     }
 
-    function addContract(bytes32 _name, address _addr) public validateOverwrite(_name) returns (bool result) {
-        return super.addContract(_name, _addr);
-    }
+
 
 }

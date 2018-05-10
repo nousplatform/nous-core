@@ -37,8 +37,13 @@ contract Doug is DougDb {
         for (uint i; i < _names.length; i++) {
             require(_addrs[i] != 0x0, "Contract address is empty.");
             require(_names[i] != bytes32(0), "Contract name is empty.");
+            require(_setDougAddress(_addrs[i]));
             _addElement(_names[i],_addrs[i]);
         }
+    }
+
+    function _setDougAddress(address _addr) internal returns(bool) {
+        return DougEnabled(_addr).setDougAddress(address(this));
     }
 
     /// @notice Add a contract to Doug. This contract should extend DougEnabled, because
@@ -53,7 +58,7 @@ contract Doug is DougDb {
         // Only the owner may add, and the contract has to be DougEnabled and
         // return true when setting the Doug address.
         address am = contracts("ActionManager");
-        if (Validator(am).validate(msg.sender) || !DougEnabled(_addr).setDougAddress(address(this))) {
+        if (Validator(am).validate(msg.sender) || _setDougAddress(_addr)) {
             // Access denied. Should divide these up into two maybe.
             AddContract(msg.sender, _name, 403);
             return false;
