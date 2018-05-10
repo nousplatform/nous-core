@@ -5,9 +5,10 @@ import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "zeppelin-solidity/contracts/token/ERC20/ERC20Basic.sol";
 import "zeppelin-solidity/contracts/token/ERC20/BurnableToken.sol";
 import "../../../doug/safety/DougEnabled.sol";
+import "../../../doug/ownership/AllowPurchases.sol";
 
 
-contract PurchaseToken is BurnableToken, DougEnabled {
+contract PurchaseToken is BurnableToken, DougEnabled, AllowPurchases {
 
     using SafeMath for uint256;
 
