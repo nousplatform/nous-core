@@ -2,7 +2,7 @@ pragma solidity ^0.4.18;
 
 
 import "../safety/Validee.sol";
-import {RoleDbInterface} from "./RoleDb.sol";
+import {RoleDbInterface as RoleDb} from "./RoleDb.sol";
 
 
 interface UserDbInterface {
@@ -57,34 +57,34 @@ contract UserDb is Validee {
 
     function setRole(address _addr, bytes32 _role) external returns (bool) {
         if (!validate()) return false;
-        if (!isUser(_account)) return false;
+        if (!isUser(_addr)) return false;
         if (!validateRole(_role)) return false;
 
         userList[_addr].role = _role;
         return true;
     }
 
-    function addUser(address _account, bytes32 _name, bytes32 _role) external returns (bool) {
+    function addUser(address _addr, bytes32 _name, bytes32 _role) external returns (bool) {
         if (!validate()) return false;
-        if (isUser(_account)) return false;
+        if (isUser(_addr)) return false;
         if (!validateRole(_role)) return false;
 
-        _addUser(_account, _name, _role, false);
+        _addUser(_addr, _name, _role, false);
         return true;
     }
 
     function count() public constant returns(uint256) {
-        return userIndexes.length();
+        return userIndexes.length;
     }
 
     function getUserFromIndex(uint256 _index) public constant returns(address _account, bytes32 _name, bytes32 _role, bool _owned) {
-        User _user = userList[userIndexes[_index]];
+        User memory _user = userList[userIndexes[_index]];
         return (userIndexes[_index], _user.name, _user.role, _user.owned);
     }
 
     function getUser(address _account) public constant returns(bytes32 _name, bytes32 _role, bool _owned) {
         require(!isUser(_account), "User not exist");
-        User _user = userList[_account];
+        User memory _user = userList[_account];
         return (_user.name, _user.role, _user.owned);
     }
 

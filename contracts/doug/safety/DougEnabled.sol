@@ -22,7 +22,7 @@ contract DougEnabled {
         if (DOUG != 0x0) {
             _contract = ContractProvider(DOUG).contracts(_name);
         }
-        assert(_contract != 0x0);
+        require(_contract != 0x0);
         return _contract;
     }
 

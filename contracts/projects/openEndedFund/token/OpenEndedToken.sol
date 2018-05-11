@@ -1,16 +1,10 @@
 pragma solidity ^0.4.18;
 
 
-//import "zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
-//import "zeppelin-solidity/contracts/token/ERC20/PausableToken.sol";
-import "../../../doug/safety/Validee.sol";
-//import "../base/Construct.sol";
-import "../sales/Sale.sol";
+//import "../../../doug/safety/Validee.sol";
 import "./InvestorsCounter.sol";
 import "./PurchaseToken.sol";
-import "./SaleToken.sol";
-
-//import "../base/DougEnabled.sol";
+//import "./SaleToken.sol";
 
 
 /**
@@ -18,7 +12,7 @@ import "./SaleToken.sol";
  * @dev Very simple ERC20 Token that can be minted.
  * It is meant to be used in a crowdsale contract.
  */
-contract OpenEndedToken is Validee, PurchaseToken, /*PausableToken,*/ SaleToken, InvestorsCounter {
+contract OpenEndedToken is PurchaseToken, InvestorsCounter /*SaleToken,*/ {
 
     using SafeMath for uint256;
 
@@ -27,7 +21,7 @@ contract OpenEndedToken is Validee, PurchaseToken, /*PausableToken,*/ SaleToken,
     uint8 public decimals;
 
     // @dev Constructor only nous token can mint.
-    function OpenEndedToken(address _nousToken, string _name, string _symbol, uint8 _decimals) {
+    constructor(address _nousToken, string _name, string _symbol, uint8 _decimals) {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
@@ -35,7 +29,7 @@ contract OpenEndedToken is Validee, PurchaseToken, /*PausableToken,*/ SaleToken,
         addAddressToAllowPurchases(_nousToken);
     }
 
-    function mint(address _to, uint256 _amount) public returns (bool) {
+    function mint(address _to, uint256 _amount) internal returns (bool) {
         super.mint(_to, _amount);
         addInvestor(_to);
         return true;

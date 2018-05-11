@@ -13,7 +13,7 @@ import "./interfaces/Validator.sol";
 //import "./models/PermissionsDb.sol";
 
 
-interface DougInterface {
+contract DougInterface {
     function contracts(bytes32 _name) public constant returns (address addr);
     function addContract(bytes32 name, address addr, bool _overWr) public returns (bool result);
     function removeContract(bytes32 name) public returns (bool result);
@@ -57,19 +57,19 @@ contract Doug is DougDb {
     function addContract(bytes32 _name, address _addr) public returns (bool result) {
         // Only the owner may add, and the contract has to be DougEnabled and
         // return true when setting the Doug address.
-        address am = contracts("ActionManager");
+        address am = contractList["ActionManager"];
         if (Validator(am).validate(msg.sender) || _setDougAddress(_addr)) {
             // Access denied. Should divide these up into two maybe.
-            AddContract(msg.sender, _name, 403);
+            emit AddContract(msg.sender, _name, 403);
             return false;
         }
         // Add to contract.
         bool ae = _addElement(_name, _addr);
         if (ae) {
-            AddContract(msg.sender, _name, 201);
+            emit AddContract(msg.sender, _name, 201);
         } else {
             // Can't overwrite.
-            AddContract(msg.sender, _name, 409);
+            emit AddContract(msg.sender, _name, 409);
         }
         return ae;
     }
@@ -78,24 +78,24 @@ contract Doug is DougDb {
     /// @param _name The bytes32 name of the contract.
     /// @return { "result": "showing if the adding succeeded or failed." }
     function removeContract(bytes32 _name) public returns (bool result) {
-        address am = contracts("ActionManager");
+        address am = contractList["ActionManager"];
         if(Validator(am).validate(msg.sender)) {
-            RemoveContract(msg.sender, _name, 403);
+            emit RemoveContract(msg.sender, _name, 403);
             return false;
         }
         bool re = _removeElement(_name);
         if(re) {
-            RemoveContract(msg.sender, _name, 200);
+            emit RemoveContract(msg.sender, _name, 200);
         } else {
             // Can't remove, it's already gone.
-            RemoveContract(msg.sender, _name, 410);
+            emit RemoveContract(msg.sender, _name, 410);
         }
         return re;
     }
 
     function contracts(bytes32 _name) public constant returns(address) {
         if (!isElement(_name)) revert(); //return 0x0;
-        return contractList[_name].addr;
+        return contractList[_name];
     }
 
     // Should be safe to update to returning 'Element' instead

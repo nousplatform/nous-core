@@ -2,9 +2,10 @@ pragma solidity ^0.4.18;
 
 
 //import "zeppelin-solidity/contracts/math/SafeMath.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
 
-contract SaleDb {
+contract SaleDb is Ownable {
 
     //using SafeMath for uint256;
     uint8 decimals = 18;
@@ -128,11 +129,11 @@ contract SaleDb {
     }
 
     //@dev you may redefined this function, but coll method super
-    function finalise() public onlyOwner {
+    /*function finalise() public onlyOwner {
         require(finalizeICO == false);
         finalizeICO = true;
         SampleCrowdsaleTokenInterface(tokenAddress).finishMinting();
-    }
+    }*/
 
 
 }

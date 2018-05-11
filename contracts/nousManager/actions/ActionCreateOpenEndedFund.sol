@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
 
-import "../fundTemplates/TemplateConstructorOpenEndedFund.sol";
+import {TemplateConstructorOpenEndedFund} from "../fundTemplates/TemplateConstructorOpenEndedFund.sol";
 import {TemplatesDbInterface as TemplatesDb} from "../models/TemplatesDb.sol";
 import {FundDbInterface as FundDb} from "../models/FundDb.sol";
 import {Action} from "../../doug/actions/Mainactions.sol";
@@ -45,7 +45,7 @@ contract ActionCreateOpenEndedFund is Action {
         //require(fundsIndex[ownerFundIndex[_newOwner]] == 0x0);
 
         address tdb = ContractProvider(DOUG).contracts("TemplatesDb");
-        require(tdb != 0x0, "Template 'TemplatesDb = 0x0' not set.");
+        require(tdb != 0x0, "Template TemplatesDb = 0x0' not set.");
 
         var (_addr,) = TemplatesDb(tdb).template("TemplateConstructorOpenEndedFund", 0);
         require(_addr != 0x0, "Template 'TemplateConstructorOpenEndedFund = 0x0' not set.");

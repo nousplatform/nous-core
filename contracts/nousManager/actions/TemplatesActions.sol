@@ -12,13 +12,13 @@ contract ActionAddTemplates is Action {
         require(isActionManager(), "Permission denied.");
         require(_names.length == _addrs.length && _names.length == _overwrite.length, "Invalid Params");
 
-        address tdba = ContractProvider(DOUG).contracts("TemplatesDb");
-        require(tdba != 0x0);
+        address _tdba = getContractAddress("TemplatesDb"); //ContractProvider(DOUG).contracts("TemplatesDb");
+        require(_tdba != 0x0);
 
-        TemplatesDb tdb = TemplatesDb(tdba);
+        TemplatesDb _tdb = TemplatesDb(_tdba);
 
         for (uint256 i = 0; i < _names.length; i++) {
-            tdb.addTemplate(_names[i], _addrs[i], _overwrite[i]);
+            _tdb.addTemplate(_names[i], _addrs[i], _overwrite[i]);
         }
 
     }

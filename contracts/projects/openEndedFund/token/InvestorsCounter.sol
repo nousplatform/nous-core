@@ -15,7 +15,7 @@ contract InvestorsCounter {
     function removeInvestor(address _addr) internal {
         uint rowToDel = investors[_addr] - 1;
         investors[_addr] = 0;
-        uint lastRow = investorIndex.length - 1;
+        address lastRow = investorIndex[investorIndex.length - 1];
         investorIndex[rowToDel] = lastRow;
         investorIndex.length--;
     }

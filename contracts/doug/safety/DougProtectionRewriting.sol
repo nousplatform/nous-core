@@ -1,8 +1,8 @@
 pragma solidity ^0.4.18;
 
 
-import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import {Doug} from "../../doug/Doug.sol";
+import "../interfaces/Validator.sol";
 
 
 contract DougProtectionRewriting is Doug {
@@ -25,13 +25,14 @@ contract DougProtectionRewriting is Doug {
         return true;
     }
 
-    function addProtection(bytes32 _name, bool _perm) external  {
-        if (!Validator(am).validate(msg.sender)) return false;
+    function addProtection(bytes32 _name, bool _perm) external returns(bool) {
+        address _am = contractList["ActionManager"];
+        if (!Validator(_am).validate(msg.sender)) return false;
         _addProtection(_name, _perm);
+        return true;
     }
 
     function addContract(bytes32 _name, address _addr) public validateOverwrite(_name) returns (bool result) {
-        //_addProtection(_name, _perm);
         return super.addContract(_name, _addr);
     }
 }

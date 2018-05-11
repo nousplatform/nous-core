@@ -18,6 +18,7 @@ contract OpenEndedSaleDb is Validee {
     //uint256 maxInvestors;
 
 
+    // ToDo protection
     function setParams(uint256 _entryFee, uint256 _exitFee, uint256 _managementFee/*, uint256 _maxInvestors*/) public {
         entryFee = _entryFee;
         exitFee = _exitFee;

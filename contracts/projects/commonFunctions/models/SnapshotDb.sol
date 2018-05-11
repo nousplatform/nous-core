@@ -19,9 +19,9 @@ contract SnapshotDb is Validee {
     mapping(uint256 => Snapshot) public snapshot;
     uint256[] public timestampSnapshot;
 
-    function addSnapshot(uint256 _timestamp, string _hash, uint256 _rate) external returns(bool) {
+    function addSnapshot(uint256 _timestamp, bytes32 _hash, uint256 _rate) external returns(bool) {
         if (!validate()) return false;
-        snapshot[_timestamp].hash = bytes8(_hash);
+        snapshot[_timestamp].hash = _hash;
         snapshot[_timestamp].rate = _rate;
         return true;
     }
@@ -31,8 +31,8 @@ contract SnapshotDb is Validee {
     }
 
     function getFromIndex(uint256 _index) external constant returns(bytes32 hash, uint256 rate) {
-        Snapshot memory _last = snapshot[timestampSnapshot[_index]];
-        return (_last.hash, _last.rate);
+        Snapshot memory _current = snapshot[timestampSnapshot[_index]];
+        return (_current.hash, _current.rate);
     }
 
     /**
@@ -40,13 +40,12 @@ contract SnapshotDb is Validee {
     * @param _date format YYYYMMDD
     */
     function getFromDate(uint256 _date) external constant returns(bytes32 hash, uint256 rate) {
-        Snapshot memory _last = snapshot[timestampSnapshot[_index]];
-        return (_last.hash, _last.rate);
+        Snapshot memory _current = snapshot[timestampSnapshot[_date]];
+        return (_current.hash, _current.rate);
     }
 
     /**
     * @notice gets last snapshot
-    * @return {}
     */
     function last() external constant returns(bytes32 hash, uint256 rate) {
         Snapshot memory _last = snapshot[timestampSnapshot.length - 1];

@@ -2,17 +2,16 @@ pragma solidity ^0.4.18;
 
 
 import "./safety/DougEnabled.sol";
-import "./models/UserDb.sol";
 import "./interfaces/ContractProvider.sol";
 import {ActionDbAbstract as ActionDb} from "./models/ActionDb.sol";
-import {Action} from "./actions/Mainactions.sol";
+import {LockedAction} from "./actions/Mainactions.sol";
 import {/*UsersDbInterface as*/ UserDb} from "./models/UserDb.sol";
-import {/*UsersDbInterface as*/ RoleDb} from "./models/RoleDb.sol";
+//import {/*UsersDbInterface as*/ RoleDb} from "./models/RoleDb.sol";
 
 
 interface ActionManagerInterface {
-    function lock() public returns (bool);
-    function unlock() public returns (bool);
+    function lock() external returns (bool);
+    function unlock() external returns (bool);
     //function resetActiveAction() public returns(bool);
 }
 
@@ -66,9 +65,9 @@ contract ActionManager is DougEnabled {
         }
 
         // Very simple system.
-        Action _a = Action(actn);
+        LockedAction _a = LockedAction(actn);
         require(_a.permission(_userRole), "Access denied. Not permissions for action.");
-        require(!_a.locked, "Action locked.");
+        require(!_a.locked(), "Action locked.");
 
         // todo locked process
         require(activeAction == 0x0, "Process busy at the moment.");
@@ -85,7 +84,7 @@ contract ActionManager is DougEnabled {
         return true;
     }
 
-    function lock() public returns (bool) {
+    function lock() external returns (bool) {
         if (msg.sender != activeAction) {
             return false;
         }
@@ -95,7 +94,7 @@ contract ActionManager is DougEnabled {
         locked = true;
     }
 
-    function unlock() public returns (bool) {
+    function unlock() external returns (bool) {
         if (msg.sender != activeAction) {
             return false;
         }

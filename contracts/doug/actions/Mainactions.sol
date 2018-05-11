@@ -6,7 +6,7 @@ import "../safety/Validee.sol";
 import {ActionDbAbstract as ActionDb} from "../models/ActionDb.sol";
 import {DougInterface as Doug} from "../Doug.sol";
 import {ActionManagerInterface as ActionManager} from "../ActionManager.sol";
-import {PermissionsDb as Permissions} from "../models/UserDb.sol";
+import {UserDbInterface as UserDb} from "../models/UserDb.sol";
 
 interface ActionProvider {
     function setPermission(bytes32 _role, bool _permVal) external returns (bool);
@@ -29,9 +29,6 @@ contract Action is Validee, ActionManagerEnabled {
 
 /**
 * @notice LockedAction do not set permission
-* @dev
-* @param
-* @return
 */
 contract LockedAction is Action {
 
@@ -67,7 +64,7 @@ contract ActionAddAction is LockedAction {
 
 // Remove action. Does not allow 'ActionAddAction' to be removed, though that it can still
 // be done by overwriting this action with one that allows it.
-contract ActionRemoveAction is Action {
+contract ActionRemoveAction is LockedAction {
 
     constructor() public {
         permission["owner"] = true;
@@ -135,10 +132,10 @@ contract ActionAddUser is Action {
         permission["owner"] = true;
     }
 
-    function execute(address _addr, bytes32 _role, uint8 _perm) external {
+    function execute(address _addr, bytes32 _name, bytes32 _role) external {
         require(isActionManager(), "Access denied");
-        address _perms = getContractAddress("PermissionDb");
-        require(Permissions(_perms).setPermission(_addr, _role, _perm));
+        address _userDb = getContractAddress("UserDb");
+        require(UserDb(_userDb).addUser(_addr, _name, _role));
     }
 
 }
@@ -150,12 +147,12 @@ contract ActionSetActionPermission is Action {
         permission["owner"] = true;
     }
 
-    function execute(string _name, bool _perm) external {
+    function execute(bytes32 _name, bytes32 _role, bool _permVal) external {
         require(isActionManager(), "Access denied");
         address _adb = getContractAddress("ActionDb");
         address _action = ActionDb(_adb).actions(_name);
         require(_action != 0x0);
-        require(Action(_action).setPermission(_role, _perm));
+        require(Action(_action).setPermission(_role, _permVal));
     }
 
 }

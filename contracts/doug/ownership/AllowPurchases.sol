@@ -21,18 +21,18 @@ contract AllowPurchases is Ownable {
    * @dev Throws if called by any account that's not whitelisted.
    */
   modifier onlyAllowPurchases() {
-    require(whitelist[msg.sender]);
+    require(allowPurchases[msg.sender]);
     _;
   }
 
   /**
    * @dev add an address to the whitelist
    * @param addr address
-   * @return true if the address was added to the whitelist, false if the address was already in the whitelist
+   * @return success true if the address was added to the whitelist, false if the address was already in the whitelist
    */
   function addAddressToAllowPurchases(address addr) onlyOwner public returns(bool success) {
-    if (!whitelist[addr]) {
-      whitelist[addr] = true;
+    if (!allowPurchases[addr]) {
+      allowPurchases[addr] = true;
       allowPurchasesIndex.push(addr);
       emit AllowPurchasesAddressAdded(addr);
       success = true;
@@ -42,7 +42,7 @@ contract AllowPurchases is Ownable {
   /**
    * @dev add addresses to the whitelist
    * @param addrs addresses
-   * @return true if at least one address was added to the whitelist,
+   * @return success true if at least one address was added to the whitelist,
    * false if all addresses were already in the whitelist
    */
   function addAddressesToAllowPurchases(address[] addrs) onlyOwner public returns(bool success) {
@@ -56,27 +56,23 @@ contract AllowPurchases is Ownable {
   /**
    * @dev remove an address from the whitelist
    * @param addr address
-   * @return true if the address was removed from the whitelist,
+   * @return success true if the address was removed from the whitelist,
    * false if the address wasn't in the whitelist in the first place
    */
   function removeAddressFromAllowPurchases(address addr) onlyOwner public returns(bool success) {
-    if (whitelist[addr]) {
-      uint rowToDel;
+    if (allowPurchases[addr]) {
       for (uint i = 0; i < allowPurchasesIndex.length; i++) {
-        if (addr == allowPurchasesIndex[i]) {
-          uint rowToDel = i;
-          break;
-        }
+        if (addr == allowPurchasesIndex[i]) break;
       }
       // first element not deleted
-      if (rowToDel > 0) {
-        whitelist[addr] = false;
+      if (i > 0) {
+        allowPurchases[addr] = false;
         address lastAddr = allowPurchasesIndex[allowPurchasesIndex.length - 1];
-        allowPurchasesIndex[rowToDel] = lastAddr;
-        emit AllowPurchasesedAddressRemoved(addr);
-        success = true;
+        allowPurchasesIndex[i] = lastAddr;
+        emit AllowPurchasesAddressRemoved(addr);
+        return true;
       }
-      success = false;
+      return false;
     }
   }
 

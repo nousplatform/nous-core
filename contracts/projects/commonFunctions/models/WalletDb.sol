@@ -35,7 +35,7 @@ contract WalletDb is Validee {
     // Add new wallet
     function addWallet(bytes32 _typeWallet, bytes32 _walletAddress) external returns (bool) {
         if (!validate()) return false;
-        if (isWallet(walletAddress)) return false;
+        if (isWallet(_walletAddress)) return false;
 
         wallets[_typeWallet].addr = _walletAddress;
         wallets[_typeWallet].index = walletsIndex.push(_typeWallet) - 1;
@@ -56,6 +56,6 @@ contract WalletDb is Validee {
 
     function getWalletByIndex(uint256 _index) external constant returns(bytes32 wallet, bytes32 walletAddress, bool confirmed) {
         Wallet memory _wallet = wallets[walletsIndex[_index]];
-        return (walletIndex[_index], _wallet.addr, _wallet.confirmed);
+        return (walletsIndex[_index], _wallet.addr, _wallet.confirmed);
     }
 }

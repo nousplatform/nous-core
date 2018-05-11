@@ -18,9 +18,7 @@ contract ActionDb is Validee {
 
     struct Action {
         address addr;
-        //uint8 perm;
         uint index;
-        //bytes32[] permRole;
     }
 
     // This is where we keep all the actions.
@@ -30,7 +28,7 @@ contract ActionDb is Validee {
 
     function isAction(bytes32 _name) internal returns(bool) {
         if(actionIndex.length == 0) return false;
-        return (actionIndex[actions[_name].index] == _name);
+        return (actionIndex[actionStruct[_name].index] == _name);
     }
 
     /**
@@ -50,10 +48,10 @@ contract ActionDb is Validee {
         address _addrAction = new ActionAddAction();
         // If this fails, then something is wrong with the add action contract.
         // Will be events logging these things in later parts.
-        if(!DougEnabled(_addAction).setDougAddress(_dougAddr)) {
+        if(!DougEnabled(_addrAction).setDougAddress(_dougAddr)) {
             return false;
         }
-        actionStruct["ActionAddAction"] = Action({addr: _addrAction, /*perm: 255,*/ index: actionIndex.push(_addrAction) - 1});
+        actionStruct["ActionAddAction"] = Action({addr: _addrAction, index: actionIndex.push("ActionAddAction") - 1});
         return true;
     }
 
@@ -69,7 +67,7 @@ contract ActionDb is Validee {
         }
         actionStruct[_name].addr = _addr;
         //actionStruct[_name].perm = _permVal;
-        actionStruct[_name].index = actionIndex.push(_addr) - 1;
+        actionStruct[_name].index = actionIndex.push(_name) - 1;
 
         return true;
     }

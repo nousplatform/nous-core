@@ -5,8 +5,7 @@ import "../../doug/safety/Validee.sol";
 
 
 interface TemplatesDbInterface {
-    function template(bytes32 _name, uint _version) public constant returns(address, bool, uint);
-    ///function template(bytes32 _name) external returns(address);
+    function template(bytes32 _name, uint _version) external constant returns(address, bool, uint);
 }
 
 
@@ -14,19 +13,19 @@ contract TemplatesDb is Validee {
 
     /// address contract,
     /// boll type allow of rewrite contract
-    struct templateDetails {
+    struct TemplateDetails {
         address addr;
         bool overwrite;
         //bytes32 version;
         uint index;
     }
 
-    /// defaultTpl[name_contract][version.1.0] = struct templateDetails
-    mapping (bytes32 => templateDetails[]) public defaultTpl;
+    /// defaultTpl[name_contract][version.1.0] = struct TemplateDetails
+    mapping (bytes32 => TemplateDetails[]) public defaultTpl;
 
     bytes32[] tplList;
 
-    function isElement(bytes32 _name) returns (bool){
+    function isElement(bytes32 _name) returns (bool) {
         if(tplList.length == 0) return false;
         return (tplList[defaultTpl[_name][0].index] == _name);
     }
@@ -39,7 +38,7 @@ contract TemplatesDb is Validee {
             return false;
         }*/
 
-        templateDetails memory tpl;
+        TemplateDetails memory tpl;
 
         if (!isElement(_name)) {
             tpl.index = tplList.push(_name) - 1;
@@ -58,14 +57,14 @@ contract TemplatesDb is Validee {
     /**
     * @notice return last version contract
     */
-    function template(bytes32 _name, uint _version) public constant returns(address, bool, uint) {
+    function template(bytes32 _name, uint256 _version) external constant returns(address, bool, uint) {
         require(isElement(_name));
+        uint256 _ver;
         if (_version == 0) {
-            _version = defaultTpl[_name].length - 1;
+            _ver = defaultTpl[_name].length - 1;
         }
 
-        templateDetails memory contr = defaultTpl[_name][_version];
-        //require(contr.addr != 0x0, "Template address empty");
+        TemplateDetails memory contr = defaultTpl[_name][_ver];
         return (contr.addr, contr.overwrite, contr.index);
     }
 

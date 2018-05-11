@@ -1,20 +1,20 @@
 pragma solidity ^0.4.18;
 
 
-//import "./SimpleMintableToken.sol";
-//import "zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
 import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
-import "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "../../../doug/ownership/AllowPurchases.sol";
 import "../../../doug/safety/DougEnabled.sol";
-import {SnapshotDbInterface as SnapshotDb} from "../../commonFunctions/models/SnapshotDb.sol";
 import "./SimpleMintableToken.sol";
+import {SnapshotDbInterface} from "../../commonFunctions/models/SnapshotDb.sol";
 
 
-contract SaleToken is SimpleMintableToken, AllowPurchases, DougEnabled {
+contract SaleToken is DougEnabled, SimpleMintableToken, AllowPurchases {
 
     using SafeMath for uint256;
+
+    // Todo is set wallet address
+    //address public walletAddress = "";
 
     /**
     * Get notify in token contracts, only nous token
@@ -26,7 +26,8 @@ contract SaleToken is SimpleMintableToken, AllowPurchases, DougEnabled {
         require(_sender != 0x0);
         require(_value > 0);
 
-        ERC20 nt = ERC20(subOwner); //_tknAddress
+        address _withdrawAddr = getAddressForWithdraw(0);
+        ERC20 nt = ERC20(_withdrawAddr); //_tknAddress
         uint256 _amount = nt.allowance(_sender, this);
 
         // how many coins we are allowed to spend
@@ -34,7 +35,7 @@ contract SaleToken is SimpleMintableToken, AllowPurchases, DougEnabled {
             if (nt.transferFrom(_sender, this, _value)) {
                 // todo function library to calculate And Calculate fee
                 address _sdb = getContractAddress("SnapshotDb");
-                var (, _rate) = SnapshotDb(_sdb).last();
+                var (, _rate) = SnapshotDbInterface(_sdb).last();
                 require(_rate > 0);
 
                 uint256 _totalAmount = _value.mul(_rate);
@@ -42,8 +43,8 @@ contract SaleToken is SimpleMintableToken, AllowPurchases, DougEnabled {
                 // mining token
                 mint(_sender, _totalAmount);
 
-                // send nous token to wallet
-                nt.transfer(walletAddress, _value);
+                // Todo send nous token to wallet
+                //nt.transfer(walletAddress, _value);
                 return true;
             }
         }

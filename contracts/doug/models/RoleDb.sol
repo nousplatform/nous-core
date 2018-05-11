@@ -4,11 +4,11 @@ pragma solidity ^0.4.18;
 import "../safety/Validee.sol";
 
 
-interface RoleDbInterface {
+contract RoleDbInterface {
     function addRole(bytes32 _role) external returns(bool);
     function removeRole(bytes32 _role) external returns(bool);
     function isLocked(bytes32 _role) public constant returns(bool);
-    function allowToAssign(bytes32 _role) public constant returns(bool);
+    function allowToAssign(bytes32 _role) external constant returns(bool);
 }
 
 
@@ -21,7 +21,7 @@ contract RoleDb is Validee {
 
     // @dev role name <to> structure Role
     mapping(bytes32 => Role) roleList;
-    address[] public roleIndexes;
+    bytes32[] public roleIndexes;
 
     constructor() public {
         _addRole("owner", true);
@@ -33,8 +33,8 @@ contract RoleDb is Validee {
     }
 
     function _addRole(bytes32 _name, bool _locked) internal {
-        roles[_name].locked = _locked;
-        roles[_name].index = rolesIndex.push(_name) - 1;
+        roleList[_name].locked = _locked;
+        roleList[_name].index = roleIndexes.push(_name) - 1;
     }
 
     // all roley add from function addRole can be overwritten
@@ -49,7 +49,7 @@ contract RoleDb is Validee {
     function removeRole(bytes32 _role) external returns(bool) {
         if (!validate()) return false;
         if (!isRole(_role)) return false;
-        if (isLocked()) return false;
+        if (isLocked(_role)) return false;
 
         // todo Todos this realization
 
@@ -62,7 +62,7 @@ contract RoleDb is Validee {
     }
 
     // @dev function carries out check of permission to add a role to the new user
-    function allowToAssign(bytes32 _role) public constant returns(bool) {
+    function allowToAssign(bytes32 _role) external constant returns(bool) {
         if (!isRole(_role)) return false;
         return !roleList[_role].locked;
     }
