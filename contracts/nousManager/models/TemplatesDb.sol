@@ -24,7 +24,7 @@ contract TemplatesDb is Validee {
 
     bytes32[] tplList;
 
-    function isElement(bytes32 _name) internal returns (bool) {
+    function isElement(bytes32 _name) view returns (bool) {
         if(tplList.length == 0) return false;
         return (tplList[defaultTpl[_name][0].index] == _name);
     }
@@ -53,7 +53,7 @@ contract TemplatesDb is Validee {
     /**
     * @notice return last version contract
     */
-    function template(bytes32 _name, uint256 _version) external constant returns(address, bool, uint) {
+    function template(bytes32 _name, uint256 _version) external view returns(address, bool, uint) {
         require(isElement(_name));
         uint256 _ver;
         if (_version == 0) {

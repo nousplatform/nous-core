@@ -7,5 +7,4 @@ import "./models/ProjectUserDb.sol";
 
 contract ProjectManager is ActionManager {
 
-
 }

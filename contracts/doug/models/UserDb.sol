@@ -30,11 +30,6 @@ contract UserDb is Validee {
         _addUser(_owner, "Owner", "owner", true);
     }
 
-    function isUser(address _account) internal returns(bool) {
-        if (userIndexes.length == 0) return false;
-        userIndexes[userList[_account].index] == _account;
-    }
-
     function _addUser(address _userAddr, bytes32 _name, bytes32 _role, bool _owned) internal {
         userList[_userAddr] = User({
             name: _name,
@@ -44,7 +39,12 @@ contract UserDb is Validee {
         });
     }
 
-    function validateRole(bytes32 _role) internal returns(bool) {
+    function isUser(address _account) public view returns(bool) {
+        if (userIndexes.length == 0) return false;
+        userIndexes[userList[_account].index] == _account;
+    }
+
+    function validateRole(bytes32 _role) public view returns(bool) {
         address rdb_ = getContractAddress("RoleDb");
         return RoleDb(rdb_).allowToAssign(_role);
     }

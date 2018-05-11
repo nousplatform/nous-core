@@ -93,7 +93,7 @@ contract Doug is DougDb {
         return re;
     }
 
-    function contracts(bytes32 _name) public constant returns(address) {
+    function contracts(bytes32 _name) public view returns(address) {
         if (!isElement(_name)) revert(); //return 0x0;
         return contractList[_name];
     }

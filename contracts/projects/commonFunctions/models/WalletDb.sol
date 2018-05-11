@@ -7,18 +7,11 @@ import "../../../doug/safety/Validee.sol";
 //TODO уточнить за снепшоты
 contract WalletDb is Validee {
 
-    /*struct Snapshot {
-        uint256 totalUSD;
-        uint256 course;
-    }*/
-
     // snapshot - timestamp => value
     struct Wallet {
         bytes32 addr;
         bool confirmed;
         uint256 index;
-        //mapping(uint256 => Snapshot) snapshot;
-        //uint256[] timestampSnapshot;
     }
 
     //symbol coins => structWallet

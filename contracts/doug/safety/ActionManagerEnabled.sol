@@ -11,7 +11,7 @@ contract ActionManagerEnabled is DougEnabled {
     // Makes it easier to check that action manager is the caller.
     function isActionManager() internal constant returns (bool) {
         if (DOUG != 0x0) {
-            address am = ContractProvider(DOUG).contracts("ActionManager");
+            address am = getContractAddress("ActionManager");
             return msg.sender == am;
         }
         return false;

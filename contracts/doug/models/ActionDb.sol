@@ -26,7 +26,7 @@ contract ActionDb is Validee {
 
     bytes32[] public actionIndex;
 
-    function isAction(bytes32 _name) internal returns(bool) {
+    function isAction(bytes32 _name) view returns(bool) {
         if(actionIndex.length == 0) return false;
         return (actionIndex[actionStruct[_name].index] == _name);
     }

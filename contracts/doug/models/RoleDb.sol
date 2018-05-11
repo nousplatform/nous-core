@@ -27,7 +27,7 @@ contract RoleDb is Validee {
         _addRole("owner", true);
     }
 
-    function isRole(bytes32 _role) internal returns(bool) {
+    function isRole(bytes32 _role) view returns(bool) {
         if (roleIndexes.length == 0) return false;
         return roleIndexes[roleList[_role].index] == _role;
     }
@@ -46,14 +46,14 @@ contract RoleDb is Validee {
         return true;
     }
 
-    function removeRole(bytes32 _role) external returns(bool) {
+    /*function removeRole(bytes32 _role) external returns(bool) {
         if (!validate()) return false;
         if (!isRole(_role)) return false;
         if (isLocked(_role)) return false;
 
         // todo Todos this realization
 
-    }
+    }*/
 
     // getters
     function isLocked(bytes32 _role) public constant returns(bool) {
