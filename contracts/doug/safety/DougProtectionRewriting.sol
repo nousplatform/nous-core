@@ -14,7 +14,7 @@ contract DougProtectionRewriting is Doug {
         _;
     }
 
-    constructor(bytes32[] _names, bool[] _perms) {
+    constructor(bytes32[] _names, bool[] _perms) public {
         for (uint i = 0; i < _names.length; i++) {
             _addProtection(_names[i], _perms[i]);
         }

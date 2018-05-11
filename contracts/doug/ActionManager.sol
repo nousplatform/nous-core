@@ -6,7 +6,6 @@ import "./interfaces/ContractProvider.sol";
 import {ActionDbAbstract as ActionDb} from "./models/ActionDb.sol";
 import {LockedAction} from "./actions/Mainactions.sol";
 import {/*UsersDbInterface as*/ UserDb} from "./models/UserDb.sol";
-//import {/*UsersDbInterface as*/ RoleDb} from "./models/RoleDb.sol";
 
 
 interface ActionManagerInterface {

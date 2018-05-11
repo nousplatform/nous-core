@@ -16,7 +16,6 @@ contract TemplatesDb is Validee {
     struct TemplateDetails {
         address addr;
         bool overwrite;
-        //bytes32 version;
         uint index;
     }
 
@@ -25,7 +24,7 @@ contract TemplatesDb is Validee {
 
     bytes32[] tplList;
 
-    function isElement(bytes32 _name) returns (bool) {
+    function isElement(bytes32 _name) internal returns (bool) {
         if(tplList.length == 0) return false;
         return (tplList[defaultTpl[_name][0].index] == _name);
     }
@@ -34,9 +33,6 @@ contract TemplatesDb is Validee {
     function addTemplate(bytes32 _name, address _addr, bool _overwrite) public returns(bool) {
 
         require(validate());
-        /*if (!validate()) {
-            return false;
-        }*/
 
         TemplateDetails memory tpl;
 

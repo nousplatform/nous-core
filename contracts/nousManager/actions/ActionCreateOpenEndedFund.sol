@@ -31,26 +31,21 @@ contract ActionCreateOpenEndedFund is Action {
     function execute(
         address _owner,
         string _fundName,
-//        string _fundType,
-        bytes32[] _names,
-        address[] _addrs,
+        string _fundType,
+        bytes32[] _contractNames,
+        address[] _contractAddrs,
         bool[] _overWr
     ) public returns (bool) {
 
         require(isActionManager());
         require(_owner != 0x0);
 
-        //require(Utils.emptyStringTest(_fundName));
-        //require(!Utils.emptyStringTest(ownerFundIndex[_owner]));
-        //require(fundsIndex[ownerFundIndex[_newOwner]] == 0x0);
-
-        address tdb = ContractProvider(DOUG).contracts("TemplatesDb");
-        require(tdb != 0x0, "Template TemplatesDb = 0x0' not set.");
+        address tdb = getContractAddress("TemplatesDb");
 
         var (_addr,) = TemplatesDb(tdb).template("TemplateConstructorOpenEndedFund", 0);
         require(_addr != 0x0, "Template 'TemplateConstructorOpenEndedFund = 0x0' not set.");
 
-        address _fundAddr = TemplateConstructorOpenEndedFund(_addr).create(_owner, _fundName, /*_fundType,*/ _names, _addrs, _overWr);
+        address _fundAddr = TemplateConstructorOpenEndedFund(_addr).create(_owner, _fundName, _fundType, _contractNames, _contractAddrs, _overWr);
         address fdb =  ContractProvider(DOUG).contracts("FundDb");
         assert(FundDb(fdb).addFund(_owner, _fundAddr, _fundName));
         return true;

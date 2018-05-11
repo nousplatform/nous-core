@@ -9,9 +9,9 @@ import {Validee} from  "../safety/Validee.sol";
 contract ActionDbAbstract {
     mapping (bytes32 => address) public actions;
     function getAction(bytes32 _name) public constant returns (address);
-    function setDougAddress(address dougAddr) returns (bool result);
-    function addAction(bytes32 name, address addr) returns (bool);
-    function removeAction(bytes32 name) returns (bool);
+    function setDougAddress(address dougAddr) public returns (bool result);
+    function addAction(bytes32 name, address addr) public returns (bool);
+    function removeAction(bytes32 name) public returns (bool);
 }
 
 contract ActionDb is Validee {
@@ -42,7 +42,7 @@ contract ActionDb is Validee {
 
     // To make sure we have an add action action, we need to auto generate
     // it as soon as we got the DOUG address.
-    function setDougAddress(address _dougAddr) returns (bool result) {
+    function setDougAddress(address _dougAddr) public returns (bool result) {
         require(super.setDougAddress(_dougAddr));
 
         address _addrAction = new ActionAddAction();
@@ -55,7 +55,7 @@ contract ActionDb is Validee {
         return true;
     }
 
-    function addAction(bytes32 _name, address _addr/*, uint8 _permVal*/) returns (bool) {
+    function addAction(bytes32 _name, address _addr/*, uint8 _permVal*/) public returns (bool) {
         if (!validate()) return false;
         // Remember we need to set the doug address for the action to be safe -
         // or someone could use a false doug to do damage to the system.
@@ -73,13 +73,13 @@ contract ActionDb is Validee {
     }
 
     /// todo
-//    function removeAction(bytes32 _name) returns (bool) {
-//        if(!validate()) return false;
-//        if (!isAction(_name)) return false;
-//
-//        actions[_name].addr = 0x0;
-//        return true;
-//    }
+    function removeAction(bytes32 _name) public returns (bool) {
+        if(!validate()) return false;
+        if (!isAction(_name)) return false;
+
+        actionStruct[_name].addr = 0x0;
+        return true;
+    }
 
     /*function setPermission(bytes32 _name, uint8 _permVal) external returns (bool) {
         require(validate());
