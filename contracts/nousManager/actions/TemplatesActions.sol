@@ -6,9 +6,10 @@ import {Action} from "../../doug/actions/Mainactions.sol";
 import "../../doug/interfaces/ContractProvider.sol";
 
 
-contract ActionAddTemplates is Action {
+contract ActionAddTemplates is Action("owner") {
 
-    function execute(bytes32[] _names, address[] _addrs, bool[] _overwrite) public returns (bool) {
+    function execute(bytes32[] _names, address[] _addrs, bool[] _overwrite) public  {
+
         require(isActionManager(), "Permission denied.");
         require(_names.length == _addrs.length && _names.length == _overwrite.length, "Invalid Params");
 

@@ -10,13 +10,14 @@ contract NousCore is Doug {
     address public nousTokenAddress;
 
     /**
+    * TODO Nous tOken In constructor only for test
     * @dev Constructor
     * @param _nousTokenAddress : NSU address for sale token fund
     */
     function NousCore(address _nousTokenAddress, bytes32[] _names, address[] _addrs) public
     Doug(_names, _addrs)
     {
-        setNousTokenAddress(_nousTokenAddress);
+        nousTokenAddress = _nousTokenAddress;
     }
 
     /**

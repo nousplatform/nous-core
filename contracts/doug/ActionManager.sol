@@ -4,8 +4,8 @@ pragma solidity ^0.4.18;
 import "./safety/DougEnabled.sol";
 import "./interfaces/ContractProvider.sol";
 import {ActionDbAbstract as ActionDb} from "./models/ActionDb.sol";
-import {LockedAction} from "./actions/Mainactions.sol";
-import {/*UsersDbInterface as*/ UserDb} from "./models/UserDb.sol";
+import {Action} from "./actions/Mainactions.sol";
+import {PermissionDbInterface as PermissionDb} from "./models/PermissionDb.sol";
 
 
 interface ActionManagerInterface {
@@ -23,7 +23,6 @@ contract ActionManager is DougEnabled {
         uint blockNumber;
         bool success;
     }
-
 
     bool LOGGING = true;
 
@@ -48,14 +47,14 @@ contract ActionManager is DougEnabled {
         address actionDb = getContractAddress("ActionDb");
 
         // If no action with the given name exists - cancel.
-        address actn = ActionDb(actionDb).actions(actionName);
-        require(actn != 0x0);
+        address _actnAddr = ActionDb(actionDb).actions(actionName);
+        require(_actnAddr != 0x0);
 
         // Permissions stuff
-        address uAddr = getContractAddress("UserDb");
+        address pAddr = getContractAddress("PermissionDb");
 
         // First we check the permissions of the account that's trying to execute the action.
-        var ( , _userRole, _owned) = UserDb(uAddr).getUser(msg.sender);
+        var ( , _userRole, _owned) = PermissionDb(pAddr).getUser(msg.sender);
 
         // Now we check that the action manager isn't locked down. In that case, special
         // permissions is needed.
@@ -64,19 +63,18 @@ contract ActionManager is DougEnabled {
         }
 
         // Very simple system.
-        LockedAction _a = LockedAction(actn);
-        require(_a.permission(_userRole), "Access denied. Not permissions for action.");
-        require(!_a.locked(), "Action locked.");
+        Action _actn = Action(_actnAddr);
+        require(_actn.permission(_userRole), "Access denied. Not permissions for action.");
 
         // todo locked process
         require(activeAction == 0x0, "Process busy at the moment.");
 
         // TODO keep up with return values from generic calls.
         // Set this as the currently active action.
-        activeAction = actn;
+        activeAction = _actnAddr;
 
         // Just assume it succeeds for now (important for logger).
-        require(actn.call(data), "Query rejected.");
+        require(_actnAddr.call(data), "Query rejected.");
         // Now clear it.
         activeAction = 0x0;
         _log(actionName, true);

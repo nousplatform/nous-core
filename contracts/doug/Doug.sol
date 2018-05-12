@@ -5,12 +5,6 @@ import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./safety/DougEnabled.sol";
 import "./models/DougDb.sol";
 import "./interfaces/Validator.sol";
-//import "./safety/Validee.sol";
-
-//import {ActionManagerInterface as ActionManager} from "./ActionManager.sol";
-//import {ActionManager} from "./ActionManager.sol";
-//import {ActionDb} from "./models/ActionDb.sol";
-//import "./models/PermissionsDb.sol";
 
 
 contract DougInterface {

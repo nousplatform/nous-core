@@ -25,7 +25,8 @@ contract TemplatesDb is Validee {
     bytes32[] tplList;
 
     function isElement(bytes32 _name) view returns (bool) {
-        if(tplList.length == 0) return false;
+        if (tplList.length == 0) return false;
+        if (defaultTpl[_name].length == 0) return false;
         return (tplList[defaultTpl[_name][0].index] == _name);
     }
 
@@ -44,7 +45,6 @@ contract TemplatesDb is Validee {
 
         tpl.addr = _addr;
         tpl.overwrite = _overwrite;
-        //tpl.version = _version;
         defaultTpl[_name].push(tpl);
 
         return true;
@@ -54,7 +54,7 @@ contract TemplatesDb is Validee {
     * @notice return last version contract
     */
     function template(bytes32 _name, uint256 _version) external view returns(address, bool, uint) {
-        require(isElement(_name));
+        //require(isElement(_name));
         uint256 _ver;
         if (_version == 0) {
             _ver = defaultTpl[_name].length - 1;
