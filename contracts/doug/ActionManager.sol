@@ -11,6 +11,7 @@ import {PermissionDbInterface as PermissionDb} from "./models/PermissionDb.sol";
 interface ActionManagerInterface {
     function lock() external returns (bool);
     function unlock() external returns (bool);
+    function execute(bytes32 actionName, bytes data) public returns (bool);
     //function resetActiveAction() public returns(bool);
 }
 
@@ -52,6 +53,10 @@ contract ActionManager is DougEnabled {
 
         // Permissions stuff
         address pAddr = getContractAddress("PermissionDb");
+
+        if (pAddr != 0x0) {
+
+        }
 
         // First we check the permissions of the account that's trying to execute the action.
         var ( , _userRole, _owned) = PermissionDb(pAddr).getUser(msg.sender);

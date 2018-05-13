@@ -74,7 +74,7 @@ contract ActionUnlockActions is Action("owner") {
 
 // The set user permission action.
 contract ActionSetUserRole is Action("owner") {
-    function execute(address _addr, bytes32 _role, uint8 _perm) external {
+    function execute(address _addr, bytes32 _role) external {
         require(isActionManager(), "Access denied");
         address _perms = getContractAddress("PermissionDb");
         require(PermissionDb(_perms).setRole(_addr, _role));
@@ -100,6 +100,7 @@ contract ActionSetActionPermission is Action("owner") {
         require(Action(_action).setPermission(_role, _permVal));
     }
 }
+
 
 // Add contract.
 /*contract ActionAddContract is Action {

@@ -5,6 +5,7 @@ import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./safety/DougEnabled.sol";
 import "./models/DougDb.sol";
 import "./interfaces/Validator.sol";
+import {ActionManagerInterface as ActionManager} from "./ActionManager.sol";
 
 
 contract DougInterface {
@@ -19,7 +20,7 @@ contract DougInterface {
 /// @notice This contract is used to register other contracts by name.
 /// @dev Stores the contracts as entries in a doubly linked list, so that
 /// the list of elements can be gotten.
-contract Doug is DougDb {
+contract Doug is DougDb, Ownable {
 
     // When adding a contract.
     event AddContract(address indexed caller, bytes32 indexed name, uint16 indexed code);
@@ -27,7 +28,7 @@ contract Doug is DougDb {
     event RemoveContract(address indexed caller, bytes32 indexed name, uint16 indexed code);
 
     constructor(bytes32[] _names, address[] _addrs) public {
-        require(_names.length == _addrs.length);
+        //require(_names.length == _addrs.length);
         for (uint i; i < _names.length; i++) {
             require(_addrs[i] != 0x0, "Contract address is empty.");
             require(_names[i] != bytes32(0), "Contract name is empty.");
@@ -48,15 +49,15 @@ contract Doug is DougDb {
     /// @param _name The bytes32 name of the contract.
     /// @param _addr The address to the actual contract.
     /// @return { "result": "showing if the adding succeeded or failed." }
-    function addContract(bytes32 _name, address _addr) public returns (bool result) {
+    function addContract(bytes32 _name, address _addr) public onlyOwner returns (bool result) {
         // Only the owner may add, and the contract has to be DougEnabled and
         // return true when setting the Doug address.
-        address am = contractList["ActionManager"];
+        /*address am = contractList["ActionManager"];
         if (Validator(am).validate(msg.sender) || _setDougAddress(_addr)) {
             // Access denied. Should divide these up into two maybe.
             emit AddContract(msg.sender, _name, 403);
             return false;
-        }
+        }*/
         // Add to contract.
         bool ae = _addElement(_name, _addr);
         if (ae) {
@@ -71,12 +72,12 @@ contract Doug is DougDb {
     /// @notice Remove a contract from doug.
     /// @param _name The bytes32 name of the contract.
     /// @return { "result": "showing if the adding succeeded or failed." }
-    function removeContract(bytes32 _name) public returns (bool result) {
-        address am = contractList["ActionManager"];
+    function removeContract(bytes32 _name) public onlyOwner returns (bool result) {
+        /*address am = contractList["ActionManager"];
         if(Validator(am).validate(msg.sender)) {
             emit RemoveContract(msg.sender, _name, 403);
             return false;
-        }
+        }*/
         bool re = _removeElement(_name);
         if(re) {
             emit RemoveContract(msg.sender, _name, 200);

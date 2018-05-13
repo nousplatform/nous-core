@@ -21,10 +21,10 @@ contract OpenEndedToken is PurchaseToken, InvestorsCounter /*SaleToken,*/ {
     uint8 public decimals;
 
     // @dev Constructor only nous token can mint.
-    constructor(address _nousToken, string _name, string _symbol, uint8 _decimals) {
+    constructor(address _nousToken, string _name, string _symbol/*, uint8 _decimals*/) {
         name = _name;
         symbol = _symbol;
-        decimals = _decimals;
+        decimals = 18;
         //paused = true;
         addAddressToAllowPurchases(_nousToken);
     }

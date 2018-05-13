@@ -2,7 +2,7 @@ pragma solidity ^0.4.18;
 
 
 //import "../../doug/ownable/SubOwnerDougContracts.sol";
-//import "../../doug/Doug.sol";
+import "../../doug/Doug.sol";
 import "../../doug/safety/DougProtectionRewriting.sol";
 
 

@@ -20,6 +20,14 @@ contract NousCore is Doug {
         nousTokenAddress = _nousTokenAddress;
     }
 
+
+    // Todo temp
+    function queryFund(address _fundAddr, bytes32 _actionName, bytes _data) public onlyOwner {
+        //address _am = contractList["ActionManager"];
+        //if (!Validator(_am).validate(msg.sender)) return false;
+        ActionManager(_fundAddr).execute(_actionName, _data);
+    }
+
     /**
     * @notice Set address NOUS tokens
     * @param _nousTokenAddress Contract address NOUS token

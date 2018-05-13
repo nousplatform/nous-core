@@ -6,6 +6,7 @@ import "../../doug/safety/Validee.sol";
 
 interface TemplatesDbInterface {
     function template(bytes32 _name, uint _version) external constant returns(address, bool, uint);
+    function addTmpContract(address _owner, bytes32 _type, bytes32[] _name, address[] _addr) external;
 }
 
 
@@ -19,10 +20,20 @@ contract TemplatesDb is Validee {
         uint index;
     }
 
+
     /// defaultTpl[name_contract][version.1.0] = struct TemplateDetails
     mapping (bytes32 => TemplateDetails[]) public defaultTpl;
 
     bytes32[] tplList;
+
+    struct TmpTpl {
+        bytes32 name;
+        address addr;
+    }
+
+    // ownerFund => tempContracts
+    mapping (address => mapping(bytes32 => TmpTpl[])) public tempContracts;
+
 
     function isElement(bytes32 _name) view returns (bool) {
         if (tplList.length == 0) return false;
@@ -50,6 +61,29 @@ contract TemplatesDb is Validee {
         return true;
     }
 
+    function addTmpContract(address _owner, bytes32 _type,  bytes32[] _name, address[] _addr) external {
+        require(validate());
+        for (uint i = 0; i < _name.length; i++) {
+            tempContracts[_owner][_type].push(TmpTpl({
+                    name: _name[i],
+                    addr: _addr[i]
+                }));
+        }
+    }
+
+    function getTplContracts(address _owner, bytes32 _type) public view returns(bytes32[] memory names, address[] memory addrs, bool[] memory owrs) {
+        uint _length = tempContracts[_owner][_type].length;
+        names = new bytes32[](_length);
+        addrs = new address[](_length);
+        owrs = new bool[](_length);
+        for (var i = 0; i < _length; i++) {
+            names[i] = tempContracts[_owner][_type][i].name;
+            addrs[i] = tempContracts[_owner][_type][i].addr;
+            owrs[i] = true;
+        }
+        return(names, addrs, owrs);
+    }
+
     /**
     * @notice return last version contract
     */
@@ -63,6 +97,8 @@ contract TemplatesDb is Validee {
         TemplateDetails memory contr = defaultTpl[_name][_ver];
         return (contr.addr, contr.overwrite, contr.index);
     }
+
+
 
     /*function template(bytes32 _name) public constant returns(address) {
         return defaultTpl[_name][defaultTpl[_name].length - 1].addr;

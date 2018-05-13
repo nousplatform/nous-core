@@ -31,15 +31,6 @@ contract ActionDb is Validee {
         return (actionIndex[actionStruct[_name].index] == _name);
     }
 
-    /**
-    * @notice return action
-    * @param _name action name
-    * @return address action
-    */
-    function getAction(bytes32 _name) public constant returns (address/*, uint8*/) {
-        return (actionStruct[_name].addr/*, actions[_name].perm*/);
-    }
-
     // To make sure we have an add action action, we need to auto generate
     // it as soon as we got the DOUG address.
     function setDougAddress(address _dougAddr) public returns (bool result) {

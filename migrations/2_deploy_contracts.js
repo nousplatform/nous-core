@@ -7,18 +7,27 @@ const ActionManager = artifacts.require("ActionManager.sol");
 const ActionDb = artifacts.require("ActionDb.sol");
 const PermissionDb = artifacts.require("PermissionDb.sol");
 const TemplatesDb = artifacts.require("TemplatesDb.sol");
-const FundDb = artifacts.require("FundDb.sol");
+const ProjectDb = artifacts.require("ProjectDb.sol");
 //actions
 const ActionRemoveAction = artifacts.require("ActionRemoveAction.sol");
 const ActionLockActions = artifacts.require("ActionLockActions.sol");
 const ActionUnlockActions = artifacts.require("ActionUnlockActions.sol");
-const ActionSetUserPermission = artifacts.require("ActionSetUserPermission.sol");
+const ActionSetUserRole = artifacts.require("ActionSetUserRole.sol");
 const ActionSetActionPermission = artifacts.require("ActionSetActionPermission.sol");
 const ActionCreateOpenEndedFund = artifacts.require("ActionCreateOpenEndedFund.sol");
 const ActionAddTemplates = artifacts.require("ActionAddTemplates.sol");
 const ActionAddAction = artifacts.require("ActionAddAction.sol");
+const ActionAddUser = artifacts.require("ActionAddUser.sol");
+
 //temlates
-const TemplateConstructorOpenEndedFund = artifacts.require("TemplateConstructorOpenEndedFund.sol");
+const TPLConstructorOpenEndedFund = artifacts.require("TPLConstructorOpenEndedFund.sol");
+const TPLActionManager = artifacts.require("TPLActionManager.sol");
+const TPLOpenEndedSaleDb = artifacts.require("TPLOpenEndedSaleDb.sol");
+const TPLOpenEndedToken = artifacts.require("TPLOpenEndedToken.sol");
+const TPLProjectActionDb = artifacts.require("TPLProjectActionDb.sol");
+const TPLProjectPermissionDb = artifacts.require("TPLProjectPermissionDb.sol");
+const TPLSnapshotDb = artifacts.require("TPLSnapshotDb.sol");
+const TPLWalletDb = artifacts.require("TPLWalletDb.sol");
 
 let OWNER = "0x719a22E179bb49a4596eFe3BD6F735b8f3b00AF1";
 OWNER = "0xce4f64f27883578e9ce7430d9b1d5f57cde584d6";
@@ -71,19 +80,38 @@ const actionsParams = {
     name: "execute",
     inputs: []
   },
-  "ActionSetUserPermission" : {
+  "ActionSetUserRole" : {
     address: "",
     type: "function",
     name: "execute",
     inputs: [
       {
         type: "address",
-        name: "addr"
+        name: "_addr"
       },
       {
-        type: "uint8",
-        name: "perm"
+        type: "bytes32",
+        name: "_role"
+      }
+    ]
+  },
+  "ActionAddUser" : {
+    address: "",
+    type: "function",
+    name: "execute",
+    inputs: [
+      {
+        type: "address",
+        name: "_addr"
       },
+      {
+        type: "bytes32",
+        name: "_name"
+      },
+      {
+        type: "bytes32",
+        name: "_role"
+      }
     ]
   },
   "ActionSetActionPermission" : {
