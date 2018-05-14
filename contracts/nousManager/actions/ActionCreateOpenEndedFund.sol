@@ -49,7 +49,6 @@ contract ActionCreateOpenEndedFund is Action("owner") {
         //bool[] _overWr;
 
 
-
         //var (_addrAdb, _overwrAdb, ) = TemplatesDb(tdb).template("TPLProjectActionDb", 0);
         //address _adb = TPLProjectActionDb(_addrAdb).create();
         //_contractNames.push("ActionDb");

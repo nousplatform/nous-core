@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
 
-import {ActionAddAction, Action} from "../../../doug/actions/Mainactions.sol";
+import {ActionAddActions, Action} from "../../../doug/actions/Mainactions.sol";
 
 /**
 * @notice LockedAction do not set permission
@@ -29,10 +29,15 @@ contract LockedAction is Action("nous") {
 
 
 // Add action. NOTE: Overwrites currently added actions with the same name.
-contract ProjectActionAddAction is ActionAddAction, LockedAction {
+contract ProjectActionAddActions is ActionAddActions, LockedAction {
 
-    function execute(bytes32 _name, address _addr) public allowExecute {
-        super.execute(_name, _addr);
+    constructor() {
+        permission["owner"] = false;
+        permission["nous"] = true;
+    }
+
+    function execute(bytes32[] _names, address[] _addrs) public allowExecute {
+        super.execute(_names, _addrs);
     }
 
 }

@@ -8,6 +8,7 @@ const ActionDb = artifacts.require("ActionDb.sol");
 const PermissionDb = artifacts.require("PermissionDb.sol");
 const TemplatesDb = artifacts.require("TemplatesDb.sol");
 const ProjectDb = artifacts.require("ProjectDb.sol");
+const Doug = artifacts.require("Doug.sol");
 //actions
 const ActionRemoveAction = artifacts.require("ActionRemoveAction.sol");
 const ActionLockActions = artifacts.require("ActionLockActions.sol");
@@ -18,6 +19,7 @@ const ActionCreateOpenEndedFund = artifacts.require("ActionCreateOpenEndedFund.s
 const ActionAddTemplates = artifacts.require("ActionAddTemplates.sol");
 const ActionAddAction = artifacts.require("ActionAddAction.sol");
 const ActionAddUser = artifacts.require("ActionAddUser.sol");
+const ActionAddActions = artifacts.require("ActionAddActions.sol");
 
 const ActionCreateCompOEFund1 = artifacts.require("ActionCreateCompOEFund1.sol");
 const ActionCreateCompOEFund2 = artifacts.require("ActionCreateCompOEFund2.sol");
@@ -69,6 +71,21 @@ const actionsParams = {
       {
         type: "address",
         name: "addr"
+      }
+    ]
+  },
+  "ActionAddActions" : {
+    address: "",
+    type: "function",
+    name: "execute",
+    inputs: [
+      {
+        type: "bytes32[]",
+        name: "names"
+      },
+      {
+        type: "address[]",
+        name: "addrs"
       }
     ]
   },
@@ -395,6 +412,7 @@ contract('NousCore', async function (accounts) {
   });*/
 
   it("Add Action templates. Action Create New Fund", async () => {
+
     await createAllActions();
     //let tpls = Object.keys(templates);
 
@@ -413,13 +431,14 @@ contract('NousCore', async function (accounts) {
     let _tplAddrs = Object.keys(templates).map(item => templates[item].interface.address);
     let _tplOwerWr = Object.keys(templates).map(item => templates[item].overwrite);
 
+    //console.log("_tplNames", _tplNames);
+    //console.log("_tplAddrs", _tplAddrs);
+
+
     let data = [_tplNames, _tplAddrs, _tplOwerWr];
     //console.log("data", data);
 
-
     await actionManagerQuery("ActionAddTemplates", data);
-
-
 
     //console.log("11", await instanceList["TemplatesDb"].template("TPLConstructorOpenEndedFund", 0));
 
@@ -428,49 +447,58 @@ contract('NousCore', async function (accounts) {
       assert.equal(templates[item].interface.address, (await instanceList["TemplatesDb"].template(item, 0))[0], "Instance list not equal templates Db");
     }
 
-    data = [NOUSCoreInstance.address, accounts[0]];
+    //STEP 1
+    data = [accounts[0], accounts[1]];
     await actionManagerQuery("ActionCreateCompOEFund1", data);
 
-    data = [NOUSCoreInstance.address, accounts[0]];
+    //STEP 2
+    data = [accounts[0], accounts[1]];
     await actionManagerQuery("ActionCreateCompOEFund2", data);
 
-    data = [accounts[0], nousTokenInstance.address, "BWT Token", "BWT"];
+    //STEP 3
+    let walletAddress = accounts[2];
+    data = [accounts[1], nousTokenInstance.address, "BWT Token", "BWT"];
     await actionManagerQuery("ActionCreateCompOEFund3", data);
 
-    data = [accounts[0]];
+    //STEP 4 create Fund
+    data = [accounts[1]];
     await actionManagerQuery("ActionCreateActionsOEFund", data);
 
-    let tpls = await instanceList["TemplatesDb"].getTplContracts(accounts[0], web3.utils.toHex("contracts"));
-    console.log("tpls", tpls);
-
+    // get all tpls
+    let tpls = await instanceList["TemplatesDb"].getTplContracts(accounts[1], web3.utils.toHex("contracts"));
+    //console.log("tpls", tpls)
 
     //Crate new fund
     data = [accounts[0], "Test Fund", "OpenEndedFund", tpls[0], tpls[1], tpls[2]];
     await actionManagerQuery("ActionCreateOpenEndedFund", data);
 
-    let acts =  await instanceList["TemplatesDb"].getTplContracts(accounts[0], web3.utils.toHex("actions"));
-
-    let fundAddr = await instanceList["ProjectDb"].getOwnerFundLast(accounts[0]);
-    console.log("getOwnerFundLast", fundAddr);
-
-    let projectManager = await ActionManager.at(fundAddr);
-    console.log("projectManager.address", projectManager.address);
-
-
-    for (let i = 0; i < acts[0].length; i++) {
-      let data = [web3.utils.toHex(acts[0][i]), acts[1][i]];
-      let structure = actionsParams["ActionAddAction"];
-      let bytes = getFunctionCallData(structure, data);
-      
-
-      await projectManager.execute("ActionAddAction", bytes);
-    }
-
-
+    let acts =  await instanceList["TemplatesDb"].getTplContracts(accounts[1], web3.utils.toHex("actions"));
     //console.log("acts", acts);
 
 
+    let fundAddr = await instanceList["ProjectDb"].getOwnerFundLast(accounts[0]);
+    //console.log("getOwnerFundLast", fundAddr);
 
+    let dougFund = Doug.at(fundAddr);
+    let actManagerFund = await dougFund.contractList.call("ActionManager");
+    //console.log("actManagerFund", actManagerFund);
+
+    //todo -------
+    // let actionDbaddr = await dougFund.contractList.call("ActionDb");
+    // let actionDb = ActionDb.at(actionDbaddr);
+    // console.log("actionAddActions", await actionDb.actions.call("ActionAddActions"));
+    // console.log("ActionLockActions", await actionDb.actions.call("ActionLockActions"));
+    //todo -------
+
+
+    let projectManager = ActionManager.at(actManagerFund);
+    //console.log("projectManager.address", projectManager.address);
+    let _actions = acts[0].map(item => web3.utils.toHex(item));
+
+    let structure = actionsParams["ActionAddActions"];
+    let bytes = getFunctionCallData(structure, [_actions, acts[1]]);
+    //console.log("bytes", bytes);
+    await projectManager.execute("ActionAddActions", bytes);
 
 
 

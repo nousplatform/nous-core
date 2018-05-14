@@ -48,7 +48,7 @@ contract ActionCreateCompOEFund3 is Action("owner") {
         TemplatesDb tpldb = TemplatesDb(tdb);
 
         var (_addrAdb,  ) = tpldb.template("TPLComponentsOEFund3", 0);
-        var (_names, _addrs) = TPLComponentsOEFund3(_addrAdb).create(_nousToken, _name, _symbol);
+        var (_names, _addrs) = TPLComponentsOEFund3(_addrAdb).create(_owner, _nousToken, _name, _symbol);
 
         tpldb.addTmpContract(_owner, "contracts", _names, _addrs);
     }

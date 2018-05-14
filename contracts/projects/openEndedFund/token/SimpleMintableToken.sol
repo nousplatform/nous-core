@@ -1,6 +1,7 @@
 pragma solidity ^0.4.21;
 
 
+//import "https://github.com/OpenZeppelin/openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 import "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 
 

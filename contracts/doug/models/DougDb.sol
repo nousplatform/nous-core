@@ -7,7 +7,7 @@ import "../safety/DougEnabled.sol";
 
 contract DougDb {
 
-    mapping (bytes32 => address) contractList;
+    mapping (bytes32 => address) public contractList;
 
     bytes32[] public listIndex;
 

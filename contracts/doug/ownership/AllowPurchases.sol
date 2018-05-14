@@ -1,6 +1,7 @@
 pragma solidity ^0.4.21;
 
 
+//import "https://github.com/OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
 
@@ -25,12 +26,18 @@ contract AllowPurchases is Ownable {
     _;
   }
 
+  constructor(address _addr) {
+    addAddressToAllowPurchases(_addr);
+  }
+
   /**
    * @dev add an address to the whitelist
    * @param addr address
    * @return success true if the address was added to the whitelist, false if the address was already in the whitelist
    */
   function addAddressToAllowPurchases(address addr) onlyOwner public returns(bool success) {
+    //todo validate()
+
     if (!allowPurchases[addr]) {
       allowPurchases[addr] = true;
       allowPurchasesIndex.push(addr);

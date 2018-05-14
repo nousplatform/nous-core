@@ -54,17 +54,13 @@ contract ActionManager is DougEnabled {
         // Permissions stuff
         address pAddr = getContractAddress("PermissionDb");
 
-        if (pAddr != 0x0) {
-
-        }
-
         // First we check the permissions of the account that's trying to execute the action.
         var ( , _userRole, _owned) = PermissionDb(pAddr).getUser(msg.sender);
 
         // Now we check that the action manager isn't locked down. In that case, special
         // permissions is needed.
         if (locked && !_owned) {
-            revert();
+            revert("Action manager locked");
         }
 
         // Very simple system.

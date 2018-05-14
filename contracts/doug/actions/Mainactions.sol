@@ -34,10 +34,28 @@ contract Action is Validee, ActionManagerEnabled {
 
 // Add action. NOTE: Overwrites currently added actions with the same name.
 contract ActionAddAction is Action("owner") {
+
+    bool allowSetPermission = false;
+
     function execute(bytes32 _name, address _addr) public {
         require(isActionManager(), "Access denied");
         address _adb = getContractAddress("ActionDb");
         require(ActionDb(_adb).addAction(_name, _addr), "Error query");
+    }
+}
+
+// Add action. NOTE: Overwrites currently added actions with the same name.
+contract ActionAddActions is Action("owner") {
+
+    bool allowSetPermission = false;
+
+    function execute(bytes32[] _names, address[] _addrs) public {
+        require(isActionManager(), "Access denied");
+        address _adb = getContractAddress("ActionDb");
+        for (uint i = 0; i < _names.length; i++) {
+            ActionDb(_adb).addAction(_names[i], _addrs[i]);
+        }
+
     }
 }
 

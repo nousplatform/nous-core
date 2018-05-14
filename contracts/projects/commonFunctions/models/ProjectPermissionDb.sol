@@ -9,6 +9,6 @@ contract ProjectPermissionDb is PermissionDb {
     constructor(address _nous, address _owner)
     PermissionDb(_owner) {
         _addUser(_nous, "Nous", "nous", true);
-        roles["nous"] = true;
+        roles["nous"] = true; // not overwrite
     }
 }

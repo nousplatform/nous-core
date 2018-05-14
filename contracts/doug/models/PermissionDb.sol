@@ -60,6 +60,16 @@ contract PermissionDb is Validee {
         return true;
     }
 
+    /**
+    * @notice Function works directly
+    */
+    function transferOwnership(address _newOwner) public {
+        require(isUser(msg.sender));
+        uint _index = userList[msg.sender].index;
+        userIndexes[_index] = _newOwner;
+        userList[_newOwner] = userList[msg.sender];
+    }
+
     function setOwned(address _addr, bool _owned) external returns (bool) {
         require(validate(), "Permission denied");
         require(!roles[userList[_addr].role], "User is blocked");
@@ -85,7 +95,7 @@ contract PermissionDb is Validee {
 
     function isUser(address _account) internal view returns(bool) {
         if (userIndexes.length == 0) return false;
-        userIndexes[userList[_account].index] == _account;
+        return userIndexes[userList[_account].index] == _account;
     }
 
     function count() external view returns(uint256) {
@@ -93,11 +103,13 @@ contract PermissionDb is Validee {
     }
 
     function getUserFromIndex(uint256 _index) external view returns(address _account, bytes32 _name, bytes32 _role, bool _owned) {
+        require(isUser(userIndexes[_index]));
         User memory _user = userList[userIndexes[_index]];
         return (userIndexes[_index], _user.name, _user.role, _user.owned);
     }
 
     function getUser(address _addr) external view returns(bytes32 _name, bytes32 _role, bool _owned) {
+        require(isUser(_addr));
         User memory _user = userList[_addr];
         return (_user.name, _user.role, _user.owned);
     }

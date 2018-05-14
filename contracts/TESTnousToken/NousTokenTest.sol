@@ -1,6 +1,7 @@
 pragma solidity ^0.4.18;
 
 
+//import "https://github.com/OpenZeppelin/openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
 import "zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
 
 
@@ -14,6 +15,13 @@ contract NousTokenTest is MintableToken {
     string public name = "NousTkn";
     string public symbol = "NSU";
     uint8 public decimals = 18;
+
+    uint256 EXPONENT = 10 ** uint256(decimals);
+
+    function mint(address _to, uint256 _amount) public returns (bool) {
+        _amount = _amount * EXPONENT;
+        super.mint(_to, _amount);
+    }
 
     /**
     * Set allowance for other address and notify

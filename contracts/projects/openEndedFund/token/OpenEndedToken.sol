@@ -21,12 +21,16 @@ contract OpenEndedToken is PurchaseToken, InvestorsCounter /*SaleToken,*/ {
     uint8 public decimals;
 
     // @dev Constructor only nous token can mint.
-    constructor(address _nousToken, string _name, string _symbol/*, uint8 _decimals*/) {
+    constructor(address _owner, address _nousToken, string _name, string _symbol /*, uint8 _decimals*/)
+    AllowPurchases(_nousToken)
+    PurchaseToken(_owner)
+    {
         name = _name;
         symbol = _symbol;
         decimals = 18;
+
         //paused = true;
-        addAddressToAllowPurchases(_nousToken);
+        //addAddressToAllowPurchases(_nousToken);
     }
 
     function mint(address _to, uint256 _amount) internal returns (bool) {

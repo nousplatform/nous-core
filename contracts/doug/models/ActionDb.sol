@@ -2,9 +2,15 @@ pragma solidity ^0.4.18;
 
 
 import "../safety/ActionManagerEnabled.sol";
-import {ActionAddAction} from "../actions/Mainactions.sol";
 import {Validee} from  "../safety/Validee.sol";
 
+import {ActionAddActions} from "../actions/Mainactions.sol";
+import {ActionRemoveAction} from "../actions/Mainactions.sol";
+import {ActionLockActions} from "../actions/Mainactions.sol";
+import {ActionUnlockActions} from "../actions/Mainactions.sol";
+import {ActionSetUserRole} from "../actions/Mainactions.sol";
+import {ActionAddUser} from "../actions/Mainactions.sol";
+import {ActionSetActionPermission} from "../actions/Mainactions.sol";
 
 contract ActionDbAbstract {
     mapping (bytes32 => address) public actions;
@@ -16,70 +22,92 @@ contract ActionDbAbstract {
 
 contract ActionDb is Validee {
 
-    struct Action {
-        address addr;
-        uint index;
-    }
-
     // This is where we keep all the actions.
-    mapping (bytes32 => Action) public actionStruct;
+    mapping (bytes32 => address) public actions;
 
-    bytes32[] public actionIndex;
-
-    function isAction(bytes32 _name) view returns(bool) {
-        if(actionIndex.length == 0) return false;
-        return (actionIndex[actionStruct[_name].index] == _name);
-    }
+    //bytes32[] public actionIndex;
 
     // To make sure we have an add action action, we need to auto generate
     // it as soon as we got the DOUG address.
     function setDougAddress(address _dougAddr) public returns (bool result) {
         require(super.setDougAddress(_dougAddr));
 
-        address _addrAction = new ActionAddAction();
+        address _addrAction = new ActionAddActions();
         // If this fails, then something is wrong with the add action contract.
         // Will be events logging these things in later parts.
-        if(!DougEnabled(_addrAction).setDougAddress(_dougAddr)) {
-            return false;
-        }
-        actionStruct["ActionAddAction"] = Action({addr: _addrAction, index: actionIndex.push("ActionAddAction") - 1});
+        require(DougEnabled(_addrAction).setDougAddress(DOUG));
+        actions["ActionAddActions"] = _addrAction;
         return true;
     }
 
-    function addAction(bytes32 _name, address _addr/*, uint8 _permVal*/) public returns (bool) {
-        if (!validate()) return false;
+    function addAction(bytes32 _name, address _addr) public returns (bool) {
+        require(validate());
         // Remember we need to set the doug address for the action to be safe -
         // or someone could use a false doug to do damage to the system.
         // Normally the Doug contract does this, but actions are never added
         // to Doug - they're instead added to this lower-level CMC.
-        bool sda = DougEnabled(_addr).setDougAddress(DOUG);
-        if(!sda) {
-            return false;
-        }
-        actionStruct[_name].addr = _addr;
-        //actionStruct[_name].perm = _permVal;
-        actionStruct[_name].index = actionIndex.push(_name) - 1;
+        require(DougEnabled(_addr).setDougAddress(DOUG));
+
+        actions[_name] = _addr;
 
         return true;
     }
 
-    /// todo
-    function removeAction(bytes32 _name) public returns (bool) {
-        if(!validate()) return false;
-        if (!isAction(_name)) return false;
 
-        actionStruct[_name].addr = 0x0;
-        return true;
-    }
+    /*function setupBaseActions() internal {
+        // ActionAddAction
+        address _addrAction = new ActionAddActions();
+        require(DougEnabled(_addrAction).setDougAddress(DOUG));
+        actions["ActionAddAction"] = _addrAction;
 
-    /*function setPermission(bytes32 _name, uint8 _permVal) external returns (bool) {
-        require(validate());
-        actionStruct[_name].perm = _permVal;
+        // ActionRemoveAction
+        address _actionRemoveAction = new ActionRemoveAction();
+        require(DougEnabled(_actionRemoveAction).setDougAddress(DOUG));
+        actions["ActionRemoveAction"] = _actionRemoveAction;
+
+        // ActionLockActions
+        address _actionLockActions = new ActionLockActions();
+        require(DougEnabled(_actionLockActions).setDougAddress(DOUG));
+        actions["ActionLockActions"] = _actionLockActions;
+
+        // _actionUnlockActions
+        address _actionUnlockActions = new ActionUnlockActions();
+        require(DougEnabled(_actionUnlockActions).setDougAddress(DOUG));
+        actions["ActionUnlockActions"] = _actionUnlockActions;
+
+        // ActionSetUserRole
+        address _actionSetUserRole = new ActionSetUserRole();
+        require(DougEnabled(_actionSetUserRole).setDougAddress(DOUG));
+        actions["ActionSetUserRole"] = _actionSetUserRole;
+
+        // ActionAddUser
+        address _actionAddUser = new ActionAddUser();
+        require(DougEnabled(_actionAddUser).setDougAddress(DOUG));
+        actions["ActionAddUser"] = _actionAddUser;
+
+        // ActionSetActionPermission
+        address _actionSetActionPermission = new ActionSetActionPermission();
+        require(DougEnabled(_actionSetActionPermission).setDougAddress(DOUG));
+        actions["ActionSetActionPermission"] = _actionSetActionPermission;
+
     }*/
 
-    function actions(bytes32 _name) public constant returns(address) {
-        if (!isAction(_name)) revert();
-        return actionStruct[_name].addr;
+
+    function removeAction(bytes32 _name) public returns (bool) {
+        require(validate());
+        require(actions[_name] != 0x0);
+
+        /*for (uint i = 0; i < actionIndex.length; i++) {
+            if (actionIndex[i] == _name) break;
+        }
+
+        bytes32 lastAction = actionIndex[actionIndex.length - 1];
+        actionIndex[i] = lastAction;
+        actionIndex.length--;*/
+
+        actions[_name] = 0x0;
+        return true;
     }
+
 
 }
