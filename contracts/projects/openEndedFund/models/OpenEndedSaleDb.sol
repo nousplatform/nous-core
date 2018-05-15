@@ -3,27 +3,33 @@ pragma solidity ^0.4.18;
 
 import "../../../doug/safety/Validee.sol";
 
+contract OpenEndedSaleDbInterface {
+    mapping(bytes32 => uint256) public params;
+}
+
 
 contract OpenEndedSaleDb is Validee {
 
-    uint256 entryFee;
+    mapping(bytes32 => uint256) public params;
 
-    uint256 exitFee;
-
-    uint256 managementFee;
-
-    // Amount of nous token raised
-    uint256 public NSURaised;
-
-    //uint256 maxInvestors;
-
-
-    // ToDo protection
-    function setParams(uint256 _entryFee, uint256 _exitFee, uint256 _managementFee/*, uint256 _maxInvestors*/) public {
-        entryFee = _entryFee;
-        exitFee = _exitFee;
-        managementFee = _managementFee;
-        //maxInvestors = _maxInvestors;
+    constructor(bytes32[] _paramSale, uint256[] _valSale) public {
+        for (uint i = 0; i < _paramSale.length; i++) {
+            params[_paramSale[i]] = _valSale[i];
+        }
     }
 
+    function setEntryFee(uint _entryFee) external {
+        require(validate());
+        params["entryFee"] = _entryFee;
+    }
+
+    function setExitFee(uint _exitFee) external {
+        require(validate());
+        params["exitFee"] = _exitFee;
+    }
+
+    function setManagementFee(uint _managementFee) external {
+        require(validate());
+        params["managementFee"] = _managementFee;
+    }
 }

@@ -1,12 +1,13 @@
 pragma solidity ^0.4.18;
 
 
-import "../../../doug/safety/Validee.sol";
+import {Validee} from "../../../doug/safety/Validee.sol";
 
 
-interface SnapshotDbInterface {
+contract SnapshotDbInterface {
     function addSnapshot(uint256 _timestamp, bytes32 _hash, uint256 _rate) external returns(bool);
-    function last() external constant returns(bytes32 hash, uint256 rate);
+    function getSnapshot(uint256 _date) external constant returns(bytes32 hash, uint256 rate);
+    function rate() external constant returns(uint256 rate);
 }
 
 
@@ -40,17 +41,23 @@ contract SnapshotDb is Validee {
     * @notice gets snapshot from date
     * @param _date format YYYYMMDD
     */
-    function getFromDate(uint256 _date) external constant returns(bytes32 hash, uint256 rate) {
-        Snapshot memory _current = snapshot[timestampSnapshot[_date]];
+    function getSnapshot(uint256 _date) external constant returns(bytes32 hash, uint256 rate) {
+        uint index;
+        if (_date == 0) {
+            index = timestampSnapshot.length - 1;
+        } else {
+            index = timestampSnapshot[_date];
+        }
+        Snapshot storage _current = snapshot[index];
         return (_current.hash, _current.rate);
     }
 
     /**
     * @notice gets last snapshot
     */
-    function last() external constant returns(bytes32 hash, uint256 rate) {
-        Snapshot memory _last = snapshot[timestampSnapshot.length - 1];
-        return (_last.hash, _last.rate);
+    function rate() external constant returns(uint256 rate) {
+        Snapshot storage _last = snapshot[timestampSnapshot.length - 1];
+        return _last.rate;
     }
 
 }

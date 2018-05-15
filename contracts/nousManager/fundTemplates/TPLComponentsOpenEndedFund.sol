@@ -45,7 +45,8 @@ contract TPLComponentsOEFund2 {
 import {OpenEndedToken} from "../../projects/openEndedFund/token/OpenEndedToken.sol";
 import {OpenEndedSaleDb} from "../../projects/openEndedFund/models/OpenEndedSaleDb.sol";
 contract TPLComponentsOEFund3 {
-    function create(address _owner, address _nousToken, string _name, string _symbol) public returns (bytes32[] memory _names, address[] memory _addrs) {
+    function create(address _owner, address _nousToken, string _name, string _symbol, bytes32[] _paramSale, uint256[] _valSale)
+    public returns (bytes32[] memory _names, address[] memory _addrs) {
         _names = new bytes32[](2);
         _addrs = new address[](2);
 
@@ -53,7 +54,7 @@ contract TPLComponentsOEFund3 {
         _addrs[0] = new OpenEndedToken(_owner, _nousToken, _name, _symbol);
 
         _names[1] = "OpenEndedSaleDb";
-        _addrs[1] = new OpenEndedSaleDb();
+        _addrs[1] = new OpenEndedSaleDb(_paramSale, _valSale);
         return (_names, _addrs);
     }
 }
@@ -82,15 +83,6 @@ contract TPLActionsOEFundStep1 {
         _names[4] = "ActionSetActionPermission";
         _addrs[4] = new ActionSetActionPermission();
 
-//        _names[5] = "ActionAddWallet";
-//        _addrs[5] = new ActionAddWallet();
-//
-//        _names[6] = "ActionConfirmWallet";
-//        _addrs[6] = new ActionConfirmWallet();
-//
-//        _names[7] = "ActionAddSnapshot";
-//        _addrs[7] = new ActionAddSnapshot();
-        return (_names, _addrs);
     }
 }
 

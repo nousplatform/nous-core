@@ -7,17 +7,14 @@ pragma solidity ^0.4.18;
 import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "../../../doug/ownership/AllowPurchases.sol";
-import {DougEnabled} from "../../../doug/safety/DougEnabled.sol";
 import "./SimpleMintableToken.sol";
-import {SnapshotDbInterface} from "../../commonFunctions/models/SnapshotDb.sol";
+
+import {BaseSaleOpenEnded} from "./BaseSaleOpenEnded.sol";
 
 
-contract SaleToken is DougEnabled, SimpleMintableToken, AllowPurchases {
+contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
 
     using SafeMath for uint256;
-
-    // Todo is set wallet address
-    //address public walletAddress = "";
 
     /**
     * Get notify in token contracts, only nous token
@@ -34,14 +31,19 @@ contract SaleToken is DougEnabled, SimpleMintableToken, AllowPurchases {
 
         // how many coins we are allowed to spend
         if (_amount >= _value) {
+
+            uint _entryFee = getDataParamsSaleDb("entryFee");
+
+            uint _amountFee = _value.mul(_entryFee).div(100);
+
+            _value = _value.sub(_amountFee);
+
             if (nt.transferFrom(_sender, this, _value)) {
-                // todo function library to calculate And Calculate fee
-                address _sdb = getContractAddress("SnapshotDb");
-                var (, _rate) = SnapshotDbInterface(_sdb).last();
-                require(_rate > 0);
+                nt.transfer(wallet, _amountFee); // transfer amount fee to wallet
+
+                uint _rate = getRate();
 
                 uint256 _totalAmount = _value.mul(_rate);
-
                 // mining token
                 mint(_sender, _totalAmount);
 

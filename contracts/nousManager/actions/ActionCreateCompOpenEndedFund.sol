@@ -37,12 +37,12 @@ contract ActionCreateCompOEFund2 is Action("owner") {
 
 import {TPLComponentsOEFund3} from "../fundTemplates/TPLComponentsOpenEndedFund.sol";
 contract ActionCreateCompOEFund3 is Action("owner") {
-    function execute(address _owner, address _nousToken, string _name, string _symbol) {
+    function execute(address _owner, address _nousToken, string _name, string _symbol, bytes32[] _paramSale, uint256[] _valSale) {
         address tdb = getContractAddress("TemplatesDb");
         TemplatesDb tpldb = TemplatesDb(tdb);
 
         var (_addrAdb,  ) = tpldb.template("TPLComponentsOEFund3", 0);
-        var (_names, _addrs) = TPLComponentsOEFund3(_addrAdb).create(_owner, _nousToken, _name, _symbol);
+        var (_names, _addrs) = TPLComponentsOEFund3(_addrAdb).create(_owner, _nousToken, _name, _symbol, _paramSale, _valSale);
 
         tpldb.addTmpContract(_owner, "contracts", _names, _addrs);
     }

@@ -23,7 +23,8 @@ const ActionAddActions = artifacts.require("ActionAddActions.sol");
 const ActionCreateCompOEFund1 = artifacts.require("ActionCreateCompOEFund1.sol");
 const ActionCreateCompOEFund2 = artifacts.require("ActionCreateCompOEFund2.sol");
 const ActionCreateCompOEFund3 = artifacts.require("ActionCreateCompOEFund3.sol");
-const ActionCreateActionsOEFund = artifacts.require("ActionCreateActionsOEFund.sol");
+const ActionCreateActionsOEFund1 = artifacts.require("ActionCreateActionsOEFund1.sol");
+const ActionCreateActionsOEFund2 = artifacts.require("ActionCreateActionsOEFund2.sol");
 
 //temlates
 const TPLConstructorOpenEndedFund = artifacts.require("TPLConstructorOpenEndedFund.sol");
@@ -38,7 +39,8 @@ const TPLWalletDb = artifacts.require("TPLWalletDb.sol");
 const TPLComponentsOEFund1 = artifacts.require("TPLComponentsOEFund1.sol");
 const TPLComponentsOEFund2 = artifacts.require("TPLComponentsOEFund2.sol");
 const TPLComponentsOEFund3 = artifacts.require("TPLComponentsOEFund3.sol");
-const TPLActionsOEFund = artifacts.require("TPLActionsOEFund.sol");
+const TPLActionsOEFundStep1 = artifacts.require("TPLActionsOEFundStep1.sol");
+const TPLActionsOEFundStep2 = artifacts.require("TPLActionsOEFundStep2.sol");
 
 let OWNER = "0x719a22E179bb49a4596eFe3BD6F735b8f3b00AF1";
 OWNER = "0xe653e5c421d58318eb8b693ffe1b66fcc87f5c58";
@@ -206,7 +208,18 @@ const actionsParams = {
       },
     ]
   },
-  "ActionCreateActionsOEFund" : {
+  "ActionCreateActionsOEFund1" : {
+    address: "",
+    type: "function",
+    name: "execute",
+    inputs: [
+      {
+        "name": "_owner",
+        "type": "address"
+      }
+    ],
+  },
+  "ActionCreateActionsOEFund2" : {
     address: "",
     type: "function",
     name: "execute",
@@ -317,7 +330,11 @@ const templates = {
     interface: "",
     overwrite: false
   },
-  TPLActionsOEFund: {
+  TPLActionsOEFundStep1: {
+    interface: "",
+    overwrite: false
+  },
+  TPLActionsOEFundStep2: {
     interface: "",
     overwrite: false
   }
@@ -349,6 +366,8 @@ async function createAddActions(data) {
 }
 
 module.exports = async function(deployer) {
+
+  //return;
 
   await deployer.deploy(NousTokenTest);
   //console.log("nousTokenInstance.address", NousTokenTest.address);

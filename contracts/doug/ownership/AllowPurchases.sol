@@ -2,15 +2,15 @@ pragma solidity ^0.4.21;
 
 
 //import "https://github.com/OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol";
-import "zeppelin-solidity/contracts/ownership/Ownable.sol";
-
+//import "zeppelin-solidity/contracts/ownership/Ownable.sol";
+import {Validee} from "../safety/Validee.sol";
 
 /**
  * @title AllowPurchases
  * @dev The AllowPurchases contract has a whitelist of addresses, and provides basic authorization control functions.
  * @dev This simplifies the implementation of "user permissions".
  */
-contract AllowPurchases is Ownable {
+contract AllowPurchases is Validee {
   mapping(address => bool) public allowPurchases;
 
   address[] allowPurchasesIndex;
@@ -35,9 +35,8 @@ contract AllowPurchases is Ownable {
    * @param addr address
    * @return success true if the address was added to the whitelist, false if the address was already in the whitelist
    */
-  function addAddressToAllowPurchases(address addr) onlyOwner public returns(bool success) {
-    //todo validate()
-
+  function addAddressToAllowPurchases(address addr)  public returns(bool success) {
+    require(validate());
     if (!allowPurchases[addr]) {
       allowPurchases[addr] = true;
       allowPurchasesIndex.push(addr);
@@ -52,7 +51,8 @@ contract AllowPurchases is Ownable {
    * @return success true if at least one address was added to the whitelist,
    * false if all addresses were already in the whitelist
    */
-  function addAddressesToAllowPurchases(address[] addrs) onlyOwner public returns(bool success) {
+  function addAddressesToAllowPurchases(address[] addrs) public returns(bool success) {
+    require(validate());
     for (uint256 i = 0; i < addrs.length; i++) {
       if (addAddressToAllowPurchases(addrs[i])) {
         success = true;
@@ -66,7 +66,8 @@ contract AllowPurchases is Ownable {
    * @return success true if the address was removed from the whitelist,
    * false if the address wasn't in the whitelist in the first place
    */
-  function removeAddressFromAllowPurchases(address addr) onlyOwner public returns(bool success) {
+  function removeAddressFromAllowPurchases(address addr) public returns(bool success) {
+    require(validate());
     if (allowPurchases[addr]) {
       for (uint i = 0; i < allowPurchasesIndex.length; i++) {
         if (addr == allowPurchasesIndex[i]) break;

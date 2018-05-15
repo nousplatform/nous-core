@@ -76,7 +76,7 @@ contract TemplatesDb is Validee {
         names = new bytes32[](_length);
         addrs = new address[](_length);
         owrs = new bool[](_length);
-        for (var i = 0; i < _length; i++) {
+        for (uint i = 0; i < _length; i++) {
             names[i] = tempContracts[_owner][_type][i].name;
             addrs[i] = tempContracts[_owner][_type][i].addr;
             owrs[i] = true;

@@ -24,7 +24,8 @@ const ActionAddActions = artifacts.require("ActionAddActions.sol");
 const ActionCreateCompOEFund1 = artifacts.require("ActionCreateCompOEFund1.sol");
 const ActionCreateCompOEFund2 = artifacts.require("ActionCreateCompOEFund2.sol");
 const ActionCreateCompOEFund3 = artifacts.require("ActionCreateCompOEFund3.sol");
-const ActionCreateActionsOEFund = artifacts.require("ActionCreateActionsOEFund.sol");
+const ActionCreateActionsOEFund1 = artifacts.require("ActionCreateActionsOEFund1.sol");
+const ActionCreateActionsOEFund2 = artifacts.require("ActionCreateActionsOEFund2.sol");
 //temlates
 const TPLConstructorOpenEndedFund = artifacts.require("TPLConstructorOpenEndedFund.sol");
 const TPLActionManager = artifacts.require("TPLActionManager.sol");
@@ -38,7 +39,8 @@ const TPLWalletDb = artifacts.require("TPLWalletDb.sol");
 const TPLComponentsOEFund1 = artifacts.require("TPLComponentsOEFund1.sol");
 const TPLComponentsOEFund2 = artifacts.require("TPLComponentsOEFund2.sol");
 const TPLComponentsOEFund3 = artifacts.require("TPLComponentsOEFund3.sol");
-const TPLActionsOEFund = artifacts.require("TPLActionsOEFund.sol");
+const TPLActionsOEFundStep1 = artifacts.require("TPLActionsOEFundStep1.sol");
+const TPLActionsOEFundStep2 = artifacts.require("TPLActionsOEFundStep2.sol");
 
 
 const ProjectManager = artifacts.require("ProjectManager.sol");
@@ -212,7 +214,18 @@ const actionsParams = {
       },
     ]
   },
-  "ActionCreateActionsOEFund" : {
+  "ActionCreateActionsOEFund1" : {
+    address: "",
+    type: "function",
+    name: "execute",
+    inputs: [
+      {
+        "name": "_owner",
+        "type": "address"
+      }
+    ],
+  },
+  "ActionCreateActionsOEFund2" : {
     address: "",
     type: "function",
     name: "execute",
@@ -323,7 +336,11 @@ const templates = {
     interface: "",
     overwrite: false
   },
-  TPLActionsOEFund: {
+  TPLActionsOEFundStep1: {
+    interface: "",
+    overwrite: false
+  },
+  TPLActionsOEFundStep2: {
     interface: "",
     overwrite: false
   }
@@ -376,13 +393,27 @@ contract('NousCore', async function (accounts) {
   });
 
   async function createAllActions() {
+
     for (let item in actionsParams) {
+      actionsParams[item].address = (await eval(`${item}.new()`)).address;
+      console.log(`${item}: `, actionsParams[item].address);
+    }
+
+    let _actionNames = Object.keys(actionsParams).map(item => web3.utils.toHex(item));
+    //console.log("_actionNames", _actionNames);
+    let _actionAddr =  Object.keys(actionsParams).map(item => actionsParams[item].address);
+
+    //console.log("_actionAddr", _actionAddr);
+
+    await createAddActions([_actionNames, _actionAddr]);
+
+    /*for (let item in actionsParams) {
       actionsParams[item].interface = await eval(`${item}.new()`);
       await createAddAction(item);
       //console.log(item, actionsParams[item].interface.address);
 
       assert.equal(actionsParams[item].interface.address, await instanceList["ActionDb"].actions(item));
-    }
+    }*/
   }
 
   async function createAddAction(newActionName) {
@@ -394,11 +425,16 @@ contract('NousCore', async function (accounts) {
     await ActionManagerInstance.execute("ActionAddAction", bytes);
   }
 
+  async function createAddActions(data) {
+    //let data = [web3.utils.toHex(newActionName), actionsParams[newActionName].address];
+    await actionManagerQuery("ActionAddActions", data);
+  }
+
   async function actionManagerQuery(actionNmae, data) {
     let structure = actionsParams[actionNmae];
     let bytes = getFunctionCallData(structure, data);
 
-    await ActionManagerInstance.execute(actionNmae, bytes);
+    return (await ActionManagerInstance.execute(actionNmae, bytes)).tx;
   }
 
   /*it("Validate Deploy all nous core contracts. Add to doug manager. ", async function () {
@@ -448,21 +484,26 @@ contract('NousCore', async function (accounts) {
     }
 
     //STEP 1
+
     data = [accounts[0], accounts[1]];
-    await actionManagerQuery("ActionCreateCompOEFund1", data);
+    console.log("STEP 1 ActionCreateCompOEFund1", await actionManagerQuery("ActionCreateCompOEFund1", data));
 
     //STEP 2
     data = [accounts[0], accounts[1]];
-    await actionManagerQuery("ActionCreateCompOEFund2", data);
+    console.log("STEP 2 ActionCreateCompOEFund2", await actionManagerQuery("ActionCreateCompOEFund2", data));
 
     //STEP 3
     let walletAddress = accounts[2];
     data = [accounts[1], nousTokenInstance.address, "BWT Token", "BWT"];
-    await actionManagerQuery("ActionCreateCompOEFund3", data);
+    console.log("STEP 3 ActionCreateCompOEFund3 ", await actionManagerQuery("ActionCreateCompOEFund3", data));
 
     //STEP 4 create Fund
     data = [accounts[1]];
-    await actionManagerQuery("ActionCreateActionsOEFund", data);
+    console.log("STEP 4 ActionCreateActionsOEFund1", await actionManagerQuery("ActionCreateActionsOEFund1", data));
+
+    //STEP 5 create Fund
+    data = [accounts[1]];
+    console.log("STEP 4 ActionCreateActionsOEFund1", await actionManagerQuery("ActionCreateActionsOEFund2", data));
 
     // get all tpls
     let tpls = await instanceList["TemplatesDb"].getTplContracts(accounts[1], web3.utils.toHex("contracts"));
@@ -498,9 +539,7 @@ contract('NousCore', async function (accounts) {
     let structure = actionsParams["ActionAddActions"];
     let bytes = getFunctionCallData(structure, [_actions, acts[1]]);
     //console.log("bytes", bytes);
-    await projectManager.execute("ActionAddActions", bytes);
-
-
+    console.log("ActionAddActions", (await projectManager.execute("ActionAddActions", bytes)).tx);
 
   });
 });
