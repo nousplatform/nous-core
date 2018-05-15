@@ -13,7 +13,6 @@ interface ActionProvider {
 }
 
 
-
 contract Action is Validee, ActionManagerEnabled {
 
     // role => level Role permissions
@@ -55,13 +54,13 @@ contract ActionAddActions is Action("owner") {
         for (uint i = 0; i < _names.length; i++) {
             ActionDb(_adb).addAction(_names[i], _addrs[i]);
         }
-
     }
 }
 
 // Remove action. Does not allow 'ActionAddAction' to be removed, though that it can still
 // be done by overwriting this action with one that allows it.
 contract ActionRemoveAction is Action("owner") {
+
     function execute(bytes32 _name) external {
         require(isActionManager(), "Access denied");
         require(_name != "ActionAddAction");

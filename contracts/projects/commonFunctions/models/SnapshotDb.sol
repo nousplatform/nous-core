@@ -5,6 +5,7 @@ import "../../../doug/safety/Validee.sol";
 
 
 interface SnapshotDbInterface {
+    function addSnapshot(uint256 _timestamp, bytes32 _hash, uint256 _rate) external returns(bool);
     function last() external constant returns(bytes32 hash, uint256 rate);
 }
 

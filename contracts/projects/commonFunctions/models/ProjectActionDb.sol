@@ -38,14 +38,11 @@ contract ProjectActionDb is Validee {
         return true;
     }
 
-
     function removeAction(bytes32 _name) public returns (bool) {
         require(validate());
         require(actions[_name] != 0x0);
         actions[_name] = 0x0;
         return true;
     }
-
-
 }
 

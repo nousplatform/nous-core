@@ -36,10 +36,9 @@ contract SaleToken is DougEnabled, SimpleMintableToken, AllowPurchases {
         if (_amount >= _value) {
             if (nt.transferFrom(_sender, this, _value)) {
                 // todo function library to calculate And Calculate fee
-                //address _sdb = getContractAddress("SnapshotDb");
-                //var (, _rate) = SnapshotDbInterface(_sdb).last();
-                //require(_rate > 0);
-                uint _rate = 10;
+                address _sdb = getContractAddress("SnapshotDb");
+                var (, _rate) = SnapshotDbInterface(_sdb).last();
+                require(_rate > 0);
 
                 uint256 _totalAmount = _value.mul(_rate);
 

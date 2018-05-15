@@ -4,6 +4,12 @@ pragma solidity ^0.4.18;
 import "../../../doug/safety/Validee.sol";
 
 
+interface WalletDbInterface {
+    function addWallet(bytes32 _typeWallet, bytes32 _walletAddress) external returns (bool);
+    function confirmWallet(bytes32 _wallet) external returns (bool);
+}
+
+
 //TODO уточнить за снепшоты
 contract WalletDb is Validee {
 
@@ -48,6 +54,7 @@ contract WalletDb is Validee {
     }
 
     function getWalletByIndex(uint256 _index) external constant returns(bytes32 wallet, bytes32 walletAddress, bool confirmed) {
+        require(isWallet(walletsIndex[_index]));
         Wallet memory _wallet = wallets[walletsIndex[_index]];
         return (walletsIndex[_index], _wallet.addr, _wallet.confirmed);
     }

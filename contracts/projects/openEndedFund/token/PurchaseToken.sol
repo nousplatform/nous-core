@@ -33,10 +33,9 @@ contract PurchaseToken is BurnableToken, SaleToken /*DougEnabled, AllowPurchases
         require(allowPurchases[_withdrawAddr]);
         require(_value <= balances[msg.sender]);
 
-        //address _sdb = getContractAddress("SnapshotDb");
-        //var (, _rate) = SnapshotDb(_sdb).last();
-        //require(_rate > 0);
-        uint _rate = 10;
+        address _sdb = getContractAddress("SnapshotDb");
+        var (, _rate) = SnapshotDb(_sdb).last();
+        require(_rate > 0);
 
         uint256 _totalAmount = _value.div(_rate);
         //address _withdrawAddr = getAddressForWithdraw(0);
