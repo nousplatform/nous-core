@@ -385,7 +385,7 @@ module.exports = async function(deployer) {
   await deployer.deploy(ActionDb);
   contractList["ActionDb"] = ActionDb.address;
 
-  OWNER = "0xe653e5c421d58318eb8b693ffe1b66fcc87f5c58";
+  OWNER = "0x1cddbdbad70bfc4eba41f07044ae53f7a687f24c";
 
   //let permInstance = await PermissionDb.new(OWNER);
 

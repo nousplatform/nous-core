@@ -11,12 +11,12 @@ import {TemplatesDbInterface as TemplatesDb} from "../models/TemplatesDb.sol";
 import {TPLComponentsOEFund1} from "../fundTemplates/TPLComponentsOpenEndedFund.sol";
 contract ActionCreateCompOEFund1 is Action("owner") {
 
-    function execute(address _nousManager, address _owner) {
+    function execute(address _nousManager, address _owner, bytes32[] _paramSale, uint256[] _valSale) {
         address tdb = getContractAddress("TemplatesDb");
         TemplatesDb tpldb = TemplatesDb(tdb);
 
         var (_addrAdb,  ) = tpldb.template("TPLComponentsOEFund1", 0);
-        var (_names, _addrs) = TPLComponentsOEFund1(_addrAdb).create();
+        var (_names, _addrs) = TPLComponentsOEFund1(_addrAdb).create(_paramSale, _valSale);
 
         tpldb.addTmpContract(_owner, "contracts", _names, _addrs);
     }
@@ -37,12 +37,12 @@ contract ActionCreateCompOEFund2 is Action("owner") {
 
 import {TPLComponentsOEFund3} from "../fundTemplates/TPLComponentsOpenEndedFund.sol";
 contract ActionCreateCompOEFund3 is Action("owner") {
-    function execute(address _owner, address _nousToken, string _name, string _symbol, bytes32[] _paramSale, uint256[] _valSale) {
+    function execute(address _owner, address _nousToken, string _name, string _symbol) {
         address tdb = getContractAddress("TemplatesDb");
         TemplatesDb tpldb = TemplatesDb(tdb);
 
         var (_addrAdb,  ) = tpldb.template("TPLComponentsOEFund3", 0);
-        var (_names, _addrs) = TPLComponentsOEFund3(_addrAdb).create(_owner, _nousToken, _name, _symbol, _paramSale, _valSale);
+        var (_names, _addrs) = TPLComponentsOEFund3(_addrAdb).create(_owner, _nousToken, _name, _symbol);
 
         tpldb.addTmpContract(_owner, "contracts", _names, _addrs);
     }

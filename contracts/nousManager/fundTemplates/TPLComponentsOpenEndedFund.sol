@@ -7,9 +7,9 @@ import {SnapshotDb} from "../../projects/commonFunctions/models/SnapshotDb.sol";
 import {ProjectActionDb} from "../../projects/commonFunctions/models/ProjectActionDb.sol";
 
 contract TPLComponentsOEFund1 {
-    function create() public returns (bytes32[] memory _names, address[] memory _addrs) {
-        _names = new bytes32[](3);
-        _addrs = new address[](3);
+    function create(bytes32[] _paramSale, uint256[] _valSale) public returns (bytes32[] memory _names, address[] memory _addrs) {
+        _names = new bytes32[](4);
+        _addrs = new address[](4);
 
         _names[0] = "ActionManager";
         _addrs[0] = new ActionManager();
@@ -19,6 +19,9 @@ contract TPLComponentsOEFund1 {
 
         _names[2] = "SnapshotDb";
         _addrs[2] = new SnapshotDb();
+
+        _names[3] = "OpenEndedSaleDb";
+        _addrs[3] = new OpenEndedSaleDb(_paramSale, _valSale);
         return (_names, _addrs);
     }
 }
@@ -45,16 +48,15 @@ contract TPLComponentsOEFund2 {
 import {OpenEndedToken} from "../../projects/openEndedFund/token/OpenEndedToken.sol";
 import {OpenEndedSaleDb} from "../../projects/openEndedFund/models/OpenEndedSaleDb.sol";
 contract TPLComponentsOEFund3 {
-    function create(address _owner, address _nousToken, string _name, string _symbol, bytes32[] _paramSale, uint256[] _valSale)
+    function create(address _owner, address _nousToken, string _name, string _symbol)
     public returns (bytes32[] memory _names, address[] memory _addrs) {
-        _names = new bytes32[](2);
-        _addrs = new address[](2);
+        _names = new bytes32[](1);
+        _addrs = new address[](1);
 
         _names[0] = "OpenEndedToken";
         _addrs[0] = new OpenEndedToken(_owner, _nousToken, _name, _symbol);
 
-        _names[1] = "OpenEndedSaleDb";
-        _addrs[1] = new OpenEndedSaleDb(_paramSale, _valSale);
+
         return (_names, _addrs);
     }
 }

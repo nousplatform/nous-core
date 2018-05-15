@@ -14,7 +14,7 @@ import {BaseSaleOpenEnded} from "./BaseSaleOpenEnded.sol";
  * @dev Very simple ERC20 Token that can be minted.
  * It is meant to be used in a crowdsale contract.
  */
-contract OpenEndedToken is /*AllowPurchases, */PurchaseToken, SaleToken, InvestorsCounter {
+contract OpenEndedToken is /*AllowPurchases,*/ PurchaseToken, SaleToken, InvestorsCounter {
 
     using SafeMath for uint256;
 

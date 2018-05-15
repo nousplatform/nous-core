@@ -7,7 +7,7 @@ module.exports = {
       network_id: "*", // Match any network id
       gas:   4700000,
       gasPrice: 1,
-      from: "0xe653e5c421d58318eb8b693ffe1b66fcc87f5c58"
+      from: "0x1cddbdbad70bfc4eba41f07044ae53f7a687f24c"
       //from: "0xc2Ddda15f8deB297EB4DE39B82ae0750dF693253",
     },
     ropsten: {
