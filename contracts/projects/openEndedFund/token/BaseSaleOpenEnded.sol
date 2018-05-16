@@ -17,6 +17,9 @@ contract BaseSaleOpenEnded is AllowPurchases {
     function getRate() public view returns (uint) {
         SnapshotDb _snapshotDb = SnapshotDb(getContractAddress("SnapshotDb"));
         uint _rate = _snapshotDb.rate();
+        if (_rate == 0) {
+            _rate = getDataParamsSaleDb("initPrice");
+        }
         require(_rate > 0);
         return _rate;
     }

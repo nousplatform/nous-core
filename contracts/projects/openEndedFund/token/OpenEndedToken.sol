@@ -8,13 +8,13 @@ import {SaleToken} from "./SaleToken.sol";
 import {AllowPurchases} from "../../../doug/ownership/AllowPurchases.sol";
 import {BaseSaleOpenEnded} from "./BaseSaleOpenEnded.sol";
 
-
+//"0x719a22e179bb49a4596efe3bd6f735b8f3b00af1","0x2d968cf3d354c891081610b65e0b83d5073a82e3", "BWT3", "BWTTTT"
 /**
  * @title SampleCrowdsaleToken
  * @dev Very simple ERC20 Token that can be minted.
  * It is meant to be used in a crowdsale contract.
  */
-contract OpenEndedToken is /*AllowPurchases,*/ PurchaseToken, SaleToken, InvestorsCounter {
+contract OpenEndedToken is /*AllowPurchases, */PurchaseToken, SaleToken, InvestorsCounter {
 
     using SafeMath for uint256;
 

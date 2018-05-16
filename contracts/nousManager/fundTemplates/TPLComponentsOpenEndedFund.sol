@@ -18,7 +18,7 @@ contract TPLComponentsOEFund1 {
         _addrs[1] = new ProjectActionDb();
 
         _names[2] = "SnapshotDb";
-        _addrs[2] = new SnapshotDb();
+        _addrs[2] = new SnapshotDb(/*_valSale[2]*/);
 
         _names[3] = "OpenEndedSaleDb";
         _addrs[3] = new OpenEndedSaleDb(_paramSale, _valSale);

@@ -291,7 +291,7 @@ const templates = {
     interface: "",
     overwrite: false
   },
-  TPLActionManager: {
+  /*TPLActionManager: {
     interface: "",
     overwrite: false
   },
@@ -318,7 +318,7 @@ const templates = {
   TPLWalletDb: {
     interface: "",
     overwrite: false
-  },
+  },*/
   TPLComponentsOEFund1: {
     interface: "",
     overwrite: false
@@ -352,6 +352,8 @@ function getFunctionCallData({name, inputs = []}, _data = null) {
 async function actionManagerQuery(actionName, data) {
   let structure = actionsParams[actionName];
   let bytes = getFunctionCallData(structure, data);
+  console.log("bytes", actionName, bytes);
+
 
   await ActionManagerInstance.execute(actionName, bytes);
 }
@@ -367,8 +369,41 @@ async function createAddActions(data) {
 }
 
 module.exports = async function(deployer) {
+  return;
 
-  //return;
+  console.log("-----==========CREATE DEPLOY TEMPLATES==========-----");
+  //deploy templates
+  /*for (let item in templates) {
+    templates[item].interface = await eval(`${item}.new()`);
+    console.log(`${item}: `, templates[item].interface.address);
+  }*/
+  let _data = ["TPLConstructorOpenEndedFund", "TPLComponentsOEFund1", "TPLComponentsOEFund2", "TPLComponentsOEFund3", "TPLActionsOEFundStep1", "TPLActionsOEFundStep2"];
+  let _addr = ["0x1a8bd3f1670440451f858d7733c1afa00eb88a22", "0xc4887564248b1ef280595bd964ed4c774ef7ad07", "0x1b87c935ab41c28e395a4fbafce75465141c694c", "0x7b983069e717d4ea0d0ac8f41a5c7867b211d27b","0x8072e5e91b502371269558293a8dc20d1a607966","0x5026f3c2b4e9ab406fec889a058c9eb0ff4d6dc0"]
+  let _bool = [true,true,true,true,true,true];
+
+  console.log("-----==========ADD TEMPLATES==========-----");
+  // add templates
+  _data = _data.map(item => web3.utils.toHex(item))
+  data = [_data, _addr, _bool];
+
+  ActionManagerInstance = ActionManager.at("0xe0b292985d35e38ee4a4689f973973374ac48512");
+  await actionManagerQuery("ActionAddTemplates", data);
+
+  console.log("\n");
+  return;
+
+  //
+  // await deployer.deploy(TemplatesDb);
+  // const doug = NousCore.at("0x51a80300715b542e02eda50eba28030a1ac06773");
+  // doug.addContract("TemplatesDb", TemplatesDb.address);
+  // return;
+
+  // //ActionAddTemplates execute(bytes32[] _names, address[] _addrs, bool[] _overwrite)
+  // ActionManagerInstance = ActionManager.at("0xe0b292985d35e38ee4a4689f973973374ac48512");
+  // let _data = [[web3.utils.toHex("TPLComponentsOEFund1")],[TPLComponentsOEFund1.address],[true]]
+  // actionManagerQuery("ActionAddTemplates", _data);
+
+  return;
 
   await deployer.deploy(NousTokenTest);
   //console.log("nousTokenInstance.address", NousTokenTest.address);

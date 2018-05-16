@@ -31,7 +31,7 @@ contract TemplatesDb is Validee {
         address addr;
     }
 
-    // ownerFund => tempContracts
+    // ownerFund => projecttype => tplstruct
     mapping (address => mapping(bytes32 => TmpTpl[])) public tempContracts;
 
 
@@ -63,6 +63,7 @@ contract TemplatesDb is Validee {
 
     function addTmpContract(address _owner, bytes32 _type,  bytes32[] _name, address[] _addr) external {
         require(validate());
+        tempContracts[_owner][_type].length = 0;
         for (uint i = 0; i < _name.length; i++) {
             tempContracts[_owner][_type].push(TmpTpl({
                     name: _name[i],
@@ -88,7 +89,7 @@ contract TemplatesDb is Validee {
     * @notice return last version contract
     */
     function template(bytes32 _name, uint256 _version) external view returns(address, bool, uint) {
-        //require(isElement(_name));
+        require(isElement(_name));
         uint256 _ver;
         if (_version == 0) {
             _ver = defaultTpl[_name].length - 1;

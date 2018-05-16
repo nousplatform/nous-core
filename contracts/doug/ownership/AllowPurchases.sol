@@ -1,8 +1,6 @@
 pragma solidity ^0.4.21;
 
 
-//import "https://github.com/OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol";
-//import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 import {Validee} from "../safety/Validee.sol";
 
 /**
@@ -27,20 +25,20 @@ contract AllowPurchases is Validee {
   }
 
   constructor(address _addr) {
-    addAddressToAllowPurchases(_addr);
+    allowPurchases[_addr] = true;
   }
 
   /**
    * @dev add an address to the whitelist
-   * @param addr address
+   * @param _addr address
    * @return success true if the address was added to the whitelist, false if the address was already in the whitelist
    */
-  function addAddressToAllowPurchases(address addr)  public returns(bool success) {
+  function addAddressToAllowPurchases(address _addr)  public returns(bool success) {
     require(validate());
-    if (!allowPurchases[addr]) {
-      allowPurchases[addr] = true;
-      allowPurchasesIndex.push(addr);
-      emit AllowPurchasesAddressAdded(addr);
+    if (!allowPurchases[_addr]) {
+      allowPurchases[_addr] = true;
+      allowPurchasesIndex.push(_addr);
+      emit AllowPurchasesAddressAdded(_addr);
       success = true;
     }
   }

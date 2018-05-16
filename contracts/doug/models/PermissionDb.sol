@@ -61,7 +61,7 @@ contract PermissionDb is Validee {
     }
 
     /**
-    * @notice Function works directly
+    * @notice TODO Function works directly
     */
     function transferOwnership(address _newOwner) public {
         require(isUser(msg.sender));

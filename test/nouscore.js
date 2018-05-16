@@ -240,7 +240,7 @@ const actionsParams = {
     address: "",
     type: "function",
     name: "execute",
-    inputs: [
+    "inputs": [
       {
         "name": "_nousManager",
         "type": "address"
@@ -248,6 +248,14 @@ const actionsParams = {
       {
         "name": "_owner",
         "type": "address"
+      },
+      {
+        "name": "_paramSale",
+        "type": "bytes32[]"
+      },
+      {
+        "name": "_valSale",
+        "type": "uint256[]"
       }
     ],
   },
@@ -296,7 +304,7 @@ const templates = {
     interface: "",
     overwrite: false
   },
-  TPLActionManager: {
+  /*TPLActionManager: {
     interface: "",
     overwrite: false
   },
@@ -323,7 +331,7 @@ const templates = {
   TPLWalletDb: {
     interface: "",
     overwrite: false
-  },
+  },*/
   TPLComponentsOEFund1: {
     interface: "",
     overwrite: false
@@ -457,9 +465,8 @@ contract('NousCore', async function (accounts) {
       templates[item].interface = await eval(`${item}.new()`);
       /*let data = [[web3.utils.toHex(item)], [templates[item].interface.address], [templates[item].overwrite]];
       console.log(data);
-
-      await actionManagerQuery("ActionAddTemplates", data);
-      console.log("item", templates[item].interface.address);*/
+      await actionManagerQuery("ActionAddTemplates", data);;*/
+      console.log(item, templates[item].interface.address)
     }
 
     // add templates
@@ -470,11 +477,11 @@ contract('NousCore', async function (accounts) {
     //console.log("_tplNames", _tplNames);
     //console.log("_tplAddrs", _tplAddrs);
 
-
     let data = [_tplNames, _tplAddrs, _tplOwerWr];
-    //console.log("data", data);
+    console.log("data", data);
 
     await actionManagerQuery("ActionAddTemplates", data);
+
 
     //console.log("11", await instanceList["TemplatesDb"].template("TPLConstructorOpenEndedFund", 0));
 
@@ -484,8 +491,14 @@ contract('NousCore', async function (accounts) {
     }
 
     //STEP 1
+    // todo дописать
+    let _paramSale = [],_valSale = [];
+    ["entryFee", "exitFee", "initPrice", "maxFundCup", "maxInvestors", "managementFee"].map(item => {
+        _paramSale.push(web3.utils.toHex(item));
+        _valSale.push(1);
+    });
 
-    data = [accounts[0], accounts[1]];
+    data = [accounts[0], accounts[1], _paramSale, _valSale];
     console.log("STEP 1 ActionCreateCompOEFund1", await actionManagerQuery("ActionCreateCompOEFund1", data));
 
     //STEP 2
