@@ -21,9 +21,6 @@ contract ActionCreateOpenEndedFund is Action("owner") {
         address _owner,
         string _fundName,
         string _fundType,
-        //address _nousToken,
-        //string _tokenName,
-        //string _tokenSymbol//,
         bytes32[] _contractNames,
         address[] _contractAddrs,
         bool[] _overWr
@@ -36,6 +33,10 @@ contract ActionCreateOpenEndedFund is Action("owner") {
 
         var (_addrConst,) = TemplatesDb(tdb).template("TPLConstructorOpenEndedFund", 0);
         require(_addrConst != 0x0, "Template 'TPLConstructorOpenEndedFund = 0x0' not set.");
+
+        //address tdb = getContractAddress("TemplatesDb");
+        //TemplatesDb tpldb = TemplatesDb(tdb);
+        //var (_contractNames, _contractAddrs, _overWr) = tpldb.getTplContracts(_owner, "contracts");
 
         address _fundAddr = TPLConstructorOpenEndedFund(_addrConst).create(_owner, _fundName, _fundType, _contractNames, _contractAddrs, _overWr);
 

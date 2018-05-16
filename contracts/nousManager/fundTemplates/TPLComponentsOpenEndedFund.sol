@@ -56,7 +56,6 @@ contract TPLComponentsOEFund3 {
         _names[0] = "OpenEndedToken";
         _addrs[0] = new OpenEndedToken(_owner, _nousToken, _name, _symbol);
 
-
         return (_names, _addrs);
     }
 }
