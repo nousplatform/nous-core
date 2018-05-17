@@ -52,12 +52,12 @@ contract Doug is DougDb, Ownable {
     function addContract(bytes32 _name, address _addr) public onlyOwner returns (bool result) {
         // Only the owner may add, and the contract has to be DougEnabled and
         // return true when setting the Doug address.
-        /*address am = contractList["ActionManager"];
-        if (Validator(am).validate(msg.sender) || _setDougAddress(_addr)) {
+        address am = contractList["ActionManager"];
+        if (/*Validator(am).validate(msg.sender) || */ _setDougAddress(_addr)) {
             // Access denied. Should divide these up into two maybe.
             emit AddContract(msg.sender, _name, 403);
             return false;
-        }*/
+        }
         // Add to contract.
         bool ae = _addElement(_name, _addr);
         if (ae) {

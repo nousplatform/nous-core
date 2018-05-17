@@ -35,12 +35,16 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
 
             _value = _value.sub(_amountFee);
 
+            uint _rate = getRate();
+
+            uint256 _totalAmount = _value.mul(_rate);
+            //todo add check to max total value
+            //require();
+
             if (nt.transferFrom(_sender, this, _value)) {
                 nt.transfer(wallet, _amountFee); // transfer amount fee to wallet
 
-                uint _rate = getRate();
 
-                uint256 _totalAmount = _value.mul(_rate);
                 // mining token
                 mint(_sender, _totalAmount);
 

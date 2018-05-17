@@ -43,7 +43,7 @@ const TPLActionsOEFundStep1 = artifacts.require("TPLActionsOEFundStep1.sol");
 const TPLActionsOEFundStep2 = artifacts.require("TPLActionsOEFundStep2.sol");
 
 let OWNER = "0x719a22E179bb49a4596eFe3BD6F735b8f3b00AF1";
-//OWNER = "0xe653e5c421d58318eb8b693ffe1b66fcc87f5c58";
+//OWNER = "0x1a0816d178bfc9ad3a59b372a3270eb7e82dd1f4";
 
 const NOUSTOKEN = "0x2d968cf3d354c891081610b65e0b83d5073a82e3";
 
@@ -369,28 +369,31 @@ async function createAddActions(data) {
 }
 
 module.exports = async function(deployer) {
-  return;
-
+  await deployer.deploy(TPLComponentsOEFund3);
+  ActionManagerInstance = ActionManager.at("0x463dd281b953e89bd0ae0a0918289dfd80de8dbc");
+  await actionManagerQuery("ActionAddTemplates", [[web3.utils.toHex("TPLComponentsOEFund3")],[TPLComponentsOEFund3.address],[true]]);
+return;
+/*
   console.log("-----==========CREATE DEPLOY TEMPLATES==========-----");
   //deploy templates
-  /*for (let item in templates) {
+  for (let item in templates) {
     templates[item].interface = await eval(`${item}.new()`);
     console.log(`${item}: `, templates[item].interface.address);
-  }*/
-  let _data = ["TPLConstructorOpenEndedFund", "TPLComponentsOEFund1", "TPLComponentsOEFund2", "TPLComponentsOEFund3", "TPLActionsOEFundStep1", "TPLActionsOEFundStep2"];
-  let _addr = ["0x1a8bd3f1670440451f858d7733c1afa00eb88a22", "0xc4887564248b1ef280595bd964ed4c774ef7ad07", "0x1b87c935ab41c28e395a4fbafce75465141c694c", "0x7b983069e717d4ea0d0ac8f41a5c7867b211d27b","0x8072e5e91b502371269558293a8dc20d1a607966","0x5026f3c2b4e9ab406fec889a058c9eb0ff4d6dc0"]
-  let _bool = [true,true,true,true,true,true];
+  }
 
   console.log("-----==========ADD TEMPLATES==========-----");
   // add templates
-  _data = _data.map(item => web3.utils.toHex(item))
-  data = [_data, _addr, _bool];
+  let _tplName = Object.keys(templates).map(item => web3.utils.toHex(item));
+  let _tplAddr = Object.keys(templates).map(item => templates[item].interface.address);
+  let _tplOwerW = Object.keys(templates).map(item => templates[item].overwrite);
+
+  let dat = [_tplName, _tplAddr, _tplOwerW];
 
   ActionManagerInstance = ActionManager.at("0xe0b292985d35e38ee4a4689f973973374ac48512");
-  await actionManagerQuery("ActionAddTemplates", data);
+  await actionManagerQuery("ActionAddTemplates", dat);
 
   console.log("\n");
-  return;
+  return;*/
 
   //
   // await deployer.deploy(TemplatesDb);
@@ -403,12 +406,12 @@ module.exports = async function(deployer) {
   // let _data = [[web3.utils.toHex("TPLComponentsOEFund1")],[TPLComponentsOEFund1.address],[true]]
   // actionManagerQuery("ActionAddTemplates", _data);
 
-  return;
+  //return;
 
-  await deployer.deploy(NousTokenTest);
+  //await deployer.deploy(NousTokenTest);
   //console.log("nousTokenInstance.address", NousTokenTest.address);
 
-
+  //return;
   console.log("-----=====DEPLOY NOUS CONTRACT=====-----");
   //deploy
 
@@ -438,7 +441,8 @@ module.exports = async function(deployer) {
   console.log("-----==========ADD FUND CONTRACT TO DOUG==========-----");
   //Contracts Doug Contract
   await deployer.deploy(NousCore,
-    NousTokenTest.address,
+    //NousTokenTest.address,
+    NOUSTOKEN,
     Object.keys(contractList),
     Object.keys(contractList).map(_name => contractList[_name])
   );
@@ -453,7 +457,7 @@ module.exports = async function(deployer) {
   //console.log("_actionNames", _actionNames);
   let _actionAddr =  Object.keys(actionsParams).map(item => actionsParams[item].address);
 
-  //console.log("_actionAddr", _actionAddr);
+  console.log("_actionAddr", [_actionNames, _actionAddr]);
 
   await createAddActions([_actionNames, _actionAddr]);
 

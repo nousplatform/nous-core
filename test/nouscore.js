@@ -474,8 +474,8 @@ contract('NousCore', async function (accounts) {
     let _tplAddrs = Object.keys(templates).map(item => templates[item].interface.address);
     let _tplOwerWr = Object.keys(templates).map(item => templates[item].overwrite);
 
-    //console.log("_tplNames", _tplNames);
-    //console.log("_tplAddrs", _tplAddrs);
+    console.log("_tplNames", _tplNames);
+    console.log("_tplAddrs", _tplAddrs);
 
     let data = [_tplNames, _tplAddrs, _tplOwerWr];
     console.log("data", data);
@@ -516,7 +516,7 @@ contract('NousCore', async function (accounts) {
 
     //STEP 5 create Fund
     data = [accounts[1]];
-    console.log("STEP 4 ActionCreateActionsOEFund1", await actionManagerQuery("ActionCreateActionsOEFund2", data));
+    console.log("STEP 4 ActionCreateActionsOEFund2", await actionManagerQuery("ActionCreateActionsOEFund2", data));
 
     // get all tpls
     let tpls = await instanceList["TemplatesDb"].getTplContracts(accounts[1], web3.utils.toHex("contracts"));
@@ -556,6 +556,4 @@ contract('NousCore', async function (accounts) {
 
   });
 });
-
-
 
