@@ -14,7 +14,7 @@ contract BaseSaleOpenEnded is AllowPurchases {
         wallet = _wallet;
     }
 
-    function getRate() public view returns (uint) {
+    function rate() public view returns (uint) {
         var (_rate, ) = SnapshotDb(getContractAddress("SnapshotDb")).rate(0);
         if (_rate == 0) {
             _rate = getDataParamsSaleDb("initPrice");

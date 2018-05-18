@@ -35,7 +35,7 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
 
             _value = _value.sub(_amountFee);
 
-            uint _rate = getRate();
+            uint _rate = rate();
 
             uint256 _totalAmount = _value.mul(_rate);
             //todo add check to max total value

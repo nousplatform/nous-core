@@ -24,7 +24,7 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
         require(allowPurchases[_withdrawAddr]);
         require(_value <= balances[msg.sender]);
 
-        uint _rate = getRate();
+        uint _rate = rate();
         uint256 _totalAmount = _value.div(_rate);
 
         uint _exitFee = getDataParamsSaleDb("exitFee");
