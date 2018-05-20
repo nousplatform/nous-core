@@ -369,10 +369,16 @@ async function createAddActions(data) {
 }
 
 module.exports = async function(deployer) {
-  await deployer.deploy(TPLComponentsOEFund3);
+
+  /*await deployer.deploy(TemplatesDb);
+  var __data = [[web3.utils.toHex("TemplatesDb")], [TemplatesDb.address]];
+  await actionManagerQuery("ActionAddActions", __data);
+  return;
+*/
+/*  await deployer.deploy(TPLComponentsOEFund3);
   ActionManagerInstance = ActionManager.at("0x463dd281b953e89bd0ae0a0918289dfd80de8dbc");
   await actionManagerQuery("ActionAddTemplates", [[web3.utils.toHex("TPLComponentsOEFund3")],[TPLComponentsOEFund3.address],[true]]);
-return;
+return;*/
 /*
   console.log("-----==========CREATE DEPLOY TEMPLATES==========-----");
   //deploy templates

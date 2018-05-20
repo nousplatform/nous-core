@@ -6,12 +6,13 @@ import "../doug/safety/DougEnabled.sol";
 
 
 contract DougInterface {
-    mapping (bytes32 => address) public contracts;
-    function addContract(bytes32 _name, address _addr) public;
-    function removeContract(bytes32 _name) external;
+    function contracts(bytes32 _name) public constant returns (address addr);
+    function addContract(bytes32 name, address addr, bool _overWr) public returns (bool result);
+    function removeContract(bytes32 name) public returns (bool result);
 }
 
-contract Doug is DougDb {
+
+contract ProjectConstructor is DougDb {
 
     event AddContract(address indexed caller, bytes32 indexed name, address contractAddress);
 
@@ -49,7 +50,7 @@ contract Doug is DougDb {
 
     // ---
     function addContract(bytes32 _name, address _addr)
-    public
+    external
     onlyActionManager
     {
         require(_name != bytes32(0), "Contract name is empty.");

@@ -8,13 +8,11 @@ import {Action} from "./actions/Mainactions.sol";
 import {PermissionDbInterface as PermissionDb} from "./models/PermissionDb.sol";
 
 
-interface ActionManagerInterface {
+contract ActionManagerInterface {
     function lock() external returns (bool);
     function unlock() external returns (bool);
     function execute(bytes32 actionName, bytes data) public returns (bool);
-    //function resetActiveAction() public returns(bool);
 }
-
 
 contract ActionManager is DougEnabled {
 
@@ -76,6 +74,10 @@ contract ActionManager is DougEnabled {
 
         // Just assume it succeeds for now (important for logger).
         require(_actnAddr.call(data), "Query rejected.");
+
+        //bytes32 _action_name, bytes32[] _bytesArr, uint[] _uints, bool[] _bools
+        //_action().execute(_bytesArr, _uints, _addrs, _bools);
+
         // Now clear it.
         activeAction = 0x0;
         _log(actionName, true);

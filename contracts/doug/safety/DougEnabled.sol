@@ -5,31 +5,34 @@ import "../interfaces/ContractProvider.sol";
 
 
 contract DougEnabled {
+
     address DOUG;
 
-    function setDougAddress(address dougAddr) public returns (bool result) {
-        // Once the doug address is set, don't allow it to be set again, except by the
-        // doug contract itself.
-        if(DOUG != 0x0 && dougAddr != DOUG) {
-            return false;
-        }
-        DOUG = dougAddr;
-        return true;
-    }
-
-    function getContractAddress(bytes32 _name) public constant returns(address) {
-        address _contract;
-        if (DOUG != 0x0) {
-            _contract = ContractProvider(DOUG).contracts(_name);
-        }
+    function getContractAddress(bytes32 _name)
+    internal
+    view
+    returns (address)
+    {
+        require(DOUG != 0x0);
+        address _contract = ContractProvider(DOUG).contracts(_name);
         require(_contract != 0x0);
         return _contract;
     }
 
+    function setDougAddress(address _dougAddr)
+    public
+    returns (bool)
+    {
+        require(DOUG == 0x0);
+        DOUG = _dougAddr;
+        return true;
+    }
+
     // Makes it so that Doug is the only contract that may kill it.
-    function remove() public {
-        if(msg.sender == DOUG) {
-            selfdestruct(DOUG);
-        }
+    function remove()
+    external
+    {
+        require(msg.sender == DOUG);
+        selfdestruct(DOUG);
     }
 }

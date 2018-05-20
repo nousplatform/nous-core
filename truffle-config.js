@@ -15,7 +15,7 @@ module.exports = {
       port: 8545,
       network_id: "3",
       gas: 4700000, // Gas limit used for deploys
-      gasPrice: 100000000000, // 20 gwei
+      gasPrice: 50000000000, // 20 gwei
       from: "0x719a22e179bb49a4596efe3bd6f735b8f3b00af1",
     },
     kovan: {

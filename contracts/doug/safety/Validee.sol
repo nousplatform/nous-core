@@ -7,6 +7,14 @@ import "../interfaces/ContractProvider.sol";
 
 
 contract Validee is DougEnabled {
+
+    modifier validate_() {
+        require(DOUG != 0x0);
+        address am = getContractAddress("ActionManager");
+        require(Validator(am).validate(msg.sender));
+        _;
+    }
+
     // Makes it easier to check that action manager is the caller.
     function validate() internal constant returns (bool) {
         if (DOUG != 0x0) {

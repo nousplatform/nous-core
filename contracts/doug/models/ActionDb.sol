@@ -21,13 +21,14 @@ contract ActionDb is Validee {
 
     // To make sure we have an add action action, we need to auto generate
     // it as soon as we got the DOUG address.
-    function setDougAddress(address _dougAddr) public returns (bool result) {
-        require(super.setDougAddress(_dougAddr));
+    function setDougAddress(address _dougAddr)
+    public
+    returns (bool result)
+    {
+        super.setDougAddress(_dougAddr);
 
         address _addrAction = new ActionAddActions();
-        // If this fails, then something is wrong with the add action contract.
-        // Will be events logging these things in later parts.
-        require(DougEnabled(_addrAction).setDougAddress(DOUG));
+        DougEnabled(_addrAction).setDougAddress(DOUG);
         actions["ActionAddActions"] = _addrAction;
         return true;
     }
@@ -38,7 +39,7 @@ contract ActionDb is Validee {
         // or someone could use a false doug to do damage to the system.
         // Normally the Doug contract does this, but actions are never added
         // to Doug - they're instead added to this lower-level CMC.
-        require(DougEnabled(_addr).setDougAddress(DOUG));
+        DougEnabled(_addr).setDougAddress(DOUG);
 
         actions[_name] = _addr;
 
