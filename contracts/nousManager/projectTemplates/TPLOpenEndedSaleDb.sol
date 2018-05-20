@@ -9,6 +9,7 @@ contract TPLOpenEndedSaleDb is BaseTemplate {
 
     bytes32 constant TYPE_PROJECT = "OpenEnded";
     bytes32 constant CONTRACT_NAME = "OpenEndedSaleDb";
+    bytes32 constant TPL_NAME = "TPLOpenEndedSaleDb";
 
     function create(
         address _projectOwner,
@@ -20,8 +21,7 @@ contract TPLOpenEndedSaleDb is BaseTemplate {
         uint256 _managementFee
     )
     public
-    validate_
-    returns (address)
+    //validate_
     {
         address newContract = new OpenEndedSaleDb(
                 _entryFee,
@@ -31,7 +31,7 @@ contract TPLOpenEndedSaleDb is BaseTemplate {
                 _maxInvestors,
                 _managementFee
         );
-        uint _id = ids[_projectOwner]++;
+        uint _id = getId(_projectOwner, TYPE_PROJECT);
         addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
     }
 

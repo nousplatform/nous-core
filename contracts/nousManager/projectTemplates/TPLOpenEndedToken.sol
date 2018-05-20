@@ -9,6 +9,7 @@ contract TPLOpenEndedToken is BaseTemplate { // ----
 
     bytes32 constant TYPE_PROJECT = "OpenEnded";
     bytes32 constant CONTRACT_NAME = "OpenEndedToken"; // -----
+    bytes32 constant TPL_NAME = "TPLOpenEndedToken"; // -----
 
     function create(
         address _projectOwner,
@@ -17,8 +18,7 @@ contract TPLOpenEndedToken is BaseTemplate { // ----
         string _symbol
     )
     external
-    validate_
-    returns (address)
+    //validate_
     {
         address newContract = new OpenEndedToken(
             _projectOwner,
@@ -26,7 +26,7 @@ contract TPLOpenEndedToken is BaseTemplate { // ----
             _name,
             _symbol
         );
-        uint _id = ids[_projectOwner]++;
+        uint _id = getId(_projectOwner, TYPE_PROJECT);
         addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
     }
 }

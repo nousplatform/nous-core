@@ -20,7 +20,10 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
     }
 
     // @dev withdraw Token
-    function redeem(address _withdrawAddr, uint256 _value) public returns(bool) {
+    function redeem(address _withdrawAddr, uint256 _value)
+    public
+    returns(bool)
+    {
         require(allowPurchases[_withdrawAddr]);
         require(_value <= balances[msg.sender]);
 
@@ -44,7 +47,9 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
         _burn(msg.sender, _value);
     }
 
-    function withdraw(address _withdrawAddr, uint _value) {
+    function withdraw(address _withdrawAddr, uint _value)
+    public
+    {
         require(msg.sender == wallet);
         require(allowPurchases[_withdrawAddr]);
 

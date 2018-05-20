@@ -108,7 +108,11 @@ contract PermissionDb is Validee {
         return (userIndexes[_index], _user.name, _user.role, _user.owned);
     }
 
-    function getUser(address _addr) external view returns(bytes32 _name, bytes32 _role, bool _owned) {
+    function getUser(address _addr)
+    external
+    view
+    returns(bytes32 _name, bytes32 _role, bool _owned)
+    {
         require(isUser(_addr));
         User memory _user = userList[_addr];
         return (_user.name, _user.role, _user.owned);

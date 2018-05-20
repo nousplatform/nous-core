@@ -13,7 +13,10 @@ contract DougDb {
 
     //@dev Attention Add a new contract Or owerwrite old contract. This will overwrite an existing contract. 'internal' modifier means
     // it has to be called by an implementing class.
-    function _addElement(bytes32 _name, address _addr)
+    function _addElement(
+        bytes32 _name,
+        address _addr
+    )
     internal
     {
         if (contracts[_name] == 0x0) {
@@ -25,7 +28,7 @@ contract DougDb {
     // Remove a contract from Doug (we could also selfdestruct the contract if we want to).
     function _removeElement(bytes32 _name)
     internal
-    returns(bool result) {
+    returns(bool) {
 
         for (uint _i  = 0; _i < listIndex.length; _i++) {
             if (_name == listIndex[_i]) break;

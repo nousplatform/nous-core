@@ -31,6 +31,7 @@ contract Permissions is RBAC {
     public
     {
         addRole(fundOwner, ROLE_FUND_OWNER);
+        addRole(nousPlatform, ROLE_NOUS_PLATFORM);
     }
 
     /**

@@ -1,8 +1,8 @@
 pragma solidity ^0.4.18;
 
 
-import {DougDb} from "../doug/models/DougDb.sol";
-import "../doug/safety/DougEnabled.sol";
+import {DougDb} from "./models/DougDb.sol";
+import "./safety/DougEnabled.sol";
 
 
 contract DougInterface {

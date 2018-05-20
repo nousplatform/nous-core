@@ -1,5 +1,6 @@
 const Web3 = require("web3");
-var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+const fs = require('fs');
 
 const NousCore = artifacts.require("NousCore.sol");
 const NousTokenTest = artifacts.require("NousTokenTest.sol");
@@ -21,338 +22,53 @@ const ActionAddAction = artifacts.require("ActionAddAction.sol");
 const ActionAddUser = artifacts.require("ActionAddUser.sol");
 const ActionAddActions = artifacts.require("ActionAddActions.sol");
 
-const ActionCreateCompOEFund1 = artifacts.require("ActionCreateCompOEFund1.sol");
-const ActionCreateCompOEFund2 = artifacts.require("ActionCreateCompOEFund2.sol");
-const ActionCreateCompOEFund3 = artifacts.require("ActionCreateCompOEFund3.sol");
-const ActionCreateActionsOEFund1 = artifacts.require("ActionCreateActionsOEFund1.sol");
-const ActionCreateActionsOEFund2 = artifacts.require("ActionCreateActionsOEFund2.sol");
+const ActionProjectDeployer = artifacts.require("ActionProjectDeployer.sol");
+const ActionTemplates = artifacts.require("ActionTemplates.sol");
+
 //temlates
-const TPLConstructorOpenEndedFund = artifacts.require("TPLConstructorOpenEndedFund.sol");
-const TPLActionManager = artifacts.require("TPLActionManager.sol");
 const TPLOpenEndedSaleDb = artifacts.require("TPLOpenEndedSaleDb.sol");
 const TPLOpenEndedToken = artifacts.require("TPLOpenEndedToken.sol");
-const TPLProjectActionDb = artifacts.require("TPLProjectActionDb.sol");
-const TPLProjectPermissionDb = artifacts.require("TPLProjectPermissionDb.sol");
+const TPLProjectActionManager = artifacts.require("TPLProjectActionManager.sol");
+const TPLProjectConstructor = artifacts.require("TPLProjectConstructor.sol");
 const TPLSnapshotDb = artifacts.require("TPLSnapshotDb.sol");
 const TPLWalletDb = artifacts.require("TPLWalletDb.sol");
 
-const TPLComponentsOEFund1 = artifacts.require("TPLComponentsOEFund1.sol");
-const TPLComponentsOEFund2 = artifacts.require("TPLComponentsOEFund2.sol");
-const TPLComponentsOEFund3 = artifacts.require("TPLComponentsOEFund3.sol");
-const TPLActionsOEFundStep1 = artifacts.require("TPLActionsOEFundStep1.sol");
-const TPLActionsOEFundStep2 = artifacts.require("TPLActionsOEFundStep2.sol");
 
+const ProjectActionManager = artifacts.require("ProjectActionManager.sol");
+const ProjectConstructor = artifacts.require("ProjectConstructor.sol");
 
-const ProjectManager = artifacts.require("ProjectManager.sol");
-
-
-
-/*function getSignature(self) {
-  return `${self.function}(${self.params.join()})`;
-}
-
-const actionsParams = {
-  "ActionAddAction" : {
-    interface: "",
-    function: "execute",
-    signature: function() {return getSignature(this)},
-    params: ["bytes32", "address"],
-  },
-}*/
-
-const actionsParams = {
-  "ActionAddAction" : {
-    address: "",
-    type: "function",
-    name: "execute",
-    inputs: [
-      {
-        type: "bytes32",
-        name: "name"
-      },
-      {
-        type: "address",
-        name: "addr"
-      }
-    ]
-  },
-  "ActionAddActions" : {
-    address: "",
-    type: "function",
-    name: "execute",
-    inputs: [
-      {
-        type: "bytes32[]",
-        name: "names"
-      },
-      {
-        type: "address[]",
-        name: "addrs"
-      }
-    ]
-  },
-  "ActionRemoveAction" : {
-    address: "",
-    type: "function",
-    name: "execute",
-    inputs: [
-      {
-        type: "bytes32",
-        name: "name"
-      }
-    ]
-  },
-  "ActionLockActions" : {
-    address: "",
-    type: "function",
-    name: "execute",
-    inputs: []
-  },
-  "ActionUnlockActions" : {
-    address: "",
-    type: "function",
-    name: "execute",
-    inputs: []
-  },
-  "ActionSetUserRole" : {
-    address: "",
-    type: "function",
-    name: "execute",
-    inputs: [
-      {
-        type: "address",
-        name: "_addr"
-      },
-      {
-        type: "bytes32",
-        name: "_role"
-      }
-    ]
-  },
-  "ActionAddUser" : {
-    address: "",
-    type: "function",
-    name: "execute",
-    inputs: [
-      {
-        type: "address",
-        name: "_addr"
-      },
-      {
-        type: "bytes32",
-        name: "_name"
-      },
-      {
-        type: "bytes32",
-        name: "_role"
-      }
-    ]
-  },
-  "ActionSetActionPermission" : {
-    address: "",
-    type: "function",
-    name: "execute",
-    inputs: [
-      {
-        type: "bytes32",
-        name: "name"
-      },
-      {
-        type: "uint8",
-        name: "perm"
-      },
-    ]
-  },
-
-  "ActionCreateOpenEndedFund" : {
-    address: "",
-    type: "function",
-    name: "execute",
-    inputs: [
-      {
-        "name": "_owner",
-        "type": "address"
-      },
-      {
-        "name": "_fundName",
-        "type": "string"
-      },
-      {
-        "name": "_fundType",
-        "type": "string"
-      },
-      {
-        "name": "_contractNames",
-        "type": "bytes32[]"
-      },
-      {
-        "name": "_contractAddrs",
-        "type": "address[]"
-      },
-      {
-        "name": "_overWr",
-        "type": "bool[]"
-      }
-    ],
-  },
-  "ActionAddTemplates" : {
-    address: "",
-    type: "function",
-    name: "execute",
-    inputs: [
-      {
-        type: "bytes32[]",
-        name: "_names"
-      },
-      {
-        type: "address[]",
-        name: "_addrs"
-      },
-      {
-        type: "bool[]",
-        name: "_overwrite"
-      },
-    ]
-  },
-  "ActionCreateActionsOEFund1" : {
-    address: "",
-    type: "function",
-    name: "execute",
-    inputs: [
-      {
-        "name": "_owner",
-        "type": "address"
-      }
-    ],
-  },
-  "ActionCreateActionsOEFund2" : {
-    address: "",
-    type: "function",
-    name: "execute",
-    inputs: [
-      {
-        "name": "_owner",
-        "type": "address"
-      }
-    ],
-  },
-  "ActionCreateCompOEFund1" : {
-    address: "",
-    type: "function",
-    name: "execute",
-    "inputs": [
-      {
-        "name": "_nousManager",
-        "type": "address"
-      },
-      {
-        "name": "_owner",
-        "type": "address"
-      },
-      {
-        "name": "_paramSale",
-        "type": "bytes32[]"
-      },
-      {
-        "name": "_valSale",
-        "type": "uint256[]"
-      }
-    ],
-  },
-  "ActionCreateCompOEFund2" : {
-    address: "",
-    type: "function",
-    name: "execute",
-    inputs: [
-      {
-        "name": "_nousManager",
-        "type": "address"
-      },
-      {
-        "name": "_owner",
-        "type": "address"
-      }
-    ],
-  },
-  "ActionCreateCompOEFund3" : {
-    address: "",
-    type: "function",
-    name: "execute",
-    inputs: [
-      {
-        "name": "_owner",
-        "type": "address"
-      },
-      {
-        "name": "_nousToken",
-        "type": "address"
-      },
-      {
-        "name": "_name",
-        "type": "string"
-      },
-      {
-        "name": "_symbol",
-        "type": "string"
-      }
-    ],
-  },
-};
-
-const templates = {
-  TPLConstructorOpenEndedFund: {
-    interface: "",
-    overwrite: false
-  },
-  /*TPLActionManager: {
-    interface: "",
-    overwrite: false
-  },
-  TPLOpenEndedSaleDb: {
-    interface: "",
-    overwrite: false
-  },
-  TPLOpenEndedToken: {
-    interface: "",
-    overwrite: false
-  },
-  TPLProjectActionDb: {
-    interface: "",
-    overwrite: false
-  },
-  TPLProjectPermissionDb: {
-    interface: "",
-    overwrite: false
-  },
-  TPLSnapshotDb: {
-    interface: "",
-    overwrite: false
-  },
-  TPLWalletDb: {
-    interface: "",
-    overwrite: false
-  },*/
-  TPLComponentsOEFund1: {
-    interface: "",
-    overwrite: false
-  },
-  TPLComponentsOEFund2: {
-    interface: "",
-    overwrite: false
-  },
-  TPLComponentsOEFund3: {
-    interface: "",
-    overwrite: false
-  },
-  TPLActionsOEFundStep1: {
-    interface: "",
-    overwrite: false
-  },
-  TPLActionsOEFundStep2: {
-    interface: "",
-    overwrite: false
+function getAbi(contractName, param, ) {
+  var obj = JSON.parse(fs.readFileSync(`../build/contracts/${contractName}`, 'utf8'));
+  if (param) {
+    return obj[param];
   }
 }
+
+const actions = [
+  "ActionAddAction",
+  "ActionAddActions",
+  "ActionRemoveAction",
+  "ActionLockActions",
+  "ActionUnlockActions",
+  "ActionSetUserRole",
+  "ActionAddUser",
+  "ActionSetActionPermission",
+  "ActionAddContract",
+  "ActionRemoveContract",
+
+  "ActionProjectDeployer",
+  "ActionAddTemplates",
+];
+
+const tpls = [
+  "TPLOpenEndedSaleDb",
+  "TPLOpenEndedToken",
+  "TPLProjectActionManager",
+  "TPLProjectConstructor",
+  "TPLSnapshotDb",
+  "TPLWalletDb",
+];
+
 
 function getActionCallDataManual(_signature, _params, _data) {
   let bytes = web3.eth.abi.encodeFunctionSignature(_signature);
@@ -457,7 +173,7 @@ contract('NousCore', async function (accounts) {
 
   it("Add Action templates. Action Create New Fund", async () => {
 
-    await createAllActions();
+    //await createAllActions();
     //let tpls = Object.keys(templates);
 
     // create instance templates

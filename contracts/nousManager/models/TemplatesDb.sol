@@ -23,6 +23,8 @@ contract TemplatesDb is Validee {
     public
     validate_
     {
+        DougEnabled(_addr).setDougAddress(DOUG);
+
         templates[_name].push(_addr);
     }
 

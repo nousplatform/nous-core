@@ -19,11 +19,17 @@ contract BaseSaleOpenEnded is AllowPurchases {
 
     address wallet;
 
-    constructor(address _wallet) {
+    constructor(address _wallet)
+    public
+    {
         wallet = _wallet;
     }
 
-    function rate() public view returns (uint) {
+    function rate()
+    public
+    view
+    returns (uint)
+    {
         address _sdb = getContractAddress("SnapshotDb");
         uint _rate = SnapshotDb(_sdb).rate();
         if (_rate == 0) {
@@ -33,7 +39,11 @@ contract BaseSaleOpenEnded is AllowPurchases {
         return _rate;
     }
 
-    function getDataParamsSaleDb(bytes32 _rowName) public view returns(uint256) {
+    function getDataParamsSaleDb(bytes32 _rowName)
+    public
+    view
+    returns(uint256)
+    {
         address _sdb = getContractAddress("OpenEndedSaleDb");
         return OpenEndedSaleDb(_sdb).params(_rowName);
     }

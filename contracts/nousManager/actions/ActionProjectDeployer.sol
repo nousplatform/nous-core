@@ -1,5 +1,5 @@
 pragma solidity ^0.4.23;
-pragma experimental ABIEncoderV2;
+//pragma experimental ABIEncoderV2;
 
 
 import {Action} from "../../doug/actions/Mainactions.sol";
@@ -10,17 +10,20 @@ contract ActionProjectDeployer is Action("owner") {
 
     function execute(
         bytes32[] _tplNames,
-        bytes[] data
+        bytes data
     )
-    isActionManager_
+    //isActionManager_
     public
     {
+        return;
         address _tdb = getContractAddress("TemplatesDb");
 
         for (uint i = 0; i < _tplNames.length; i++) {
+
             address _template = TemplatesDb(_tdb).template(_tplNames[i], 0);
             require(_template != 0x0);
-            require(_template.call(data[i]));
+            data[i];
+            //require(_template.call(data[i]));
         }
     }
 }

@@ -29,6 +29,7 @@ contract OpenEndedToken is /*AllowPurchases, */PurchaseToken, SaleToken, Investo
         string _name,
         string _symbol
     )
+    public
     BaseSaleOpenEnded(_owner)
     AllowPurchases(_nousToken)
     {
@@ -59,10 +60,15 @@ contract OpenEndedToken is /*AllowPurchases, */PurchaseToken, SaleToken, Investo
         return true;
     }
 
-    function _burn(address _who, uint256 _value) internal {
-        super._burn(msg.sender, _value);
-        if (balances[msg.sender] == 0) {
-            removeInvestor(msg.sender);
+    function _burn(
+        address _who,
+        uint256 _value
+    )
+    internal
+    {
+        super._burn(_who, _value);
+        if (balances[_who] == 0) {
+            removeInvestor(_who);
         }
     }
 

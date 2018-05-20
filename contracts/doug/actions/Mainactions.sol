@@ -17,16 +17,15 @@ contract Action is Validee, ActionManagerEnabled {
 
     // role => level Role permissions
     mapping(bytes32 => bool) public permission;
-    // set permission sets only constructor
-    bool allowSetPermission = true;
 
     constructor(bytes32 _role) public {
         permission[_role] = true;
     }
 
-    function setPermission(bytes32 _role, bool _permVal) external returns (bool) {
-        require(allowSetPermission);
-        require(validate());
+    function setPermission(bytes32 _role, bool _permVal)
+    external
+    validate_
+    returns (bool) {
         permission[_role] = _permVal;
     }
 }
@@ -114,35 +113,29 @@ contract ActionSetActionPermission is Action("owner") {
         address _adb = getContractAddress("ActionDb");
         address _action = ActionDb(_adb).actions(_name);
         require(_action != 0x0);
-        require(Action(_action).setPermission(_role, _permVal));
+        Action(_action).setPermission(_role, _permVal);
     }
 }
 
 
 // Add contract.
-/*contract ActionAddContract is Action {
+contract ActionAddContract is Action("owner") {
 
-    function execute(bytes32 name, address addr) returns (bool) {
-        if(!isActionManager()) {
-            return false;
-        }
+    function execute(bytes32 name, address addr) external {
+        require(isActionManager(), "Access denied");
         Doug d = Doug(DOUG);
-        return d.addContract(name, addr);
+        d.addContract(name, addr);
     }
-
-}*/
+}
 
 // Remove contract.
-/*contract ActionRemoveContract is Action {
+contract ActionRemoveContract is Action("owner") {
 
-    function execute(bytes32 name) returns (bool) {
-        if(!isActionManager()){
-            return false;
-        }
+    function execute(bytes32 name) external {
+        require(isActionManager(), "Access denied");
         Doug d = Doug(DOUG);
-        return d.removeContract(name);
+        d.removeContract(name);
     }
-
-}*/
+}
 
 

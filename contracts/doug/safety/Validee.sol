@@ -9,7 +9,6 @@ import "../interfaces/ContractProvider.sol";
 contract Validee is DougEnabled {
 
     modifier validate_() {
-        require(DOUG != 0x0);
         address am = getContractAddress("ActionManager");
         require(Validator(am).validate(msg.sender));
         _;

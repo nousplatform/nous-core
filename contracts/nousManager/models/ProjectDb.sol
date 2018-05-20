@@ -2,18 +2,18 @@ pragma solidity ^0.4.18;
 
 
 import "../../doug/safety/Validee.sol";
+import {TemplatesDbInterface as TemplatesDb} from "./TemplatesDb.sol";
 
 
 interface ProjectDbInterface {
 
-    function addProject(address _owner,
+    function addProject(
+        address _owner,
         bytes32 _type,
         bytes32 _name,
         address _addr,
         uint _id
-    ) external
-    returns(bool);
-
+    ) external returns(bool);
 }
 
 
@@ -25,24 +25,30 @@ contract ProjectDb is Validee {
         mapping(bytes32 => address) contracts;
     }
 
+    modifier isProjectContract_(bytes32 _tplName) {
+        address _tdb = getContractAddress("TemplatesDb");
+        require(msg.sender == TemplatesDb(_tdb).template(_tplName, 0));
+        _;
+    }
+
     // ownerFund => projecttype => tplstruct
     mapping (address => mapping(bytes32 => TmpTpl[])) tempContracts;
 
     function addProject(
         address _owner,
-        bytes32 _type,
-        bytes32 _name,
-        address _addr,
+        bytes32 _projectType,
+        bytes32 _contractName,
+        address _contractAddr,
         uint _id
-)
-    validate_
-    external
+    )
+    //isProjectContract_(_tplName)
+    public
     {
         require(_owner != address(0));
-        require(_name != bytes32(0));
-        require(_addr != address(0));
-        TmpTpl storage _tpl = tempContracts[_owner][_type][_id];
-        _tpl.contracts[_name] = _addr;
+        require(_contractName != bytes32(0));
+        require(_contractAddr != address(0));
+        //TmpTpl storage _tpl = tempContracts[_owner][_projectType][_id];
+        //_tpl.contracts[_contractName] = _contractAddr;
     }
 
     // -----

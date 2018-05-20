@@ -24,7 +24,9 @@ contract AllowPurchases is Validee {
     _;
   }
 
-  constructor(address _addr) {
+  constructor(address _addr)
+  public
+  {
     allowPurchases[_addr] = true;
   }
 

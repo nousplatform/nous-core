@@ -33,8 +33,14 @@ contract ActionDb is Validee {
         return true;
     }
 
-    function addAction(bytes32 _name, address _addr) public returns (bool) {
-        require(validate());
+    function addAction(
+        bytes32 _name,
+        address _addr
+    )
+    public
+    validate_
+    returns (bool)
+    {
         // Remember we need to set the doug address for the action to be safe -
         // or someone could use a false doug to do damage to the system.
         // Normally the Doug contract does this, but actions are never added
