@@ -3,6 +3,7 @@ pragma solidity ^0.4.18;
 
 import {BaseTemplate} from "./BaseTemplate.sol";
 import {SnapshotDb} from "../../openEndFund/models/SnapshotDb.sol"; // ----
+import {ProjectDb} from "../models/ProjectDb.sol";
 
 
 contract TPLSnapshotDb is BaseTemplate {
@@ -19,7 +20,9 @@ contract TPLSnapshotDb is BaseTemplate {
     {
         address newContract = new SnapshotDb(); // ----
         uint _id = getId(_projectOwner, TYPE_PROJECT);
-        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
+
+        address _pdb = getContractAddress("ProjectDb");
+        ProjectDb(_pdb).addProject(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
     }
 
 }

@@ -3,6 +3,7 @@ pragma solidity ^0.4.18;
 
 import {BaseTemplate} from "./BaseTemplate.sol";
 import {OpenEndedToken} from "../../openEndFund/token/OpenEndedToken.sol"; // ---
+import {ProjectDb} from "../models/ProjectDb.sol";
 
 
 contract TPLOpenEndedToken is BaseTemplate { // ----
@@ -27,6 +28,8 @@ contract TPLOpenEndedToken is BaseTemplate { // ----
             _symbol
         );
         uint _id = getId(_projectOwner, TYPE_PROJECT);
-        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
+
+        address _pdb = getContractAddress("ProjectDb");
+        ProjectDb(_pdb).addProject(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
     }
 }

@@ -197,10 +197,7 @@ contract('NousCore', async function(accounts) {
     }
 
 
-
     //STEP 1 To deploy
-
-
     var obj = {
       "TPLSnapshotDb": {
         "variables" : [
@@ -245,16 +242,6 @@ contract('NousCore', async function(accounts) {
       }*/
     }
 
-    var obj2 = {"TPLProjectConstructor": {
-      "variables" : [
-        accounts[1],
-        "_fundName",
-        "_fundType",
-        Object.keys(obj).filter(item => {if (item != "TPLProjectConstructor") { return item} }),
-        Object.keys(obj).filter(item => {if (item != "TPLProjectConstructor") { return obj[item].address} }),
-      ],
-        "address": "0x0"
-    }}
 
     //console.log("obj", obj);
     //console.log("obj2", obj2);
@@ -263,11 +250,19 @@ contract('NousCore', async function(accounts) {
       //console.log("_item", obj[_item]);
       //console.log(" ...obj[_item].variables",  getBytesCallData(_item, obj[_item].variables, "create"));
       console.log("_item", _item);
-
-
       await ActionManagerInstance.deployTemplates(web3.utils.toHex(_item), getBytesCallData(_item, obj[_item].variables, "create"));
-
     }
+
+    var obj2 = {"TPLProjectConstructor": {
+        "variables" : [
+          accounts[1],
+          "_fundName",
+          "_fundType",
+          Object.keys(obj).filter(item => {if (item != "TPLProjectConstructor") { return item} }),
+          Object.keys(obj).filter(item => {if (item != "TPLProjectConstructor") { return obj[item].address} }),
+        ],
+        "address": "0x0"
+      }}
 
 
     //var dataSnapshotDb = [accounts[0]];

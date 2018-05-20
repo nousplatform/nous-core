@@ -3,6 +3,7 @@ pragma solidity ^0.4.18;
 
 import {BaseTemplate} from "./BaseTemplate.sol";
 import {ProjectActionManager} from "../../openEndFund/ProjectActionManager.sol";
+import {ProjectDb} from "../models/ProjectDb.sol";
 
 
 contract TPLProjectActionManager is BaseTemplate {
@@ -20,7 +21,9 @@ contract TPLProjectActionManager is BaseTemplate {
     {
         address newContract = new ProjectActionManager(_projectOwner, _nousPlatform);
         uint _id = getId(_projectOwner, TYPE_PROJECT);
-        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
+
+        address _pdb = getContractAddress("ProjectDb");
+        ProjectDb(_pdb).addProject(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
     }
 
 }

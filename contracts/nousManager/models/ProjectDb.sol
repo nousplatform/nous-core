@@ -21,18 +21,18 @@ contract ProjectDb is Validee {
 
     event CreateProject(address indexed owner, address indexed fund, string projectName, string projectType);
 
-    struct TmpTpl {
+    struct Project {
+        bytes32 _projectType;
         mapping(bytes32 => address) contracts;
     }
+
+    mapping(address => Project[]) projects;
 
     modifier isProjectContract_(bytes32 _tplName) {
         address _tdb = getContractAddress("TemplatesDb");
         require(msg.sender == TemplatesDb(_tdb).template(_tplName, 0));
         _;
     }
-
-    // ownerFund => projecttype => tplstruct
-    mapping (address => mapping(bytes32 => TmpTpl[])) tempContracts;
 
     function addProject(
         address _owner,
@@ -47,8 +47,10 @@ contract ProjectDb is Validee {
         require(_owner != address(0));
         require(_contractName != bytes32(0));
         require(_contractAddr != address(0));
-        //TmpTpl storage _tpl = tempContracts[_owner][_projectType][_id];
-        //_tpl.contracts[_contractName] = _contractAddr;
+
+        Project storage tpl = projects[_owner][_id];
+        tpl._projectType = _projectType;
+        tpl.contracts[_contractName] = _contractAddr;
     }
 
     // -----

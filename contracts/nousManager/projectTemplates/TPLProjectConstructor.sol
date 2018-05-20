@@ -3,6 +3,7 @@ pragma solidity ^0.4.18;
 
 import {BaseTemplate} from "./BaseTemplate.sol";
 import {ProjectConstructor} from "../../openEndFund/ProjectConstructor.sol";
+import {ProjectDb} from "../models/ProjectDb.sol";
 
 
 contract TPLProjectConstructor is BaseTemplate {
@@ -23,7 +24,9 @@ contract TPLProjectConstructor is BaseTemplate {
     {
         address newContract = new ProjectConstructor(_fundName, _fundType, _names, _addrs);
         uint _id = getId(_projectOwner, TYPE_PROJECT);
-        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
+
+        address _pdb = getContractAddress("ProjectDb");
+        ProjectDb(_pdb).addProject(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
     }
 
 }
