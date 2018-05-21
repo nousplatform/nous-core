@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
 
-import "zeppelin-solidity/contracts/ownership/rbac/RBAC.sol";
+import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/ownership/rbac/RBAC.sol";
 
 
 contract Permissions is RBAC {

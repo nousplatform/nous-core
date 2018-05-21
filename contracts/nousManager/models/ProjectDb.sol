@@ -21,12 +21,19 @@ contract ProjectDb is Validee {
 
     event CreateProject(address indexed owner, address indexed fund, string projectName, string projectType);
 
-    struct Project {
-        bytes32 _projectType;
-        mapping(bytes32 => address) contracts;
+    struct TmpTpl {
+        bytes32 name;
+        address addr;
     }
 
-    mapping(address => Project[]) projects;
+    struct Ids {
+        mapping(uint => TmpTpl[]) ids;
+        uint[] idsIndex;
+    }
+
+    // ownerFund => projecttype => tplstruct
+    mapping (address => mapping(bytes32 => Ids)) public tempContracts;
+
 
     modifier isProjectContract_(bytes32 _tplName) {
         address _tdb = getContractAddress("TemplatesDb");
@@ -48,23 +55,34 @@ contract ProjectDb is Validee {
         require(_contractName != bytes32(0));
         require(_contractAddr != address(0));
 
-        Project storage tpl = projects[_owner][_id];
-        tpl._projectType = _projectType;
-        tpl.contracts[_contractName] = _contractAddr;
+        require(validate());
+
+        tempContracts[_owner][_projectType].push(TmpTpl({
+            name: _contractName,
+            addr: _contractAddr
+        }));
     }
 
     // -----
-    function getProjectContract(
+    function getProjectContracts(
         address _owner,
-        bytes32 _projectType,
+        bytes32 _type/*,
         uint _id,
-        bytes32 _contractName
+        bytes32 _contractName*/
     )
     external
     view
-    returns (address)
+    returns (bytes32[] memory names, address[] memory addrs)
     {
-        return tempContracts[_owner][_projectType][_id].contracts[_contractName];
+        uint _length = tempContracts[_owner][_type].length;
+        names = new bytes32[](_length);
+        addrs = new address[](_length);
+        for (uint i = 0; i < _length; i++) {
+            names[i] = tempContracts[_owner][_type][i].name;
+            addrs[i] = tempContracts[_owner][_type][i].addr;
+        }
+
+        return(names, addrs);
     }
 
     // -----

@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
 
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
+import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
 import "./InvestorsCounter.sol";
 import {PurchaseToken} from "./PurchaseToken.sol";
 import {SaleToken} from "./SaleToken.sol";

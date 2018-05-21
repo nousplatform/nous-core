@@ -1,8 +1,8 @@
 pragma solidity ^0.4.18;
 
 
-import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
+import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
 import {AllowPurchases} from "../../doug/ownership/AllowPurchases.sol";
 import {SimpleMintableToken} from "./SimpleMintableToken.sol";
 import {BaseSaleOpenEnded} from "./BaseSaleOpenEnded.sol";

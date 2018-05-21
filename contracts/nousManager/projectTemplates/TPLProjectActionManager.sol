@@ -8,7 +8,7 @@ import {ProjectDb} from "../models/ProjectDb.sol";
 
 contract TPLProjectActionManager is BaseTemplate {
 
-    bytes32 constant TYPE_PROJECT = "OpenEnded";
+    bytes32 constant TYPE_PROJECT = "Open-end Fund";
     bytes32 constant CONTRACT_NAME = "ProjectActionManager";
     bytes32 constant TPL_NAME = "TPLProjectActionManager";
 
@@ -19,6 +19,9 @@ contract TPLProjectActionManager is BaseTemplate {
     external
     //validate_
     {
+        require(_projectOwner != 0x0);
+        require(_nousPlatform != 0x0);
+
         address newContract = new ProjectActionManager(_projectOwner, _nousPlatform);
         uint _id = getId(_projectOwner, TYPE_PROJECT);
 

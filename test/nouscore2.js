@@ -43,6 +43,11 @@ const TPLWalletDb = artifacts.require("TPLWalletDb.sol");
 const ProjectActionManager = artifacts.require("ProjectActionManager.sol");
 const ProjectConstructor = artifacts.require("ProjectConstructor.sol");
 
+
+const OpenEndedToken = artifacts.require("OpenEndedToken.sol");
+
+
+
 const actions = [
   "ActionAddAction",
   "ActionAddActions",
@@ -116,13 +121,6 @@ async function actionManagerQuery(actionName, data) {
   await ActionManagerInstance.execute(actionName, bytes);
 }
 
-//query to action manager
-async function actionManagerQuery2(data) {
-  //let bytes = getBytesCallData(actionName, data);
-  console.log("data", data);
-
-  await ActionManagerInstance.execute2(data);
-}
 
 async function createAddActions(data) {
   //let data = [web3.utils.toHex(newActionName), actionsParams[newActionName].address];
@@ -130,6 +128,9 @@ async function createAddActions(data) {
 }
 
 contract('NousCore', async function(accounts) {
+
+
+
 
   let instanceList = {
     //"name" : "instance"
@@ -217,7 +218,7 @@ contract('NousCore', async function(accounts) {
       "TPLOpenEndedToken": {
         "variables" : [
           accounts[1],
-          NOUSTOKEN,
+          nousTokenInstance.address,
           "BWT TOKEN",
           "BWT"
         ],
@@ -243,26 +244,66 @@ contract('NousCore', async function(accounts) {
     }
 
 
-    //console.log("obj", obj);
-    //console.log("obj2", obj2);
 
     for (let _item in obj) {
-      //console.log("_item", obj[_item]);
-      //console.log(" ...obj[_item].variables",  getBytesCallData(_item, obj[_item].variables, "create"));
       console.log("_item", _item);
       await ActionManagerInstance.deployTemplates(web3.utils.toHex(_item), getBytesCallData(_item, obj[_item].variables, "create"));
     }
+
+
+
+    let _projContr = await instanceList["ProjectDb"].getProjectContracts(accounts[1], "Open-end Fund");
+    // console.log("_projContr", _projContr);
 
     var obj2 = {"TPLProjectConstructor": {
         "variables" : [
           accounts[1],
           "_fundName",
           "_fundType",
-          Object.keys(obj).filter(item => {if (item != "TPLProjectConstructor") { return item} }),
-          Object.keys(obj).filter(item => {if (item != "TPLProjectConstructor") { return obj[item].address} }),
+          _projContr[0],
+          _projContr[1],
         ],
         "address": "0x0"
       }}
+
+
+
+    await ActionManagerInstance.deployTemplates(web3.utils.toHex("TPLProjectConstructor"), getBytesCallData("TPLProjectConstructor", obj2["TPLProjectConstructor"].variables, "create"));
+
+    let _projContr2 = await instanceList["ProjectDb"].getProjectContracts(accounts[1], "Open-end Fund");
+    //console.log("_projContr2", _projContr2);
+
+    console.log("_projContr", _projContr2);
+
+    let initialBalances = [1000 * Math.pow(10, 18), 2000 * Math.pow(10, 18) , 150 * Math.pow(10, 18), 500 * Math.pow(10, 18)];
+
+    const user_1 = {address: accounts[1], balance: 0};
+    const user_2 = {address: accounts[2], balance: 0};
+    const user_3 = {address: accounts[3], balance: 0};
+
+
+
+    await nousTokenInstance.mint(user_1.address, initialBalances[0], {from: accounts[0]});
+    user_1.balance = initialBalances[0] * Math.pow(10, 18);
+    await nousTokenInstance.mint(user_2.address, initialBalances[1], {from: accounts[0]});
+    user_2.balance = initialBalances[1] * Math.pow(10, 18);
+    await nousTokenInstance.mint(user_3.address, initialBalances[2], {from: accounts[0]});
+    user_3.balance = initialBalances[2] * Math.pow(10, 18);
+
+
+
+
+    let openEndedToken = OpenEndedToken.at(_projContr[1][2]);
+    console.log("total supplay", await openEndedToken.totalSupply());
+    console.log("await openEndedToken.allowPurchases(nousTokenInstance.address)", await openEndedToken.allowPurchases(nousTokenInstance.address));
+
+
+    assert.equal(user_1.balance, (await nousTokenInstance.balanceOf(user_1.address, {from: accounts[0]})).toNumber(), "Owner is first mining user_1 1000");
+    console.log("_projContr[1][2]", _projContr[1][2]);
+
+    let sum = 99 * Math.pow(10, 18);
+    await nousTokenInstance.approveAndCall(_projContr[1][2], sum, {from: user_1.address});
+
 
 
     //var dataSnapshotDb = [accounts[0]];

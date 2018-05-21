@@ -8,7 +8,7 @@ import {ProjectDb} from "../models/ProjectDb.sol";
 
 contract TPLOpenEndedToken is BaseTemplate { // ----
 
-    bytes32 constant TYPE_PROJECT = "OpenEnded";
+    bytes32 constant TYPE_PROJECT = "Open-end Fund";
     bytes32 constant CONTRACT_NAME = "OpenEndedToken"; // -----
     bytes32 constant TPL_NAME = "TPLOpenEndedToken"; // -----
 
@@ -21,6 +21,9 @@ contract TPLOpenEndedToken is BaseTemplate { // ----
     external
     //validate_
     {
+        require(_projectOwner != 0x0);
+        require(_nousToken != 0x0);
+
         address newContract = new OpenEndedToken(
             _projectOwner,
             _nousToken,

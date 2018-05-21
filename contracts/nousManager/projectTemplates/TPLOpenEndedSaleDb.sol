@@ -8,7 +8,7 @@ import {ProjectDb} from "../models/ProjectDb.sol";
 
 contract TPLOpenEndedSaleDb is BaseTemplate {
 
-    bytes32 constant TYPE_PROJECT = "OpenEnded";
+    bytes32 constant TYPE_PROJECT = "Open-end Fund";
     bytes32 constant CONTRACT_NAME = "OpenEndedSaleDb";
     bytes32 constant TPL_NAME = "TPLOpenEndedSaleDb";
 

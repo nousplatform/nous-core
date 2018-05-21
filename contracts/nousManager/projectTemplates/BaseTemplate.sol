@@ -10,7 +10,7 @@ contract BaseTemplate is Validee {
     uint public version;
 
     // owner => projectType
-    mapping (address => mapping(bytes32 => uint256)) ids;
+    mapping (address => mapping(bytes32 => uint256)) public ids;
 
     function addProjectContract(
         address _owner,

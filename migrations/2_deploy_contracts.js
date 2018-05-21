@@ -3,9 +3,9 @@ const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 const fs = require('fs');
 
 var OWNER = "0x719a22E179bb49a4596eFe3BD6F735b8f3b00AF1";
-OWNER = "0x863c777bc9c6ab7fca73c998eba43f272ec00b46";
+////OWNER = "0x0b8976a4871ff9b0f1a33dee9c0ede304c0fa131";
 
-const NOUSTOKEN = "0xe237b4A6D1cD77013C52dae8656ceC5620140490";
+const NOUSTOKEN = "0x16db3d98cf6babcfdfd4bc35d4e9da8f8a1ad983";
 
 const NousCore = artifacts.require("NousCore.sol");
 const NousTokenTest = artifacts.require("NousTokenTest.sol");
@@ -72,6 +72,9 @@ let contractList = {};
 let actionsList = {};
 let templatesList = {};
 
+let NOUSCoreInstance;
+let ActionManagerInstance;
+
 function getAbi(contractName, param = "abi") {
   var obj = JSON.parse(fs.readFileSync(`${__dirname}/../build/contracts/${contractName}.json`, 'utf8'));
   return obj[param];
@@ -87,6 +90,7 @@ function getFunctionAbi(contractName, funcName = "execute") {
   }
 }
 
+//
 function getFunctionCallData({name, inputs = []}, _data = null) {
   return web3.eth.abi.encodeFunctionCall({
     name: name,
@@ -95,24 +99,22 @@ function getFunctionCallData({name, inputs = []}, _data = null) {
   }, _data);
 }
 
+//crate date for action manager
+function getBytesCallData(actionName, data, functionName ) {
+  let structure = getFunctionAbi(actionName, functionName);
+  //console.log("structure", structure);
+
+  return getFunctionCallData(structure, data);
+}
+
+//query to action manager
 async function actionManagerQuery(actionName, data) {
-  let structure = getFunctionAbi(actionName);
-  //console.log("data", data);
-  //console.log("actionName", actionName);
+  let bytes = getBytesCallData(actionName, data);
+  console.log("bytes", bytes);
 
-  let bytes = getFunctionCallData(structure, data);
-  //console.log("bytes", actionName, bytes);
-  //console.log("ActionAddActions", actionsList["ActionAddActions"].address);
-
-  let instance = await ActionManager.deployed();
-
-  await instance.execute(actionName, bytes);
+  await ActionManagerInstance.execute(actionName, bytes);
 }
 
-async function createAddAction(newActionName) {
-  let data = [web3.utils.toHex(newActionName), actionsParams[newActionName].address];
-  await actionManagerQuery("ActionAddAction", data);
-}
 
 async function createAddActions(data) {
   //let data = [web3.utils.toHex(newActionName), actionsParams[newActionName].address];
@@ -120,16 +122,23 @@ async function createAddActions(data) {
 }
 
 module.exports = async function(deployer) {
-  return;
+return;
+  let instanceList = {
+    //"name" : "instance"
+  }
 
   console.log("-----=====DEPLOY NOUS CONTRACT=====-----");
+  //deploy
 
   await deployer.deploy(NousActionManager);
+  ActionManagerInstance = await NousActionManager.deployed();
 
   contractList["ActionManager"] = NousActionManager.address;
 
   await deployer.deploy(ActionDb);
   contractList["ActionDb"] = ActionDb.address;
+
+  //let permInstance = await PermissionDb.new(OWNER);
 
   await deployer.deploy(PermissionDb, OWNER);
   contractList["PermissionDb"] = PermissionDb.address;
@@ -145,6 +154,7 @@ module.exports = async function(deployer) {
   console.log("-----==========ADD FUND CONTRACT TO DOUG==========-----");
   //Contracts Doug Contract
   await deployer.deploy(NousCore,
+    //NousTokenTest.address,
     NOUSTOKEN,
     Object.keys(contractList),
     Object.keys(contractList).map(_name => contractList[_name])
@@ -162,11 +172,9 @@ module.exports = async function(deployer) {
   let _actionNames = Object.keys(actionsList).map(item => web3.utils.toHex(item));
   let _actionAddr =  Object.keys(actionsList).map(item => actionsList[item].address);
 
-
   await createAddActions([_actionNames, _actionAddr]);
 
   console.log("-----==========CREATE DEPLOY TEMPLATES==========-----");
-  //deploy templatesList
   for (let item in tpls) {
     let tplName = tpls[item];
     templatesList[tplName] = await eval(`${tplName}.new()`);
@@ -174,10 +182,8 @@ module.exports = async function(deployer) {
   }
 
   console.log("-----==========ADD TEMPLATES==========-----");
-  // add templatesList
   let _tplNames = Object.keys(templatesList).map(item => web3.utils.toHex(item));
   let _tplAddrs = Object.keys(templatesList).map(item => templatesList[item].address);
-
   let dataTpl = [_tplNames, _tplAddrs];
   await actionManagerQuery("ActionAddTemplates", dataTpl);
 
@@ -186,7 +192,7 @@ module.exports = async function(deployer) {
 
   //console.log("nousToken: ", nousTokenInstance.address);
   console.log("NousCore: ", NousCore.address);
-  console.log("ActionManager: ", ActionManager.address);
+  console.log("ActionManager: ", ActionManagerInstance.address);
   console.log("ActionDb: ", ActionDb.address);
   console.log("PermissionDb: ", PermissionDb.address);
   console.log("TemplatesDb: ", TemplatesDb.address);

@@ -5,9 +5,9 @@ module.exports = {
       host: "localhost",
       port: 8545,
       network_id: "*", // Match any network id
-      gas:   4500000,
-      gasPrice: 200,
-      //from: "0x1a0816d178bfc9ad3a59b372a3270eb7e82dd1f4"
+      gas:   4700000,
+      gasPrice: 50000000000,
+      //from: "0x0b8976a4871ff9b0f1a33dee9c0ede304c0fa131"
       //from: "0xc2Ddda15f8deB297EB4DE39B82ae0750dF693253",
     },
     ropsten: {
