@@ -16,6 +16,8 @@ contract ActionManagerInterface {
 
 contract ActionManager is DougEnabled {
 
+    event ActionLogs(address indexed caller, bytes32 indexed actionName, address actionAddress, uint blockNumber);
+
     address internal activeAction = 0x0;
 
     bool locked;
@@ -32,7 +34,9 @@ contract ActionManager is DougEnabled {
         address pAddr = getContractAddress("PermissionDb");
 
         // First we check the permissions of the account that's trying to execute the action.
-        var ( , _userRole, _owned) = PermissionDb(pAddr).getUser(msg.sender);
+        bytes32 _userRole;
+        bool _owned;
+        ( , _userRole, _owned) = PermissionDb(pAddr).getUser(msg.sender);
 
         // Now we check that the action manager isn't locked down. In that case, special
         // permissions is needed.
@@ -44,7 +48,6 @@ contract ActionManager is DougEnabled {
         Action _actn = Action(_actnAddr);
         require(_actn.permission(_userRole), "Access denied. Not permissions for action.");
 
-
         require(activeAction == 0x0, "Process busy at the moment.");
 
         // TODO keep up with return values from generic calls.
@@ -53,29 +56,24 @@ contract ActionManager is DougEnabled {
 
         // Just assume it succeeds for now (important for logger).
         require(_actnAddr.call(data), "Query rejected.");
-
         // Now clear it.
         activeAction = 0x0;
+        emit ActionLogs(msg.sender, actionName, _actnAddr, block.number);
+
         return true;
     }
 
+    // Locked action manager
     function lock() external returns (bool) {
-        if (msg.sender != activeAction) {
-            return false;
-        }
-        if (locked) {
-            return false;
-        }
+        require(msg.sender == activeAction);
+        require(!locked);
         locked = true;
     }
 
+    // Unlock action manager
     function unlock() external returns (bool) {
-        if (msg.sender != activeAction) {
-            return false;
-        }
-        if (!locked) {
-            return false;
-        }
+        require(msg.sender == activeAction);
+        require(locked);
         locked = false;
     }
 
@@ -90,5 +88,7 @@ contract ActionManager is DougEnabled {
         activeAction = 0x0;
         return true;
     }
+
+
 
 }

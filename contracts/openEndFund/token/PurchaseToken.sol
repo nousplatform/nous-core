@@ -1,9 +1,9 @@
 pragma solidity ^0.4.18;
 
 
-import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
-import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
-import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/BurnableToken.sol";
+import "zeppelin-solidity/contracts/math/SafeMath.sol";
+import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "./BurnableToken.sol";
 import {BaseSaleOpenEnded} from "./BaseSaleOpenEnded.sol";
 import "../models/OpenEndedSaleDb.sol";
 
@@ -14,10 +14,6 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
 
     event Redeem(address indexed from, address indexed to, uint256 value);
     event Withdraw(address indexed from, address indexed to, uint256 value);
-
-    function burn(uint256 _value) public {
-        revert();
-    }
 
     // @dev withdraw Token
     function redeem(address _withdrawAddr, uint256 _value)

@@ -15,6 +15,8 @@ contract TemplatesDb is Validee {
     /// defaultTpl[name_contract][version_uint][address] = struct TemplateDetails
     mapping (bytes32 => address[]) public templates;
 
+    event AddTemplate (bytes32 indexed name, address tplAddr, uint version);
+
     //add or edit default contracts
     function addTemplate(
         bytes32 _name,
@@ -23,9 +25,10 @@ contract TemplatesDb is Validee {
     public
     validate_
     {
+        // set doug address if not set rejected operation
         DougEnabled(_addr).setDougAddress(DOUG);
-
         templates[_name].push(_addr);
+        emit AddTemplate(_name, _addr, templates[_name].length);
     }
 
     /**

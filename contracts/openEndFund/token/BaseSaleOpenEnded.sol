@@ -8,18 +8,9 @@ import {OpenEndedSaleDbInterface as OpenEndedSaleDb} from "../models/OpenEndedSa
 
 contract BaseSaleOpenEnded is AllowPurchases {
 
-    struct SaleParam {
-        uint256 entryFee;
-        uint256 exitFee;
-        uint256 initPrice;
-        uint256 maxFundCup;
-        uint256 maxInvestors;
-        uint256 managementFee;
-    }
-
     address wallet;
 
-    constructor(address _wallet)
+    constructor (address _wallet)
     public
     {
         wallet = _wallet;
@@ -42,7 +33,7 @@ contract BaseSaleOpenEnded is AllowPurchases {
     function getDataParamsSaleDb(bytes32 _rowName)
     public
     view
-    returns(uint256)
+    returns (uint256)
     {
         address _sdb = getContractAddress("OpenEndedSaleDb");
         return OpenEndedSaleDb(_sdb).params(_rowName);

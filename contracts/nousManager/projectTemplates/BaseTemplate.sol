@@ -1,16 +1,15 @@
 pragma solidity ^0.4.18;
 
 
-import "../../doug/safety/Validee.sol";
+import {ActionManagerEnabled} from "../../doug/safety/ActionManagerEnabled.sol";
 import {ProjectDb} from "../models/ProjectDb.sol";
 
 
-contract BaseTemplate is Validee {
+contract BaseTemplate is ActionManagerEnabled {
+
+    event ContractCreator(bytes32 indexed name, address indexed contractAddr, address indexed owner);
 
     uint public version;
-
-    // owner => projectType
-    mapping (address => mapping(bytes32 => uint256)) public ids;
 
     function addProjectContract(
         address _owner,
@@ -22,14 +21,18 @@ contract BaseTemplate is Validee {
     internal
     {
         address _pdb = getContractAddress("ProjectDb");
-        ProjectDb(_pdb).addProject(_owner, _typeProject, _contractName, _contractAddr, _id);
+        ProjectDb(_pdb).addContract(_owner, _typeProject, _contractName, _contractAddr, _id);
+
+        emit ContractCreator(_contractName, _contractAddr, _owner);
     }
 
     function getId(address _projectOwner, bytes32 projectType)
     internal
+    view
     returns (uint)
     {
-        return ids[_projectOwner][projectType]++;
+        address _pdb = getContractAddress("ProjectDb");
+        ProjectDb(_pdb).getLasId(_projectOwner, projectType);
     }
 
 }

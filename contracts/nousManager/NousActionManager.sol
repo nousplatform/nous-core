@@ -9,6 +9,8 @@ import {PermissionDb} from "../doug/models/PermissionDb.sol";
 
 contract NousActionManager is ActionManager {
 
+    event TemplateLogs(address indexed caller, bytes32 indexed tmpName, address tmpAddress, uint blockNumber);
+
     function deployTemplates(
         bytes32 _tplNames,
         bytes data
@@ -21,7 +23,9 @@ contract NousActionManager is ActionManager {
         address pAddr = getContractAddress("PermissionDb");
 
         // First we check the permissions of the account that's trying to execute the action.
-        var ( , _userRole, _owned) = PermissionDb(pAddr).getUser(msg.sender);
+        bytes32 _userRole;
+        bool _owned;
+        ( , _userRole, _owned) = PermissionDb(pAddr).getUser(msg.sender);
         require(_userRole == "owner");
 
         address _tdb = getContractAddress("TemplatesDb");
@@ -31,6 +35,7 @@ contract NousActionManager is ActionManager {
         activeAction = _template;
 
         require(_template.call(data));
+        emit TemplateLogs(msg.sender, _tplNames, _template, block.number);
 
         activeAction = 0x0;
         return true;

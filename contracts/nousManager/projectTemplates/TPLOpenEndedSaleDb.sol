@@ -8,9 +8,9 @@ import {ProjectDb} from "../models/ProjectDb.sol";
 
 contract TPLOpenEndedSaleDb is BaseTemplate {
 
-    bytes32 constant TYPE_PROJECT = "Open-end Fund";
-    bytes32 constant CONTRACT_NAME = "OpenEndedSaleDb";
-    bytes32 constant TPL_NAME = "TPLOpenEndedSaleDb";
+    bytes32 constant public TYPE_PROJECT = "Open-end Fund";
+    bytes32 constant public CONTRACT_NAME = "OpenEndedSaleDb";
+    bytes32 constant public TPL_TYPE = "db";
 
     function create(
         address _projectOwner,
@@ -22,7 +22,7 @@ contract TPLOpenEndedSaleDb is BaseTemplate {
         uint256 _managementFee
     )
     public
-    //validate_
+    isActionManager_
     {
         address newContract = new OpenEndedSaleDb(
                 _entryFee,
@@ -33,9 +33,7 @@ contract TPLOpenEndedSaleDb is BaseTemplate {
                 _managementFee
         );
         uint _id = getId(_projectOwner, TYPE_PROJECT);
-
-        address _pdb = getContractAddress("ProjectDb");
-        ProjectDb(_pdb).addProject(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
+        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
     }
 
 }

@@ -15,6 +15,7 @@ contract ProjectConstructor is Doug {
         bytes32[] _names,
         address[] _addrs
     )
+    public
     Doug(_names, _addrs)
     {
         fundName = _fundName;

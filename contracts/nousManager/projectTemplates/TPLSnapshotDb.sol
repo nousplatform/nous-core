@@ -10,19 +10,18 @@ contract TPLSnapshotDb is BaseTemplate {
 
     bytes32 constant TYPE_PROJECT = "Open-end Fund";
     bytes32 constant CONTRACT_NAME = "SnapshotDb"; //----
-    bytes32 constant TPL_NAME = "TPLSnapshotDb"; //----
+    bytes32 constant TPL_TYPE = "database"; //----
 
     function create(
         address _projectOwner
     )
     external
-    //validate_
+    isActionManager_
     {
         address newContract = new SnapshotDb(); // ----
         uint _id = getId(_projectOwner, TYPE_PROJECT);
 
-        address _pdb = getContractAddress("ProjectDb");
-        ProjectDb(_pdb).addProject(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
+        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
     }
 
 }

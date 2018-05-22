@@ -8,21 +8,20 @@ import {ProjectDb} from "../models/ProjectDb.sol";
 
 contract TPLWalletDb is BaseTemplate {
 
-    bytes32 constant TYPE_PROJECT = "Open-end Fund";
-    bytes32 constant CONTRACT_NAME = "WalletDb"; //----
-    bytes32 constant TPL_NAME = "TPLWalletDb"; //----
+    bytes32 constant public TYPE_PROJECT = "Open-end Fund";
+    bytes32 constant public CONTRACT_NAME = "WalletDb";
+    bytes32 constant public TPL_TYPE = "database";
 
     function create(
         address _projectOwner
     )
     external
-    //validate_
+    isActionManager_
     {
-        address newContract = new WalletDb(); // ----
+        address newContract = new WalletDb();
         uint _id = getId(_projectOwner, TYPE_PROJECT);
 
-        address _pdb = getContractAddress("ProjectDb");
-        ProjectDb(_pdb).addProject(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
+        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
     }
 
 }

@@ -8,9 +8,9 @@ import {ProjectDb} from "../models/ProjectDb.sol";
 
 contract TPLOpenEndedToken is BaseTemplate { // ----
 
-    bytes32 constant TYPE_PROJECT = "Open-end Fund";
-    bytes32 constant CONTRACT_NAME = "OpenEndedToken"; // -----
-    bytes32 constant TPL_NAME = "TPLOpenEndedToken"; // -----
+    bytes32 constant public TYPE_PROJECT = "Open-end Fund";
+    bytes32 constant public CONTRACT_NAME = "OpenEndedToken"; // -----
+    bytes32 constant public TPL_TYPE = "token";
 
     function create(
         address _projectOwner,
@@ -19,7 +19,7 @@ contract TPLOpenEndedToken is BaseTemplate { // ----
         string _symbol
     )
     external
-    //validate_
+    isActionManager_
     {
         require(_projectOwner != 0x0);
         require(_nousToken != 0x0);
@@ -31,8 +31,6 @@ contract TPLOpenEndedToken is BaseTemplate { // ----
             _symbol
         );
         uint _id = getId(_projectOwner, TYPE_PROJECT);
-
-        address _pdb = getContractAddress("ProjectDb");
-        ProjectDb(_pdb).addProject(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
+        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
     }
 }
