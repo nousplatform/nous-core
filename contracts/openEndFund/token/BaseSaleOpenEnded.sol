@@ -10,6 +10,8 @@ contract BaseSaleOpenEnded is AllowPurchases {
 
     address wallet;
 
+    // @dev constructor
+    // @param element address _wallet
     constructor (address _wallet)
     public
     {

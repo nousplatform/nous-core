@@ -16,7 +16,7 @@ contract ActionManagerInterface {
 
 contract ActionManager is DougEnabled {
 
-    event ActionLogs(address indexed caller, bytes32 indexed actionName, address actionAddress, uint blockNumber);
+    event ActionLogs(address /*indexed*/ caller, bytes32 /*indexed*/ actionName, address actionAddress, uint blockNumber);
 
     address internal activeAction = 0x0;
 

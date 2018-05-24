@@ -14,30 +14,34 @@ contract OpenEndedSaleDb is ProjectActionManagerEnabled {
 
     mapping(bytes32 => uint256) public params;
 
+    struct Decimal {
+        uint256 numerator;
+        uint8 precision;
+    }
+
     constructor(
         uint256 _entryFee,
         uint256 _exitFee,
-        uint256 _initPrice,
         uint256 _maxFundCup,
         uint256 _maxInvestors,
-        uint256 _managementFee
+        uint256 _platformFee
     )
     public
     {
         require(_entryFee > 0);
         require(_exitFee > 0);
-        require(_initPrice > 0);
-        require(_maxFundCup > 0);
-        require(_maxInvestors > 0);
-        require(_managementFee > 0);
+        //require(_initPrice > 0);
+        //require(_maxFundCup > 0);
+        //require(_maxInvestors > 0);
+        require(_platformFee > 0);
 
         params["entryFee"] = _entryFee;
         params["exitFee"] = _exitFee;
         params["initPrice"] = _initPrice;
+
         params["maxFundCup"] = _maxFundCup;
         params["maxInvestors"] = _maxInvestors;
-        params["managementFee"] = _managementFee;
-
+        params["platformFee"] = _platformFee;
     }
 
     function setEntryFee(uint _entryFee)

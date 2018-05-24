@@ -243,14 +243,10 @@ contract('NousCore', async function(accounts) {
       }*/
     }
 
-
-
     for (let _item in obj) {
       console.log("_item", _item);
       await ActionManagerInstance.deployTemplates(web3.utils.toHex(_item), getBytesCallData(_item, obj[_item].variables, "create"));
     }
-
-
 
     let _projContr = await instanceList["ProjectDb"].getProjectContracts(accounts[1], "Open-end Fund");
     // console.log("_projContr", _projContr);
@@ -266,8 +262,6 @@ contract('NousCore', async function(accounts) {
         "address": "0x0"
       }}
 
-
-
     await ActionManagerInstance.deployTemplates(web3.utils.toHex("TPLProjectConstructor"), getBytesCallData("TPLProjectConstructor", obj2["TPLProjectConstructor"].variables, "create"));
 
     let _projContr2 = await instanceList["ProjectDb"].getProjectContracts(accounts[1], "Open-end Fund");
@@ -281,16 +275,12 @@ contract('NousCore', async function(accounts) {
     const user_2 = {address: accounts[2], balance: 0};
     const user_3 = {address: accounts[3], balance: 0};
 
-
-
     await nousTokenInstance.mint(user_1.address, initialBalances[0], {from: accounts[0]});
     user_1.balance = initialBalances[0] * Math.pow(10, 18);
     await nousTokenInstance.mint(user_2.address, initialBalances[1], {from: accounts[0]});
     user_2.balance = initialBalances[1] * Math.pow(10, 18);
     await nousTokenInstance.mint(user_3.address, initialBalances[2], {from: accounts[0]});
     user_3.balance = initialBalances[2] * Math.pow(10, 18);
-
-
 
 
     let openEndedToken = OpenEndedToken.at(_projContr[1][2]);

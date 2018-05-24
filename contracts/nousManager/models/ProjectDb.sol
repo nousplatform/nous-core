@@ -72,7 +72,7 @@ contract ProjectDb is Validee {
         emit AddsContract(_owner, _projectType, _contractName, _contractAddr);
     }
 
-    // @notice
+    //
     function createNewProjectId(
         address _owner,
         bytes32 _projectType

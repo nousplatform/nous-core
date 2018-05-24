@@ -6,6 +6,7 @@ import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import {AllowPurchases} from "../../doug/ownership/AllowPurchases.sol";
 import {SimpleMintableToken} from "./SimpleMintableToken.sol";
 import {BaseSaleOpenEnded} from "./BaseSaleOpenEnded.sol";
+import "../../lib/MathPow.sol";
 
 
 contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
@@ -17,7 +18,7 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
     * @param _sender Sender coins
     * @param _value The max amount they can spend
     */
-    function receiveApproval(address _sender, uint256 _value) public onlyAllowPurchases returns (bool) {
+    function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) public onlyAllowPurchases returns (bool) {
 
         require(_sender != 0x0);
         require(_value > 0);
@@ -34,11 +35,12 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
 
             _value = _value.sub(_amountFee);
 
-            uint _rate = rate();
+            uint _rate;
+            uint _precision;
+            (_rate, _precision) = rate();
 
-            uint256 _totalAmount = _value.mul(_rate);
-            //todo add check to max total value
-            //require();
+            uint256 _totalAmount = totalSum(_value, _rate, _precision);
+            require(validateMaxFundCap(_totalAmount), "Max fund capital is ");
 
             if (nt.transferFrom(_sender, this, _value)) {
                 nt.transfer(wallet, _amountFee); // transfer amount fee to wallet
@@ -52,6 +54,40 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
             }
         }
         return false;
+    }
+
+    function validateMaxFundCap(uint256 _totalAmount)
+    internal
+    returns (bool)
+    {
+        uint maxFundCup = getDataParamsSaleDb("maxFundCup");
+        if (maxFundCup > 0) {
+            return maxFundCup >= _totalAmount;
+        }
+        return true;
+    }
+
+    function (uint numerator, uint rate, uint precisionRate)
+    public
+    constant
+    returns(uint quotient)
+    {
+        uint decimals = 10 ** (precisionRate);
+        uint _numerator = numerator * decimals;
+        uint _quotient = (_numerator / rate) * decimals;
+        return ( _quotient / decimals);
+    }
+
+
+    function totalSum(uint numerator, uint rate, uint precisionRate)
+    public
+    constant
+    returns(uint quotient)
+    {
+        uint _decimals = 10 ** (precisionRate);
+        uint _numerator = numerator.mul(_decimals);
+        uint quotient = (_numerator.div(_rate)).mul(_decimals);
+        return (quotient / _decimals);
     }
 
 }

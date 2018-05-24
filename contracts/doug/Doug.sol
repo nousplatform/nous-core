@@ -13,7 +13,7 @@ contract DougInterface {
 
 contract Doug is DougDb {
 
-    event AddContract(address indexed caller, bytes32 indexed name, address contractAddress);
+    event AddContract(address /*indexed*/ caller, bytes32 /*indexed*/ name, address contractAddress);
 
     event RemoveContract(address indexed caller, bytes32 indexed name, address contractAddress);
 
