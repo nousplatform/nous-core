@@ -16,7 +16,7 @@ module.exports = {
       network_id: "3",
       gas: 4700000, // Gas limit used for deploys
       gasPrice: 50000000000, // 20 gwei
-      from: "0x719a22e179bb49a4596efe3bd6f735b8f3b00af1",
+      from: "0x26E196dbdE4d6cFA212fd5447B159Ad86cdB295f",
     },
     kovan: {
       host: "192.168.88.11",

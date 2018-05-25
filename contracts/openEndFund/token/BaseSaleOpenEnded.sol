@@ -4,11 +4,16 @@ pragma solidity ^0.4.18;
 import {AllowPurchases} from "../../doug/ownership/AllowPurchases.sol";
 import {SnapshotDbInterface as SnapshotDb} from "../models/SnapshotDb.sol";
 import {OpenEndedSaleDbInterface as OpenEndedSaleDb} from "../models/OpenEndedSaleDb.sol";
+import {Validee} from "../../doug/safety/Validee.sol";
 
 
-contract BaseSaleOpenEnded is AllowPurchases {
+contract BaseSaleOpenEnded is Validee, AllowPurchases {
 
     address wallet;
+
+    address nousWallet;
+
+    uint256 public constant EXPONENT = 10 ** uint256(18);
 
     // @dev constructor
     // @param element address _wallet

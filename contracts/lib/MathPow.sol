@@ -22,16 +22,16 @@ library MathPow {
     function divDecimals(
         uint256 multiplier,
         uint256 numerator,
-        uint8 precision
+        uint256 precision
     )
     public
     view
     returns(uint quotient)
     {
-        uint precision = 10 ** (precision);
-        uint _multiplier = multiplier.mul(precision);
-        uint quotient = (_multiplier.div(numerator)).mul(precision);
-        return (quotient / precision);
+        uint _precision = 10 ** (precision);
+        uint _multiplier = multiplier.mul(_precision);
+        uint _quotient = (_multiplier.div(numerator)).mul(_precision);
+        return (_quotient / _precision);
     }
 
     function percent(uint numerator, uint denominator, uint precision)

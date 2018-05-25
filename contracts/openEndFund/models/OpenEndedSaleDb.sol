@@ -22,6 +22,7 @@ contract OpenEndedSaleDb is ProjectActionManagerEnabled {
     constructor(
         uint256 _entryFee,
         uint256 _exitFee,
+        uint256 _initPrice,
         uint256 _maxFundCup,
         uint256 _maxInvestors,
         uint256 _platformFee

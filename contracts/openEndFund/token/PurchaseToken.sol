@@ -5,7 +5,7 @@ import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "./BurnableToken.sol";
 import {BaseSaleOpenEnded} from "./BaseSaleOpenEnded.sol";
-import "../models/OpenEndedSaleDb.sol";
+//import {AllowPurchases} from "../../doug/ownership/AllowPurchases.sol";
 
 
 contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {

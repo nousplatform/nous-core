@@ -16,7 +16,9 @@ contract TPLOpenEndedToken is BaseTemplate { // ----
         address _projectOwner,
         address _nousToken,
         string _name,
-        string _symbol
+        string _symbol,
+        uint8 _decimals,
+        address _nousWallet
     )
     external
     isActionManager_
@@ -28,7 +30,9 @@ contract TPLOpenEndedToken is BaseTemplate { // ----
             _projectOwner,
             _nousToken,
             _name,
-            _symbol
+            _symbol,
+            _decimals,
+            _nousWallet
         );
         uint _id = getId(_projectOwner, TYPE_PROJECT);
         addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);

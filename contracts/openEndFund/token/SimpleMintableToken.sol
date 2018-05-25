@@ -2,6 +2,7 @@ pragma solidity ^0.4.21;
 
 
 import "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
+import {SimpleMintableToken} from "./SimpleMintableToken.sol";
 
 
 /**
@@ -9,6 +10,7 @@ import "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
  * @ dev only for open ended fund
  */
 contract SimpleMintableToken is StandardToken {
+
     event Mint(address indexed to, uint256 amount);
 
     /**

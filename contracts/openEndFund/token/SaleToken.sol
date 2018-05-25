@@ -18,8 +18,16 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
     * @param _sender Sender coins
     * @param _value The max amount they can spend
     */
-    function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) public onlyAllowPurchases returns (bool) {
-
+    function receiveApproval(
+        address _sender,
+        uint256 _value,
+        address _token,
+        bytes _extraData
+    )
+    public
+    onlyAllowPurchases
+    returns (bool)
+    {
         require(_sender != 0x0);
         require(_value > 0);
 
@@ -30,26 +38,27 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
         if (_amount >= _value) {
 
             uint _entryFee = getDataParamsSaleDb("entryFee");
+            uint _amountEntryFee = MathPow.calculatePercent(_value, _entryFee);// _value.mul(_entryFee).div(100);
 
-            uint _amountFee = _value.mul(_entryFee).div(100);
+            uint _platformFee = getDataParamsSaleDb("platformFee");
+            uint _amountPlatformFee = MathPow.calculatePercent(_value, _platformFee);
 
-            _value = _value.sub(_amountFee);
+            _value = _value.sub(_amountEntryFee).sub(_amountPlatformFee);
+            uint256 _totalAmount = MathPow.divDecimals(_value, rate(), EXPONENT); //totalSum(_value,  rate(), _precision);
 
-            uint _rate;
-            uint _precision;
-            (_rate, _precision) = rate();
-
-            uint256 _totalAmount = totalSum(_value, _rate, _precision);
             require(validateMaxFundCap(_totalAmount), "Max fund capital is ");
 
             if (nt.transferFrom(_sender, this, _value)) {
-                nt.transfer(wallet, _amountFee); // transfer amount fee to wallet
+
+                // transfer amount fee to wallet
+                nt.transfer(wallet, _amountEntryFee);
+
+                // transfer amount fee to wallet for nous platform
+                nt.transfer(nousWallet, _amountPlatformFee);
 
                 // mining token
                 mint(_sender, _totalAmount);
 
-                // Todo send nous token to wallet
-                //nt.transfer(walletAddress, _value);
                 return true;
             }
         }
@@ -67,7 +76,7 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
         return true;
     }
 
-    function (uint numerator, uint rate, uint precisionRate)
+    /*function (uint numerator, uint rate, uint precisionRate)
     public
     constant
     returns(uint quotient)
@@ -76,18 +85,18 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
         uint _numerator = numerator * decimals;
         uint _quotient = (_numerator / rate) * decimals;
         return ( _quotient / decimals);
-    }
+    }*/
 
 
-    function totalSum(uint numerator, uint rate, uint precisionRate)
+    /*function totalSum(uint numerator, uint rate, uint precisionRate)
     public
     constant
     returns(uint quotient)
     {
         uint _decimals = 10 ** (precisionRate);
         uint _numerator = numerator.mul(_decimals);
-        uint quotient = (_numerator.div(_rate)).mul(_decimals);
-        return (quotient / _decimals);
-    }
+        uint _quotient = (_numerator.div(rate)).mul(_decimals);
+        return (_quotient / _decimals);
+    }*/
 
 }

@@ -3,6 +3,7 @@ pragma solidity ^0.4.21;
 
 import {Validee} from "../safety/Validee.sol";
 
+
 /**
  * @title AllowPurchases
  * @dev The AllowPurchases contract has a whitelist of addresses, and provides basic authorization control functions.
@@ -35,7 +36,7 @@ contract AllowPurchases is Validee {
    * @param _addr address
    * @return success true if the address was added to the whitelist, false if the address was already in the whitelist
    */
-  function addAddressToAllowPurchases(address _addr)  public returns(bool success) {
+  function addAddressToAllowPurchases(address _addr) public returns(bool success) {
     require(validate());
     if (!allowPurchases[_addr]) {
       allowPurchases[_addr] = true;
@@ -66,7 +67,10 @@ contract AllowPurchases is Validee {
    * @return success true if the address was removed from the whitelist,
    * false if the address wasn't in the whitelist in the first place
    */
-  function removeAddressFromAllowPurchases(address addr) public returns(bool success) {
+  function removeAddressFromAllowPurchases(address addr)
+  public
+  returns(bool success)
+  {
     require(validate());
     if (allowPurchases[addr]) {
       for (uint i = 0; i < allowPurchasesIndex.length; i++) {
