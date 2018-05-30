@@ -5,7 +5,7 @@ import {PurchaseToken} from "./PurchaseToken.sol";
 import {SimpleMintableToken} from "./SimpleMintableToken.sol";
 
 
-contract Net is PurchaseToken, SimpleMintableToken {
+contract Net is SimpleMintableToken, PurchaseToken {
 
     mapping (address => uint256) public fundCup;
     address[] indexTicker;

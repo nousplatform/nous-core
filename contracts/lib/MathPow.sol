@@ -13,7 +13,7 @@ library MathPow {
         uint256 _percent
     )
     public
-    view
+    pure
     returns(uint256)
     {
         return _value.mul(_percent).div(100);
@@ -25,7 +25,7 @@ library MathPow {
         uint256 precision
     )
     public
-    view
+    pure
     returns(uint quotient)
     {
         uint _precision = 10 ** (precision);
@@ -36,7 +36,7 @@ library MathPow {
 
     function percent(uint numerator, uint denominator, uint precision)
     public
-    view
+    pure
     returns(uint quotient)
     {
         // caution, check safe-to-multiply here

@@ -14,6 +14,7 @@ contract ActionManagerInterface {
     function execute(bytes32 actionName, bytes data) public returns (bool);
 }
 
+
 contract ActionManager is DougEnabled {
 
     event ActionLogs(address /*indexed*/ caller, bytes32 /*indexed*/ actionName, address actionAddress, uint blockNumber);
