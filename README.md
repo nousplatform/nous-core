@@ -32,7 +32,7 @@ Only development version
 DougEnabled. Once the doug address is set, don't allow it to be set again, except by the
 doug contract itself.
 
-1.  Create new fond from Nous Contract
+1.  Create new fund from Nous Contract
 
 ```javascript
 function setInstance(instance, instanceName) {
