@@ -1,6 +1,6 @@
 # Nous Core Project
 
-Pre beta version, only for review.
+Beta version, only for review.
 
 ## Getting Started
 
@@ -39,11 +39,11 @@ function setInstance(instance, instanceName) {
   instance.deployed().then(inst => (global[instanceName] = inst));
 }
 
-setInstance(NousCreator, "nousCreater");
+setInstance(NOUS, "NOUS");
 
-nousCreater.createNewFund("Fund name", "Token name", "Ticker name", 1000000);
+NOUS.createNewFund("Fund name", "Token name", "Ticker name", 1000000);
 
-nousCreater.addContract(
+NOUS.addContract(
   ["permission_db"],
   ["0xd3469e9a982cdb4d85961c4a1b09224652c46d89"]
 );
@@ -56,37 +56,36 @@ var arr = [
   PermissionDb,
   WalletDb
 ];
-//components
+// components
 
 setInstance(FundManager, "fundmanager");
 setInstance(PermissionDb, "permissiondb");
 setInstance(ManagerDb, "managerdb");
 setInstance(WalletDb, "walletdb");
 
-//models
+// models
+setInstance(NOUS, "NOUS");
 
-setInstance(NousCreater, "nousCreater");
+NOUS.addContract("permissions", permissions.address);
+NOUS.addContract("permissiondb", PermissionDb.address);
 
-nousCreater.addContract("permissions", permissions.address);
-nousCreater.addContract("permissiondb", PermissionDb.address);
+NOUS.addContract("fundmanager", fundmanager.address);
 
-nousCreater.addContract("fundmanager", fundmanager.address);
+NOUS.addContract("managers", managers.address);
+NOUS.addContract("managerdb", managerdb.address);
 
-nousCreater.addContract("managers", managers.address);
-nousCreater.addContract("managerdb", managerdb.address);
+NOUS.addContract("wallets", wallets.address);
+NOUS.addContract("walletdb", walletdb.address);
 
-nousCreater.addContract("wallets", wallets.address);
-nousCreater.addContract("walletdb", walletdb.address);
+// validation
+NOUS.getDefaultContracts();
 
-//validater
-nousCreater.getDefaultContracts();
-
-nousCreater
-  .createNewFund("test")
-  .then(() => nousCreater.getAllFund().then(res => (fund = Fund.at(res[0]))));
+NOUS.createNewFund("test").then(() =>
+  NOUS.getAllFund().then(res => (fund = Fund.at(res[0])))
+);
 
 //first addr
-nousCreater.getAllFund().then(res => (fund = Fund.at(res[0])));
+NOUS.getAllFund().then(res => (fund = Fund.at(res[0])));
 
 ////validate some components
 fund.getContracts("permissions");
@@ -98,7 +97,7 @@ fund.getContracts("fundmanager").then(
   res =>
     (fundManager = FundManager.at(res)
       .getTestVar()
-      .then(console.log))
+      .then(() => {}))
 );
 
 fund.getContracts("fundmanager").then(
@@ -136,7 +135,9 @@ fund.getContracts("permissiondb").then(
   res =>
     (permsdb = PermissionDb.at(res)
       .validateDoug()
-      .then(console.log))
+      .then(data => {
+        conslole.log(data);
+      }))
 );
 
 //end
@@ -147,9 +148,9 @@ fund
   .then(() =>
     fundManager.addManager(
       web3.eth.accounts[2],
-      "testFN",
-      "testLN",
-      "test@test"
+      "John",
+      "Doe",
+      "johndoe@test.com"
     )
   );
 fundManager.getOwnerAddress();
@@ -157,18 +158,17 @@ fundManager.getAllManagers();
 fundManager.checkPermission("owner");
 fundManager.setPermission(web3.eth.accounts, "owner");
 
-//проверка задался адресс разрешений
+// checking permissions
 fund
   .getContracts("permissiondb")
   .then(res => (permissionDb = PermissionDb.at(res)));
 permissionDb.rolePermission("owner");
 permissionDb.perms(web3.eth.accounts[0]);
 
-//add fund manager
+// adding fund manager
 fund.getContracts("managerdb").then(res => (managerDb = ManagerDb.at(res)));
 managerDb.getAllManagers();
 managerDb.getArrayData();
-
 managerDb.getManager(0);
 ```
 
