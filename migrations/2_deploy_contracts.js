@@ -29,7 +29,6 @@ const ActionAddActions = artifacts.require("ActionAddActions.sol");
 const ActionAddContract = artifacts.require("ActionAddContract.sol");
 const ActionRemoveContract = artifacts.require("ActionRemoveContract.sol");
 //project actions
-const ActionProjectDeployer = artifacts.require("ActionProjectDeployer.sol");
 const ActionAddTemplates = artifacts.require("ActionAddTemplates.sol");
 
 //temlates

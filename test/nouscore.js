@@ -2,6 +2,11 @@ const Web3 = require("web3");
 const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 const fs = require('fs');
 
+var OWNER = "0x719a22E179bb49a4596eFe3BD6F735b8f3b00AF1";
+////OWNER = "0x0b8976a4871ff9b0f1a33dee9c0ede304c0fa131";
+
+const NOUSTOKEN = "0x16db3d98cf6babcfdfd4bc35d4e9da8f8a1ad983";
+
 const NousCore = artifacts.require("NousCore.sol");
 const NousTokenTest = artifacts.require("NousTokenTest.sol");
 const ActionManager = artifacts.require("ActionManager.sol");
@@ -10,20 +15,21 @@ const PermissionDb = artifacts.require("PermissionDb.sol");
 const TemplatesDb = artifacts.require("TemplatesDb.sol");
 const ProjectDb = artifacts.require("ProjectDb.sol");
 const Doug = artifacts.require("Doug.sol");
+const NousActionManager = artifacts.require("NousActionManager.sol");
+
 //actions
 const ActionRemoveAction = artifacts.require("ActionRemoveAction.sol");
 const ActionLockActions = artifacts.require("ActionLockActions.sol");
 const ActionUnlockActions = artifacts.require("ActionUnlockActions.sol");
 const ActionSetUserRole = artifacts.require("ActionSetUserRole.sol");
 const ActionSetActionPermission = artifacts.require("ActionSetActionPermission.sol");
-const ActionCreateOpenEndedFund = artifacts.require("ActionCreateOpenEndedFund.sol");
-const ActionAddTemplates = artifacts.require("ActionAddTemplates.sol");
 const ActionAddAction = artifacts.require("ActionAddAction.sol");
 const ActionAddUser = artifacts.require("ActionAddUser.sol");
 const ActionAddActions = artifacts.require("ActionAddActions.sol");
-
-const ActionProjectDeployer = artifacts.require("ActionProjectDeployer.sol");
-const ActionTemplates = artifacts.require("ActionTemplates.sol");
+const ActionAddContract = artifacts.require("ActionAddContract.sol");
+const ActionRemoveContract = artifacts.require("ActionRemoveContract.sol");
+//project actions
+const ActionAddTemplates = artifacts.require("ActionAddTemplates.sol");
 
 //temlates
 const TPLOpenEndedSaleDb = artifacts.require("TPLOpenEndedSaleDb.sol");
@@ -33,16 +39,8 @@ const TPLProjectConstructor = artifacts.require("TPLProjectConstructor.sol");
 const TPLSnapshotDb = artifacts.require("TPLSnapshotDb.sol");
 const TPLWalletDb = artifacts.require("TPLWalletDb.sol");
 
-
 const ProjectActionManager = artifacts.require("ProjectActionManager.sol");
 const ProjectConstructor = artifacts.require("ProjectConstructor.sol");
-
-function getAbi(contractName, param, ) {
-  var obj = JSON.parse(fs.readFileSync(`../build/contracts/${contractName}`, 'utf8'));
-  if (param) {
-    return obj[param];
-  }
-}
 
 const actions = [
   "ActionAddAction",
@@ -69,15 +67,30 @@ const tpls = [
   "TPLWalletDb",
 ];
 
+let contractList = {};
+let actionsList = {};
+let templatesList = {};
 
-function getActionCallDataManual(_signature, _params, _data) {
-  let bytes = web3.eth.abi.encodeFunctionSignature(_signature);
-  if (_params.length) {
-    bytes += web3.eth.abi.encodeParameters(_params, _data).slice(2);
-  }
-  return bytes;
+let nousTokenInstance;
+let NOUSCoreInstance;
+let ActionManagerInstance;
+
+function getAbi(contractName, param = "abi") {
+  var obj = JSON.parse(fs.readFileSync(`${__dirname}/../build/contracts/${contractName}.json`, 'utf8'));
+  return obj[param];
 }
 
+function getFunctionAbi(contractName, funcName = "execute") {
+  let abi = getAbi(contractName);
+  let item;
+  for (item in abi) {
+    if (abi[item].name == funcName) {
+      return abi[item];
+    }
+  }
+}
+
+//
 function getFunctionCallData({name, inputs = []}, _data = null) {
   return web3.eth.abi.encodeFunctionCall({
     name: name,
@@ -86,15 +99,41 @@ function getFunctionCallData({name, inputs = []}, _data = null) {
   }, _data);
 }
 
+//crate date for action manager
+function getBytesCallData(actionName, data, functionName ) {
+  let structure = getFunctionAbi(actionName, functionName);
+  //console.log("structure", structure);
+
+  return getFunctionCallData(structure, data);
+}
+
+//query to action manager
+async function actionManagerQuery(actionName, data, funcName = "execute", address = "", actionManagerMethod = "execute") {
+
+  let structure = getFunctionAbi(actionName, funcName);
+
+  //console.log("structure", structure);
+  //console.log("data", data);
+
+
+  let _data = await getFunctionCallData(structure, data);
+  //console.log("_data", _data);
+
+  if (address) {}
+
+  await ActionManagerInstance[actionManagerMethod](web3.utils.toHex(actionName), _data);
+}
+
+async function createAddActions(data) {
+  //let data = [web3.utils.toHex(newActionName), actionsParams[newActionName].address];
+  await actionManagerQuery("ActionAddActions", data);
+}
+
 contract('NousCore', async function (accounts) {
 
   let instanceList = {
     //"name" : "instance"
   }
-
-  let nousTokenInstance;
-  let NOUSCoreInstance;
-  let ActionManagerInstance;
 
   beforeEach(async function () {
     nousTokenInstance = await NousTokenTest.new();
@@ -116,106 +155,52 @@ contract('NousCore', async function (accounts) {
     );
   });
 
-  async function createAllActions() {
+  it("Add Action templates. Action Create New Fund", async () => {
 
-    for (let item in actionsParams) {
-      actionsParams[item].address = (await eval(`${item}.new()`)).address;
-      console.log(`${item}: `, actionsParams[item].address);
+    console.log("-----==========DEPLOY ACTIONS FOR ACTION MANAGER==========-----");
+
+    for (let item in actions) {
+      let actionName = actions[item];
+
+      actionsList[actionName] = (await eval(`${actionName}.new()`));
+      console.log(`${actionName}: `, actionsList[actionName].address);
     }
 
-    let _actionNames = Object.keys(actionsParams).map(item => web3.utils.toHex(item));
-    //console.log("_actionNames", _actionNames);
-    let _actionAddr =  Object.keys(actionsParams).map(item => actionsParams[item].address);
-
-    //console.log("_actionAddr", _actionAddr);
+    let _actionNames = Object.keys(actionsList).map(item => web3.utils.toHex(item));
+    let _actionAddr =  Object.keys(actionsList).map(item => actionsList[item].address);
 
     await createAddActions([_actionNames, _actionAddr]);
 
-    /*for (let item in actionsParams) {
-      actionsParams[item].interface = await eval(`${item}.new()`);
-      await createAddAction(item);
-      //console.log(item, actionsParams[item].interface.address);
-
-      assert.equal(actionsParams[item].interface.address, await instanceList["ActionDb"].actions(item));
-    }*/
-  }
-
-  async function createAddAction(newActionName) {
-
-    let data = [web3.utils.toHex(newActionName), actionsParams[newActionName].interface.address];
-    let structure = actionsParams["ActionAddAction"];
-    let bytes = getFunctionCallData(structure, data);
-
-    await ActionManagerInstance.execute("ActionAddAction", bytes);
-  }
-
-  async function createAddActions(data) {
-    //let data = [web3.utils.toHex(newActionName), actionsParams[newActionName].address];
-    await actionManagerQuery("ActionAddActions", data);
-  }
-
-  async function actionManagerQuery(actionNmae, data) {
-    let structure = actionsParams[actionNmae];
-    let bytes = getFunctionCallData(structure, data);
-
-    return (await ActionManagerInstance.execute(actionNmae, bytes)).tx;
-  }
-
-  /*it("Validate Deploy all nous core contracts. Add to doug manager. ", async function () {
-    Object.keys(instanceList).forEach(async (_name) => {
-      assert.equal(instanceList[_name].address,  await NOUSCoreInstance.contracts(_name));
-    });
-  });*/
-
-  /*it("Add all action contracts and add to Action Manager", async function() {
-    await createAllActions();
-  });*/
-
-  it("Add Action templates. Action Create New Fund", async () => {
-
-    //await createAllActions();
-    //let tpls = Object.keys(templates);
-
-    // create instance templates
-    for ( let item in templates ) {
-      templates[item].interface = await eval(`${item}.new()`);
-      /*let data = [[web3.utils.toHex(item)], [templates[item].interface.address], [templates[item].overwrite]];
-      console.log(data);
-      await actionManagerQuery("ActionAddTemplates", data);;*/
-      console.log(item, templates[item].interface.address)
+    console.log("-----==========CREATE DEPLOY TEMPLATES==========-----");
+    for (let item in tpls) {
+      let tplName = tpls[item];
+      templatesList[tplName] = await eval(`${tplName}.new()`);
+      console.log(`${tplName}: `, templatesList[tplName].address);
     }
 
-    // add templates
-    let _tplNames = Object.keys(templates).map(item => web3.utils.toHex(item));
-    let _tplAddrs = Object.keys(templates).map(item => templates[item].interface.address);
-    let _tplOwerWr = Object.keys(templates).map(item => templates[item].overwrite);
+    console.log("-----==========ADD TEMPLATES==========-----");
+    let _tplNames = Object.keys(templatesList).map(item => web3.utils.toHex(item));
+    let _tplAddrs = Object.keys(templatesList).map(item => templatesList[item].address);
+    let dataTpl = [_tplNames, _tplAddrs];
+    console.log("dataTpl", dataTpl);
 
-    console.log("_tplNames", _tplNames);
-    console.log("_tplAddrs", _tplAddrs);
-
-    let data = [_tplNames, _tplAddrs, _tplOwerWr];
-    console.log("data", data);
-
-    await actionManagerQuery("ActionAddTemplates", data);
-
-
-    //console.log("11", await instanceList["TemplatesDb"].template("TPLConstructorOpenEndedFund", 0));
+    await actionManagerQuery("ActionAddTemplates", dataTpl);
 
     //validate add templates
-    for ( let item in templates ) {
-      assert.equal(templates[item].interface.address, (await instanceList["TemplatesDb"].template(item, 0))[0], "Instance list not equal templates Db");
+    for ( let item in templatesList ) {
+      assert.equal(templatesList[item].address, (await instanceList["TemplatesDb"].template(item, 0)), "Instance list not equal templates Db");
     }
 
     //STEP 1
     // todo дописать
     let _paramSale = [],_valSale = [];
-    ["entryFee", "exitFee", "initPrice", "maxFundCup", "maxInvestors", "managementFee"].map(item => {
+    ["entryFee", "exitFee", "initPrice", "maxFundCup", "maxInvestors", "platformFee"].map(item => {
         _paramSale.push(web3.utils.toHex(item));
         _valSale.push(1);
     });
 
-    data = [accounts[0], accounts[1], _paramSale, _valSale];
-    console.log("STEP 1 ActionCreateCompOEFund1", await actionManagerQuery("ActionCreateCompOEFund1", data));
+    let _data = [accounts[0], accounts[1], _paramSale, _valSale];
+    console.log("STEP 1 TPLSnapshotDb", await actionManagerQuery("TPLSnapshotDb", _data, "create", undefined, "deployTemplates"));
 
     //STEP 2
     data = [accounts[0], accounts[1]];
@@ -235,7 +220,7 @@ contract('NousCore', async function (accounts) {
     console.log("STEP 4 ActionCreateActionsOEFund2", await actionManagerQuery("ActionCreateActionsOEFund2", data));
 
     // get all tpls
-    let tpls = await instanceList["TemplatesDb"].getTplContracts(accounts[1], web3.utils.toHex("contracts"));
+    tpls = await instanceList["TemplatesDb"].getTplContracts(accounts[1], web3.utils.toHex("contracts"));
     //console.log("tpls", tpls)
 
     //Crate new fund

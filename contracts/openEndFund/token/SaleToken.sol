@@ -6,7 +6,7 @@ import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import {AllowPurchases} from "../../doug/ownership/AllowPurchases.sol";
 import {SimpleMintableToken} from "./SimpleMintableToken.sol";
 import {BaseSaleOpenEnded} from "./BaseSaleOpenEnded.sol";
-import "../../lib/MathPow.sol";
+//import "../../lib/MathPow.sol";
 
 
 contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
@@ -38,13 +38,13 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
         if (_amount >= _value) {
 
             uint _entryFee = getDataParamsSaleDb("entryFee");
-            uint _amountEntryFee = MathPow.calculatePercent(_value, _entryFee);// _value.mul(_entryFee).div(100);
+            uint _amountEntryFee = calculatePercent(_value, _entryFee);// _value.mul(_entryFee).div(100);
 
             uint _platformFee = getDataParamsSaleDb("platformFee");
-            uint _amountPlatformFee = MathPow.calculatePercent(_value, _platformFee);
+            uint _amountPlatformFee = calculatePercent(_value, _platformFee);
 
             _value = _value.sub(_amountEntryFee).sub(_amountPlatformFee);
-            uint256 _totalAmount = MathPow.divDecimals(_value, rate(), EXPONENT); //totalSum(_value,  rate(), _precision);
+            uint256 _totalAmount = divDecimals(_value, rate(), EXPONENT); //totalSum(_value,  rate(), _precision);
 
             require(validateMaxFundCap(_totalAmount), "Max fund capital is ");
 
@@ -66,7 +66,7 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
     }
 
     function validateMaxFundCap(uint256 _totalAmount)
-    internal
+    view
     returns (bool)
     {
         uint maxFundCup = getDataParamsSaleDb("maxFundCup");

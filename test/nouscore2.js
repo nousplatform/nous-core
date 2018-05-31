@@ -29,8 +29,9 @@ const ActionAddActions = artifacts.require("ActionAddActions.sol");
 const ActionAddContract = artifacts.require("ActionAddContract.sol");
 const ActionRemoveContract = artifacts.require("ActionRemoveContract.sol");
 //project actions
-const ActionProjectDeployer = artifacts.require("ActionProjectDeployer.sol");
+
 const ActionAddTemplates = artifacts.require("ActionAddTemplates.sol");
+const ActionCreateNewProject = artifacts.require("ActionCreateNewProject.sol");
 
 //temlates
 const TPLOpenEndedSaleDb = artifacts.require("TPLOpenEndedSaleDb.sol");
@@ -60,7 +61,7 @@ const actions = [
   "ActionAddContract",
   "ActionRemoveContract",
 
-  "ActionProjectDeployer",
+  "ActionCreateNewProject",
   "ActionAddTemplates",
 ];
 
@@ -109,6 +110,7 @@ function getFunctionCallData({name, inputs = []}, _data = null) {
 function getBytesCallData(actionName, data, functionName ) {
   let structure = getFunctionAbi(actionName, functionName);
   //console.log("structure", structure);
+  //console.log("data", data);
 
   return getFunctionCallData(structure, data);
 }
@@ -116,7 +118,7 @@ function getBytesCallData(actionName, data, functionName ) {
 //query to action manager
 async function actionManagerQuery(actionName, data) {
   let bytes = getBytesCallData(actionName, data);
-  console.log("bytes", bytes);
+  //console.log("bytes", bytes);
 
   await ActionManagerInstance.execute(actionName, bytes);
 }
@@ -130,13 +132,9 @@ async function createAddActions(data) {
 contract('NousCore', async function(accounts) {
 
 
-
-
   let instanceList = {
     //"name" : "instance"
   }
-
-
 
   beforeEach(async function () {
     nousTokenInstance = await NousTokenTest.new();
@@ -197,7 +195,6 @@ contract('NousCore', async function(accounts) {
       console.log(`${tplName}: ${res}`);
     }
 
-
     //STEP 1 To deploy
     var obj = {
       "TPLSnapshotDb": {
@@ -220,7 +217,9 @@ contract('NousCore', async function(accounts) {
           accounts[1],
           nousTokenInstance.address,
           "BWT TOKEN",
-          "BWT"
+          "BWT",
+          18,
+          accounts[0]
         ],
         "address": "0x0"
       },
@@ -243,13 +242,24 @@ contract('NousCore', async function(accounts) {
       }*/
     }
 
+    let projectType = web3.utils.toHex("Open-end Fund");
+    // console.log("1111", 1111);
+
+    await actionManagerQuery("ActionCreateNewProject", [accounts[1], projectType]);
+
+    let nextIdProject = await instanceList["ProjectDb"].getLasId(accounts[1], projectType);
+
+    assert.equal(1, await instanceList["ProjectDb"].getLasId(accounts[1], projectType));
+
+
     for (let _item in obj) {
       console.log("_item", _item);
       await ActionManagerInstance.deployTemplates(web3.utils.toHex(_item), getBytesCallData(_item, obj[_item].variables, "create"));
     }
 
-    let _projContr = await instanceList["ProjectDb"].getProjectContracts(accounts[1], "Open-end Fund");
-    // console.log("_projContr", _projContr);
+    let _projContr = await instanceList["ProjectDb"].getProjectContracts(accounts[1], web3.utils.toHex(projectType), 0);
+    console.log("_projContr", _projContr);
+
 
     var obj2 = {"TPLProjectConstructor": {
         "variables" : [
@@ -261,6 +271,8 @@ contract('NousCore', async function(accounts) {
         ],
         "address": "0x0"
       }}
+      //console.log("obj2", obj2);
+
 
     await ActionManagerInstance.deployTemplates(web3.utils.toHex("TPLProjectConstructor"), getBytesCallData("TPLProjectConstructor", obj2["TPLProjectConstructor"].variables, "create"));
 

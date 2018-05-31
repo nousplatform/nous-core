@@ -101,14 +101,14 @@ contract ProjectDb is Validee {
     function getProjectContracts(
         address _owner,
         bytes32 _type,
-        uint _id
+        uint256 _id
     )
     external
     view
     returns (bytes32[] memory names, address[] memory addrs)
     {
         uint id = _id;
-        if (_id == 0) {
+        if (id == 0) {
             id = projects[_owner][_type].id;
         }
         uint _length = projects[_owner][_type].collects[id].length;
