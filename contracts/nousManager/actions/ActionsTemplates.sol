@@ -28,18 +28,3 @@ contract ActionAddTemplates is Action("owner") {
     }
 }
 
-contract ActionCreateNewProject is Action("owner") {
-
-    function execute(
-        address _addrs,
-        bytes32 _type
-    )
-    isActionManager_
-    public
-    {
-        address _tdba = getContractAddress("ProjectDb");
-        ProjectDb _tdb = ProjectDb(_tdba);
-        _tdb.createNewProjectId(_addrs, _type);
-    }
-
-}

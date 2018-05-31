@@ -23,9 +23,8 @@ contract TPLProjectActionManager is BaseTemplate {
         require(_nousPlatform != 0x0);
 
         address newContract = new ProjectActionManager(_projectOwner, _nousPlatform);
-        uint _id = getId(_projectOwner, TYPE_PROJECT);
 
-        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
+        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract);
     }
 
 }

@@ -1,6 +1,7 @@
 const Web3 = require("web3");
 const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 const fs = require('fs');
+var BN = web3.utils.BN;
 
 var OWNER = "0x719a22E179bb49a4596eFe3BD6F735b8f3b00AF1";
 OWNER = "0x863c777bc9c6ab7fca73c998eba43f272ec00b46";
@@ -31,7 +32,7 @@ const ActionRemoveContract = artifacts.require("ActionRemoveContract.sol");
 //project actions
 
 const ActionAddTemplates = artifacts.require("ActionAddTemplates.sol");
-const ActionCreateNewProject = artifacts.require("ActionCreateNewProject.sol");
+
 
 //temlates
 const TPLOpenEndedSaleDb = artifacts.require("TPLOpenEndedSaleDb.sol");
@@ -44,10 +45,7 @@ const TPLWalletDb = artifacts.require("TPLWalletDb.sol");
 const ProjectActionManager = artifacts.require("ProjectActionManager.sol");
 const ProjectConstructor = artifacts.require("ProjectConstructor.sol");
 
-
 const OpenEndedToken = artifacts.require("OpenEndedToken.sol");
-
-
 
 const actions = [
   "ActionAddAction",
@@ -61,7 +59,6 @@ const actions = [
   "ActionAddContract",
   "ActionRemoveContract",
 
-  "ActionCreateNewProject",
   "ActionAddTemplates",
 ];
 
@@ -122,7 +119,6 @@ async function actionManagerQuery(actionName, data) {
 
   await ActionManagerInstance.execute(actionName, bytes);
 }
-
 
 async function createAddActions(data) {
   //let data = [web3.utils.toHex(newActionName), actionsParams[newActionName].address];
@@ -207,6 +203,9 @@ contract('NousCore', async function(accounts) {
         "variables" : [
           accounts[1],
           ...["entryFee", "exitFee", "initPrice", "maxFundCup", "maxInvestors", "managementFee"].map(item => {
+            if (item === "initPrice") {
+              return 0.004 * Math.pow(10, 18);
+            }
             return item.length;
           })
         ],
@@ -243,23 +242,14 @@ contract('NousCore', async function(accounts) {
     }
 
     let projectType = web3.utils.toHex("Open-end Fund");
-    // console.log("1111", 1111);
-
-    await actionManagerQuery("ActionCreateNewProject", [accounts[1], projectType]);
-
-    let nextIdProject = await instanceList["ProjectDb"].getLasId(accounts[1], projectType);
-
-    assert.equal(1, await instanceList["ProjectDb"].getLasId(accounts[1], projectType));
-
 
     for (let _item in obj) {
       console.log("_item", _item);
       await ActionManagerInstance.deployTemplates(web3.utils.toHex(_item), getBytesCallData(_item, obj[_item].variables, "create"));
     }
 
-    let _projContr = await instanceList["ProjectDb"].getProjectContracts(accounts[1], web3.utils.toHex(projectType), 0);
-    console.log("_projContr", _projContr);
-
+    let _projContr = await instanceList["ProjectDb"].getProjectContracts(accounts[1], web3.utils.toHex(projectType));
+    //console.log("_projContr", _projContr);
 
     var obj2 = {"TPLProjectConstructor": {
         "variables" : [
@@ -270,16 +260,9 @@ contract('NousCore', async function(accounts) {
           _projContr[1],
         ],
         "address": "0x0"
-      }}
-      //console.log("obj2", obj2);
-
+      }};
 
     await ActionManagerInstance.deployTemplates(web3.utils.toHex("TPLProjectConstructor"), getBytesCallData("TPLProjectConstructor", obj2["TPLProjectConstructor"].variables, "create"));
-
-    let _projContr2 = await instanceList["ProjectDb"].getProjectContracts(accounts[1], "Open-end Fund");
-    //console.log("_projContr2", _projContr2);
-
-    console.log("_projContr", _projContr2);
 
     let initialBalances = [1000 * Math.pow(10, 18), 2000 * Math.pow(10, 18) , 150 * Math.pow(10, 18), 500 * Math.pow(10, 18)];
 
@@ -296,16 +279,15 @@ contract('NousCore', async function(accounts) {
 
 
     let openEndedToken = OpenEndedToken.at(_projContr[1][2]);
-    console.log("total supplay", await openEndedToken.totalSupply());
-    console.log("await openEndedToken.allowPurchases(nousTokenInstance.address)", await openEndedToken.allowPurchases(nousTokenInstance.address));
-
+    //console.log("total supplay", await openEndedToken.totalSupply());
+    assert.equal(true, await openEndedToken.allowPurchases(nousTokenInstance.address), "allow purchases nsu tokens");
 
     assert.equal(user_1.balance, (await nousTokenInstance.balanceOf(user_1.address, {from: accounts[0]})).toNumber(), "Owner is first mining user_1 1000");
-    console.log("_projContr[1][2]", _projContr[1][2]);
 
     let sum = 99 * Math.pow(10, 18);
-    await nousTokenInstance.approveAndCall(_projContr[1][2], sum, {from: user_1.address});
+    console.log("rate open ended token ", await openEndedToken.rate());
 
+    await nousTokenInstance.approveAndCall(_projContr[1][2], sum, "0x0", {from: user_1.address});
 
 
     //var dataSnapshotDb = [accounts[0]];

@@ -34,7 +34,6 @@ contract TPLOpenEndedToken is BaseTemplate { // ----
             _decimals,
             _nousWallet
         );
-        uint _id = getId(_projectOwner, TYPE_PROJECT);
-        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
+        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract);
     }
 }

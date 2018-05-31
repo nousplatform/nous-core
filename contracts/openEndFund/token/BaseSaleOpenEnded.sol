@@ -67,11 +67,11 @@ contract BaseSaleOpenEnded is Validee, AllowPurchases {
     )
     public
     pure
-    returns(uint quotient)
+    returns (uint quotient)
     {
-        uint _precision = 10 ** (precision);
-        uint _multiplier = multiplier.mul(_precision);
-        uint _quotient = (_multiplier.div(numerator)).mul(_precision);
+        uint decimals = 10 ** (precision);
+        uint _multiplier = multiplier.mul(decimals);
+        uint _quotient = (_multiplier.div(numerator)).mul(decimals);
         return (_quotient / _precision);
     }
 

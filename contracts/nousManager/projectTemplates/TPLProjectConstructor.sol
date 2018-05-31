@@ -23,9 +23,8 @@ contract TPLProjectConstructor is BaseTemplate {
     isActionManager_
     {
         address newContract = new ProjectConstructor(_fundName, _fundType, _names, _addrs);
-        uint _id = getId(_projectOwner, TYPE_PROJECT);
 
-        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
+        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract);
     }
 
 }

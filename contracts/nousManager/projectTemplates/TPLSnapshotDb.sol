@@ -19,9 +19,8 @@ contract TPLSnapshotDb is BaseTemplate {
     isActionManager_
     {
         address newContract = new SnapshotDb(); // ----
-        uint _id = getId(_projectOwner, TYPE_PROJECT);
 
-        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
+        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract);
     }
 
 }

@@ -32,8 +32,7 @@ contract TPLOpenEndedSaleDb is BaseTemplate {
                 _maxInvestors,
                 _managementFee
         );
-        uint _id = getId(_projectOwner, TYPE_PROJECT);
-        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract, _id);
+        addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract);
     }
 
 }
