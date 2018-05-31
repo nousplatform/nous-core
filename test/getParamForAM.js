@@ -2,28 +2,35 @@ const Web3 = require("web3");
 var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 const ActionManager = artifacts.require("ActionManager.sol");
 
-const ActionManagerInstance = ActionManager.at("0xe0b292985d35e38ee4a4689f973973374ac48512");
+const ActionManagerInstance = ActionManager.at(
+  "0xe0b292985d35e38ee4a4689f973973374ac48512"
+);
 async function actionManagerQuery(actionNmae, data) {
   let structure = actionsParams[actionNmae];
   let bytes = getFunctionCallData(structure, data);
   console.log("bytes", bytes);
 
-
   return (await ActionManagerInstance.execute(actionNmae, bytes)).tx;
 }
 
-function getFunctionCallData({name, inputs = []}, _data = null) {
-  return web3.eth.abi.encodeFunctionCall({
-    name: name,
-    type: 'function',
-    inputs: inputs,
-  }, _data);
+function getFunctionCallData({ name, inputs = [] }, _data = null) {
+  return web3.eth.abi.encodeFunctionCall(
+    {
+      name: name,
+      type: "function",
+      inputs: inputs
+    },
+    _data
+  );
 }
 
 //ActionAddTemplates execute(bytes32[] _names, address[] _addrs, bool[] _overwrite)
-let _data = [[web3.utils.toHex("TPLComponentsOEFund3")],["0x18e37b7bc2dbf1c7ab25f0a09d5d4164b58707c6"],[true]]
+let _data = [
+  [web3.utils.toHex("TPLComponentsOEFund3")],
+  ["0x18e37b7bc2dbf1c7ab25f0a09d5d4164b58707c6"],
+  [true]
+];
 actionManagerQuery("ActionAddTemplates", _data);
-
 
 //
 // -----==========CONTRACT NOUS CORE==========-----

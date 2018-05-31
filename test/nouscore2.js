@@ -45,7 +45,10 @@ const TPLWalletDb = artifacts.require("TPLWalletDb.sol");
 const ProjectActionManager = artifacts.require("ProjectActionManager.sol");
 const ProjectConstructor = artifacts.require("ProjectConstructor.sol");
 
+
 const OpenEndedToken = artifacts.require("OpenEndedToken.sol");
+
+
 
 const actions = [
   "ActionAddAction",
@@ -119,6 +122,7 @@ async function actionManagerQuery(actionName, data) {
 
   await ActionManagerInstance.execute(actionName, bytes);
 }
+
 
 async function createAddActions(data) {
   //let data = [web3.utils.toHex(newActionName), actionsParams[newActionName].address];
@@ -266,15 +270,21 @@ contract('NousCore', async function(accounts) {
 
     let initialBalances = [1000 * Math.pow(10, 18), 2000 * Math.pow(10, 18) , 150 * Math.pow(10, 18), 500 * Math.pow(10, 18)];
 
-    const user_1 = {address: accounts[1], balance: 0};
-    const user_2 = {address: accounts[2], balance: 0};
-    const user_3 = {address: accounts[3], balance: 0};
+    const user_1 = { address: accounts[1], balance: 0 };
+    const user_2 = { address: accounts[2], balance: 0 };
+    const user_3 = { address: accounts[3], balance: 0 };
 
-    await nousTokenInstance.mint(user_1.address, initialBalances[0], {from: accounts[0]});
+    await nousTokenInstance.mint(user_1.address, initialBalances[0], {
+      from: accounts[0]
+    });
     user_1.balance = initialBalances[0] * Math.pow(10, 18);
-    await nousTokenInstance.mint(user_2.address, initialBalances[1], {from: accounts[0]});
+    await nousTokenInstance.mint(user_2.address, initialBalances[1], {
+      from: accounts[0]
+    });
     user_2.balance = initialBalances[1] * Math.pow(10, 18);
-    await nousTokenInstance.mint(user_3.address, initialBalances[2], {from: accounts[0]});
+    await nousTokenInstance.mint(user_3.address, initialBalances[2], {
+      from: accounts[0]
+    });
     user_3.balance = initialBalances[2] * Math.pow(10, 18);
 
 
@@ -300,10 +310,6 @@ contract('NousCore', async function(accounts) {
     //console.log("res", res);
 
     //await ActionManagerInstance.execute2(web3.utils.toHex("TPLSnapshotDb"), web3.eth.abi.encodeParameters(["address"], [accounts[0]]));
-
-
-
-
 
     /*var dataOpenEndedSaleDb = [accounts[1]];
     ["entryFee", "exitFee", "initPrice", "maxFundCup", "maxInvestors", "managementFee"].map(item => {

@@ -101,5 +101,4 @@ contract Doug is DougDb {
     {
         return listIndex.length;
     }
-
 }
