@@ -6,21 +6,20 @@ const moment = require("moment");
 //const _nousToken = "0x6142836bbc33a159f2503c132f255caa049392e0";
 const tokenDecimals = 18;
 
-contract('Sale', function (accounts) {
-
+contract("Sale", function(accounts) {
   const saleInitialParams = {
     _owner: accounts[0],
     _totalSupplyCap: 100000,
     _retainedByCompany: 100,
     _walletAddress: accounts[9],
     _nousToken: accounts[0]
-  }
+  };
 
   const tokenInitialParams = {
     _name: "FundTKN",
     _symbol: "FTK",
     _decimals: 18
-  }
+  };
 
   const saleAgentInitialParams = [
     {
@@ -28,7 +27,9 @@ contract('Sale', function (accounts) {
       _minDeposit: 1,
       _maxDeposit: 100,
       _startTime: moment().format("X"),
-      _endTime: moment().add(7, 'days').format("X"),
+      _endTime: moment()
+        .add(7, "days")
+        .format("X"),
       _rate: 5
     }
   ];
@@ -36,21 +37,31 @@ contract('Sale', function (accounts) {
   const bonusInitialParams = [
     {
       _startTimestamp: moment().format("X"),
-      _endTimestamp: moment().add(5, 's').format("X"),
+      _endTimestamp: moment()
+        .add(5, "s")
+        .format("X"),
       _type: 0
     },
     {
       _id: 1,
-      _startTimestamp: moment().add(2, 'days').format("X"),
-      _endTimestamp: moment().add(3, 'days').format("X"),
+      _startTimestamp: moment()
+        .add(2, "days")
+        .format("X"),
+      _endTimestamp: moment()
+        .add(3, "days")
+        .format("X"),
       _type: 0
     },
     {
-      _startTimestamp: moment().add(5, 's').format("X"),
-      _endTimestamp: moment().add(30, 's').format("X"),
+      _startTimestamp: moment()
+        .add(5, "s")
+        .format("X"),
+      _endTimestamp: moment()
+        .add(30, "s")
+        .format("X"),
       _type: 0
     }
-  ]
+  ];
 
   const bonusPricingInitialParams = [
     {
@@ -59,33 +70,36 @@ contract('Sale', function (accounts) {
       _minPrice: 1,
       _maxPrice: 10,
       _bonusRatePercent: 10
-    },{
+    },
+    {
       _bonusID: 1,
       _priceRateID: 1, // for update id 1
       _minPrice: 1,
       _maxPrice: 10,
       _bonusRatePercent: 20
-    },{
+    },
+    {
       _bonusID: 1,
       _priceRateID: 0, // for update id 1
       _minPrice: 10,
       _maxPrice: 30,
       _bonusRatePercent: 50
-    },{
+    },
+    {
       _bonusID: 2,
       _priceRateID: 0,
       _minPrice: 10,
       _maxPrice: 30,
       _bonusRatePercent: 15
-    },{
+    },
+    {
       _bonusID: 2,
       _priceRateID: 0,
       _minPrice: 30,
       _maxPrice: 40,
       _bonusRatePercent: 15
-    },
-
-  ]
+    }
+  ];
 
   let saleInstance;
   let tokenInstance;
@@ -94,21 +108,26 @@ contract('Sale', function (accounts) {
   function validate(result, validateParams, num) {
     for (let i = 0; i < validateParams.length; i++) {
       //console.log("result[i][num].toNumber()", result[i][num].toNumber());
-      assert.equal( validateParams[i], result[i][num].toNumber());
+      assert.equal(validateParams[i], result[i][num].toNumber());
     }
   }
 
   //create new smart contract instance before each test method
-  beforeEach(async function () {
+  beforeEach(async function() {
     nousTokenInstance = await NousTokenTest.new();
-    saleInitialParams._nousToken = nousTokenInstance.address; // добавить ноус токен адрес
+    saleInitialParams._nousToken = nousTokenInstance.address; // adding NousToken address
 
-    tokenInstance = await SampleCrowdsaleToken.new(...Object.values(tokenInitialParams));
-    saleInstance = await Sale.new(...Object.values(saleInitialParams), tokenInstance.address);
+    tokenInstance = await SampleCrowdsaleToken.new(
+      ...Object.values(tokenInitialParams)
+    );
+    saleInstance = await Sale.new(
+      ...Object.values(saleInitialParams),
+      tokenInstance.address
+    );
     await tokenInstance.transferOwnership(saleInstance.address);
   });
 
-  it("Set params sale agent", async function () {
+  it("Set params sale agent", async function() {
     let validateObj = Object.values(saleAgentInitialParams[0]);
     await saleInstance.setParamsSaleAgent(...validateObj);
     let _params = await saleInstance.getSaleAgents();
@@ -119,8 +138,7 @@ contract('Sale', function (accounts) {
 
         if (_params[i][el].e >= 10) {
           result = _params[i][el].toNumber() / Math.pow(10, tokenDecimals);
-        }
-        else {
+        } else {
           result = _params[i][el].toNumber();
         }
         assert.equal(validateObj[i], result);
@@ -131,11 +149,14 @@ contract('Sale', function (accounts) {
   it("Finish mining", async function() {
     await saleInstance.finalise();
     assert.equal(await saleInstance.finalizeICO.call(), true, "Ico finalize");
-    assert.equal(await tokenInstance.mintingFinished.call(), true, "Token is finalize");
+    assert.equal(
+      await tokenInstance.mintingFinished.call(),
+      true,
+      "Token is finalize"
+    );
   });
 
   it("Testing CRUD bonuses", async function() {
-
     // add first
     let validateParams = Object.values(bonusInitialParams[0]);
     await saleInstance.addBonus(...validateParams);
@@ -163,8 +184,7 @@ contract('Sale', function (accounts) {
     assert.ok(true);
   });
 
-  it("Add bonus pricing ", async function () {
-
+  it("Add bonus pricing ", async function() {
     await saleInstance.addBonus(...Object.values(bonusInitialParams[0]));
     let validateParams = Object.values(bonusPricingInitialParams[0]);
 
@@ -189,7 +209,6 @@ contract('Sale', function (accounts) {
   });
 
   it("Get bonus rate", async function() {
-
     let indexForFirstValidate = 2;
     let indexForSecondValidate = 0;
     let indexForThirdValidate = 3;
@@ -208,11 +227,16 @@ contract('Sale', function (accounts) {
     await saleInstance.addBonus(...Object.values(bonusInitialParams[0]));
     await saleInstance.addBonus(...Object.values(bonusInitialParams[2]));
 
-    let validateParams = Object.values(bonusPricingInitialParams[indexForSecondValidate]);
+    let validateParams = Object.values(
+      bonusPricingInitialParams[indexForSecondValidate]
+    );
     let test = await saleInstance.getAllPeriodsBonuses();
     assert.equal(2, test[0].length, "two params period");
-    assert.equal(bonusInitialParams[2]._startTimestamp, test[0][1].toNumber(), "Not valid period");
-
+    assert.equal(
+      bonusInitialParams[2]._startTimestamp,
+      test[0][1].toNumber(),
+      "Not valid period"
+    );
 
     //set first percent
     await saleInstance.addUpdateBonusPricing(...validateParams);
@@ -220,13 +244,17 @@ contract('Sale', function (accounts) {
     validate(result, validateParams.slice(2), 0);
 
     //add second params
-    validateParams = Object.values(bonusPricingInitialParams[indexForFirstValidate]);
+    validateParams = Object.values(
+      bonusPricingInitialParams[indexForFirstValidate]
+    );
     await saleInstance.addUpdateBonusPricing(...validateParams);
     result = await saleInstance.getAllBonusesForPeriod(1);
     validate(result, validateParams.slice(2), 1);
 
     //add third
-    validateParams = Object.values(bonusPricingInitialParams[indexForThirdValidate]);
+    validateParams = Object.values(
+      bonusPricingInitialParams[indexForThirdValidate]
+    );
 
     await saleInstance.addUpdateBonusPricing(...validateParams);
     result = await saleInstance.getAllBonusesForPeriod(2);
@@ -243,15 +271,27 @@ contract('Sale', function (accounts) {
 
     let b = await bonuse;
     let summ = params[0].amount * params[0].rate;
-    let validateSum = ((summ * bonusPricingInitialParams[indexForFirstValidate]._bonusRatePercent) / 100) + summ;
+    let validateSum =
+      summ *
+        bonusPricingInitialParams[indexForFirstValidate]._bonusRatePercent /
+        100 +
+      summ;
     assert.equal(validateSum, b.toNumber(), "FIRST Bonus is not correct");
     //console.log("b.toNumber()", b.toNumber());
 
     ///// SECOND
     let b2 = await saleInstance.testGetBonusRate(...Object.values(params[1])); // amount 5
     summ = params[1].amount * params[1].rate;
-    validateSum = ((summ * bonusPricingInitialParams[indexForSecondValidate]._bonusRatePercent) / 100) + summ;
-    assert.equal(Math.round(validateSum), b2.toNumber(), "Second is not correct");
+    validateSum =
+      summ *
+        bonusPricingInitialParams[indexForSecondValidate]._bonusRatePercent /
+        100 +
+      summ;
+    assert.equal(
+      Math.round(validateSum),
+      b2.toNumber(),
+      "Second is not correct"
+    );
     //console.log("b2.toNumber()", b2.toNumber());
 
     ///// THIRD
@@ -267,41 +307,70 @@ contract('Sale', function (accounts) {
     let b3 = await bonuse3;
     //console.log("b3.toNumber()", b3.toNumber());
     summ = params[0].amount * params[0].rate;
-    validateSum = ((summ * bonusPricingInitialParams[indexForThirdValidate]._bonusRatePercent) / 100) + summ;
+    validateSum =
+      summ *
+        bonusPricingInitialParams[indexForThirdValidate]._bonusRatePercent /
+        100 +
+      summ;
     //console.log("b3.toNumber()", b3.toNumber());
-    assert.equal(Math.round(validateSum), b3.toNumber(), "Third is not correct");
-
+    assert.equal(
+      Math.round(validateSum),
+      b3.toNumber(),
+      "Third is not correct"
+    );
   });
 
-  it("Test receive approval bay token as NSU", async function () {
+  it("Test receive approval bay token as NSU", async function() {
+    let initialBalances = [
+      1000 * Math.pow(10, 18),
+      2000 * Math.pow(10, 18),
+      150 * Math.pow(10, 18),
+      500 * Math.pow(10, 18)
+    ];
 
-    let initialBalances = [1000 * Math.pow(10, 18), 2000 * Math.pow(10, 18) , 150 * Math.pow(10, 18), 500 * Math.pow(10, 18)];
-
-    const user_1 = {address: accounts[1], balance: 0};
-    const user_2 = {address: accounts[2], balance: 0};
-    const user_3 = {address: accounts[3], balance: 0};
+    const user_1 = { address: accounts[1], balance: 0 };
+    const user_2 = { address: accounts[2], balance: 0 };
+    const user_3 = { address: accounts[3], balance: 0 };
 
     let validateObj = Object.values(saleAgentInitialParams[0]);
     await saleInstance.setParamsSaleAgent(...validateObj);
 
-    await nousTokenInstance.mint(user_1.address, initialBalances[0], {from: accounts[0]});
+    await nousTokenInstance.mint(user_1.address, initialBalances[0], {
+      from: accounts[0]
+    });
     user_1.balance = initialBalances[0];
-    await nousTokenInstance.mint(user_2.address, initialBalances[1], {from: accounts[0]});
+    await nousTokenInstance.mint(user_2.address, initialBalances[1], {
+      from: accounts[0]
+    });
     user_2.balance = initialBalances[1];
-    await nousTokenInstance.mint(user_3.address, initialBalances[2], {from: accounts[0]});
+    await nousTokenInstance.mint(user_3.address, initialBalances[2], {
+      from: accounts[0]
+    });
     user_3.balance = initialBalances[2];
 
-    assert.equal(user_1.balance, (await nousTokenInstance.balanceOf(user_1.address, {from: accounts[0]})).toNumber(), "Owner is first mining user_1 1000");
+    assert.equal(
+      user_1.balance,
+      (await nousTokenInstance.balanceOf(user_1.address, {
+        from: accounts[0]
+      })).toNumber(),
+      "Owner is first mining user_1 1000"
+    );
 
     let sum = 99 * Math.pow(10, 18);
 
-    await nousTokenInstance.approveAndCall(saleInstance.address, sum, {from: user_1.address});
+    await nousTokenInstance.approveAndCall(saleInstance.address, sum, {
+      from: user_1.address
+    });
 
-    assert.equal(sum, (await nousTokenInstance.balanceOf(accounts[9])).toNumber(), "balance token is current");
-    assert.equal(sum * saleAgentInitialParams[0]._rate, (await tokenInstance.balanceOf(user_1.address)).toNumber(), "balance token is current");
-
+    assert.equal(
+      sum,
+      (await nousTokenInstance.balanceOf(accounts[9])).toNumber(),
+      "balance token is current"
+    );
+    assert.equal(
+      sum * saleAgentInitialParams[0]._rate,
+      (await tokenInstance.balanceOf(user_1.address)).toNumber(),
+      "balance token is current"
+    );
   });
 });
-
-
-
