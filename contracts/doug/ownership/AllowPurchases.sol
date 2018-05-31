@@ -76,7 +76,7 @@ contract AllowPurchases is Validee {
       for (uint i = 0; i < allowPurchasesIndex.length; i++) {
         if (addr == allowPurchasesIndex[i]) break;
       }
-      // first element not deleted
+      // check first element not deleted
       if (i > 0) {
         allowPurchases[addr] = false;
         address lastAddr = allowPurchasesIndex[allowPurchasesIndex.length - 1];

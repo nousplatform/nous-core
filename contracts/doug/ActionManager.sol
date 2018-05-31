@@ -24,7 +24,7 @@ contract ActionManager is DougEnabled {
     bool locked;
 
     function execute(bytes32 actionName, bytes data) public returns (bool) {
-        //return true;
+        // return true;
         address actionDb = getContractAddress("ActionDb");
 
         // If no action with the given name exists - cancel.
