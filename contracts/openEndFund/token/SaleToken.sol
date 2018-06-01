@@ -44,10 +44,11 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
             uint _amountPlatformFee = calculatePercent(_value, _platformFee);
 
             _value = _value.sub(_amountEntryFee).sub(_amountPlatformFee);
-            uint256 _totalAmount = divDecimals(_value, rate(), EXPONENT); //totalSum(_value,  rate(), _precision);
+
+            uint256 _totalAmount = divDecimals(_value, rate(), decimals); //totalSum(_value,  rate(), _precision);
 
             require(validateMaxFundCap(_totalAmount), "Max fund capital is ");
-
+            return true;
             if (nt.transferFrom(_sender, this, _value)) {
 
                 // transfer amount fee to wallet
@@ -70,6 +71,7 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
     returns (bool)
     {
         uint maxFundCup = getDataParamsSaleDb("maxFundCup");
+
         if (maxFundCup > 0) {
             return maxFundCup >= _totalAmount;
         }

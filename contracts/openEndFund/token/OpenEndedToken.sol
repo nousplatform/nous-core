@@ -17,11 +17,7 @@ import {AllowPurchases} from "../../doug/ownership/AllowPurchases.sol";
  */
 contract OpenEndedToken is PurchaseToken, SaleToken/*, InvestorsCounter, Net */{
 
-    using SafeMath for uint256;
 
-    string public name;
-    string public symbol;
-    uint8 public decimals;
 
     // @dev Constructor only nous token can mint.
     constructor(

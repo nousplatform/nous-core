@@ -12,11 +12,17 @@ contract BaseSaleOpenEnded is Validee, AllowPurchases {
 
     using SafeMath for uint256;
 
+    string public name;
+
+    string public symbol;
+
+    uint8 public decimals;
+
     address wallet;
 
     address nousWallet;
 
-    uint256 public constant EXPONENT = 10 ** uint256(18);
+    uint256 public constant EXPONENT = 10 ** uint256(decimals);
 
     // @dev constructor
     // @param element address _wallet
@@ -60,6 +66,21 @@ contract BaseSaleOpenEnded is Validee, AllowPurchases {
         return _value.mul(_percent).div(100);
     }
 
+    function percent(
+        uint numerator,
+        uint denominator,
+        uint precision
+    )
+    public
+    pure
+    returns(uint quotient)
+    {
+        uint exponent = 10 ** (precision + 1);
+        uint _numerator  = numerator.mul(exponent);
+        uint _quotient =  ((_numerator.div(denominator)).add(5)).div(10);
+        return ( _quotient);
+    }
+
     function divDecimals(
         uint256 multiplier,
         uint256 numerator,
@@ -72,7 +93,7 @@ contract BaseSaleOpenEnded is Validee, AllowPurchases {
         uint decimals = 10 ** (precision);
         uint _multiplier = multiplier.mul(decimals);
         uint _quotient = (_multiplier.div(numerator)).mul(decimals);
-        return (_quotient / _precision);
+        return (_quotient / decimals);
     }
 
 }

@@ -194,6 +194,8 @@ contract('NousCore', async function(accounts) {
       assert.equal(templatesList[tplName].address, res, "Not Equal templates");
       console.log(`${tplName}: ${res}`);
     }
+    console.log("100 * Math.pow(10, 18)", 1 * Math.pow(10, 18));
+
 
     //STEP 1 To deploy
     var obj = {
@@ -206,9 +208,11 @@ contract('NousCore', async function(accounts) {
       "TPLOpenEndedSaleDb": {
         "variables" : [
           accounts[1],
-          ...["entryFee", "exitFee", "initPrice", "maxFundCup", "maxInvestors", "managementFee"].map(item => {
-            if (item === "initPrice") {
+          ...["entryFee", "exitFee", "initPrice", "maxFundCup", "maxInvestors", "platformFee"].map(item => {
+            if (item === "initPrice" ) {
               return 0.004 * Math.pow(10, 18);
+            } else if(item === "maxFundCup") {
+              return 100 * Math.pow(10, 18);
             }
             return item.length;
           })
@@ -268,7 +272,8 @@ contract('NousCore', async function(accounts) {
 
     await ActionManagerInstance.deployTemplates(web3.utils.toHex("TPLProjectConstructor"), getBytesCallData("TPLProjectConstructor", obj2["TPLProjectConstructor"].variables, "create"));
 
-    let initialBalances = [1000 * Math.pow(10, 18), 2000 * Math.pow(10, 18) , 150 * Math.pow(10, 18), 500 * Math.pow(10, 18)];
+    let initialBalances = [100, 2000, 150, 500];
+    console.log("initialBalances", initialBalances);
 
     const user_1 = { address: accounts[1], balance: 0 };
     const user_2 = { address: accounts[2], balance: 0 };
@@ -294,10 +299,19 @@ contract('NousCore', async function(accounts) {
 
     assert.equal(user_1.balance, (await nousTokenInstance.balanceOf(user_1.address, {from: accounts[0]})).toNumber(), "Owner is first mining user_1 1000");
 
-    let sum = 99 * Math.pow(10, 18);
-    console.log("rate open ended token ", await openEndedToken.rate());
+    let sum = 1 * Math.pow(10, 18);
 
-    await nousTokenInstance.approveAndCall(_projContr[1][2], sum, "0x0", {from: user_1.address});
+    console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_1.address)).toNumber());
+    console.log("sum", sum);
+    console.log("rate open ended token ", rate = (await openEndedToken.rate()).toNumber());
+
+    console.log("Total sum rate  ", (await openEndedToken.percent(sum, rate, 18)).toNumber());
+    console.log("maxFundCup ", (await openEndedToken.getDataParamsSaleDb(web3.utils.toHex("maxFundCup"))).toNumber());
+
+    await nousTokenInstance.approveAndCall(openEndedToken.address, sum, "0x0", {from: user_1.address});
+
+    console.log("balance BWT ", (await openEndedToken.balanceOf(user_1.address)).toNumber());
+    console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_1.address)).toNumber());
 
 
     //var dataSnapshotDb = [accounts[0]];

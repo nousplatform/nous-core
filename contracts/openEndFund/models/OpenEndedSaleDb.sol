@@ -16,6 +16,8 @@ contract OpenEndedSaleDb is ProjectActionManagerEnabled {
 
     mapping(bytes32 => uint256) public params;
 
+
+
     struct Decimal {
         uint256 numerator;
         uint8 precision;
@@ -45,6 +47,7 @@ contract OpenEndedSaleDb is ProjectActionManagerEnabled {
         params["maxFundCup"] = _maxFundCup;
         params["maxInvestors"] = _maxInvestors;
         params["platformFee"] = _platformFee;
+
     }
 
     function setEntryFee(uint _entryFee)
