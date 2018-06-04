@@ -58,7 +58,6 @@ const actions = [
   "ActionAddContract",
   "ActionRemoveContract",
 
-  "ActionProjectDeployer",
   "ActionAddTemplates"
 ];
 
