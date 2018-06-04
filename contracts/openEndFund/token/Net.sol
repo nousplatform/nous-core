@@ -28,12 +28,13 @@ contract Net is SimpleMintableToken, PurchaseToken {
 
     function redeem(
         address _withdrawAddr,
-        uint256 _value
+        uint256 _value,
+        bytes _extraData
     )
     public
     returns (bool)
     {
         fundCup[_withdrawAddr] -= _value;
-        super.redeem(_withdrawAddr, _value);
+        super.redeem(_withdrawAddr, _value, _extraData);
     }
 }

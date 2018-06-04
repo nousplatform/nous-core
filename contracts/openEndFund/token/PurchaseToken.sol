@@ -16,7 +16,7 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
     event Withdraw(address indexed from, address indexed to, uint256 value);
 
     // @dev withdraw Token
-    function redeem(address _withdrawAddr, uint256 _value)
+    function redeem(address _withdrawAddr, uint256 _value, bytes _extraData)
     public
     returns(bool)
     {
@@ -27,8 +27,12 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
         uint256 _totalAmount = _value.div(_rate);
 
         uint _exitFee = getDataParamsSaleDb("exitFee");
-        uint _amountFee = _totalAmount.mul(_exitFee).div(100);
-        _totalAmount = _totalAmount.sub(_amountFee);
+        uint _amountEntryFee = calculatePercent(_totalAmount, _exitFee, decimals);// _value.mul(_entryFee).div(100);
+
+        uint _platformFee = getDataParamsSaleDb("platformFee");
+        uint _amountPlatformFee = calculatePercent(_totalAmount, _platformFee, decimals);
+
+        _totalAmount = _totalAmount.sub(_amountEntryFee).sub(_amountPlatformFee);
 
         //_withdraw token
         bool res1 = ERC20(_withdrawAddr).transfer(msg.sender, _totalAmount);
@@ -37,8 +41,9 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
         emit Redeem(msg.sender, _withdrawAddr, _totalAmount);
 
         //fee token
-        bool res2 = ERC20(_withdrawAddr).transfer(wallet, _amountFee);
-        require(res2, "Transfer exit fee error");
+        ERC20(_withdrawAddr).transfer(wallet, _amountEntryFee);
+        ERC20(_withdrawAddr).transfer(nousWallet, _amountPlatformFee);
+        //require(res2, "Transfer exit fee error");
 
         _burn(msg.sender, _value);
     }

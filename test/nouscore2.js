@@ -196,6 +196,15 @@ contract('NousCore', async function(accounts) {
     }
     console.log("100 * Math.pow(10, 18)", 1 * Math.pow(10, 18));
 
+    let initTokens = {
+      entryFee: 1,
+      exitFee: 1,
+      initPrice: 0.04,
+      maxFundCup: 100,
+      maxInvestors: 0,
+      platformFee: 0.01
+    };
+
 
     //STEP 1 To deploy
     var obj = {
@@ -208,14 +217,7 @@ contract('NousCore', async function(accounts) {
       "TPLOpenEndedSaleDb": {
         "variables" : [
           accounts[1],
-          ...["entryFee", "exitFee", "initPrice", "maxFundCup", "maxInvestors", "platformFee"].map(item => {
-            if (item === "initPrice" ) {
-              return 0.004 * Math.pow(10, 18);
-            } else if(item === "maxFundCup") {
-              return 100 * Math.pow(10, 18);
-            }
-            return item.length;
-          })
+          ...Object.keys(initTokens).map(item => initTokens[item] * Math.pow(10, 18))
         ],
         "address": "0x0"
       },
@@ -293,6 +295,7 @@ contract('NousCore', async function(accounts) {
     user_3.balance = initialBalances[2] * Math.pow(10, 18);
 
 
+    console.log("---=========Sale=========-------");
     let openEndedToken = OpenEndedToken.at(_projContr[1][2]);
     //console.log("total supplay", await openEndedToken.totalSupply());
     assert.equal(true, await openEndedToken.allowPurchases(nousTokenInstance.address), "allow purchases nsu tokens");
@@ -300,10 +303,16 @@ contract('NousCore', async function(accounts) {
     assert.equal(user_1.balance, (await nousTokenInstance.balanceOf(user_1.address, {from: accounts[0]})).toNumber(), "Owner is first mining user_1 1000");
 
     let sum = 1 * Math.pow(10, 18);
+    console.log("initTokens['entryFee']", initTokens['entryFee'] * Math.pow(10, 18));
+
+    console.log("entry fee from fund  ", (await openEndedToken.getDataParamsSaleDb(web3.utils.toHex("entryFee"))).toNumber());
+
+    console.log("calculatePercent entry fee  ", (await openEndedToken.calculatePercent(sum, initTokens['entryFee'] * Math.pow(10, 18), 18)).toNumber());
 
     console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_1.address)).toNumber());
-    console.log("sum", sum);
+    console.log("sum NSU", sum);
     console.log("rate open ended token ", rate = (await openEndedToken.rate()).toNumber());
+
 
     console.log("Total sum rate  ", (await openEndedToken.percent(sum, rate, 18)).toNumber());
     console.log("maxFundCup ", (await openEndedToken.getDataParamsSaleDb(web3.utils.toHex("maxFundCup"))).toNumber());
@@ -312,6 +321,14 @@ contract('NousCore', async function(accounts) {
 
     console.log("balance BWT ", (await openEndedToken.balanceOf(user_1.address)).toNumber());
     console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_1.address)).toNumber());
+
+    console.log("---=========redeem=========-------");
+
+    await openEndedToken.redeem(nousTokenInstance.address, 10 * Math.pow(10, 18), "0x0", {from: user_1.address});
+
+    console.log("balance BWT ", (await openEndedToken.balanceOf(user_1.address)).toNumber());
+    console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_1.address)).toNumber());
+
 
 
     //var dataSnapshotDb = [accounts[0]];

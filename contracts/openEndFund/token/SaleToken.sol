@@ -38,17 +38,17 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
         if (_amount >= _value) {
 
             uint _entryFee = getDataParamsSaleDb("entryFee");
-            uint _amountEntryFee = calculatePercent(_value, _entryFee);// _value.mul(_entryFee).div(100);
+            uint _amountEntryFee = calculatePercent(_value, _entryFee, decimals);// _value.mul(_entryFee).div(100);
 
             uint _platformFee = getDataParamsSaleDb("platformFee");
-            uint _amountPlatformFee = calculatePercent(_value, _platformFee);
+            uint _amountPlatformFee = calculatePercent(_value, _platformFee, decimals);
 
             _value = _value.sub(_amountEntryFee).sub(_amountPlatformFee);
 
-            uint256 _totalAmount = divDecimals(_value, rate(), decimals); //totalSum(_value,  rate(), _precision);
+            uint256 _totalAmount = percent(_value, rate(), decimals);
 
             require(validateMaxFundCap(_totalAmount), "Max fund capital is ");
-            return true;
+
             if (nt.transferFrom(_sender, this, _value)) {
 
                 // transfer amount fee to wallet

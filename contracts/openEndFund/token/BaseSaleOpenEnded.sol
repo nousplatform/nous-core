@@ -57,13 +57,15 @@ contract BaseSaleOpenEnded is Validee, AllowPurchases {
 
     function calculatePercent(
         uint256 _value,
-        uint256 _percent
+        uint256 _percent,
+        uint256 _decimals
     )
     public
     pure
     returns(uint256)
     {
-        return _value.mul(_percent).div(100);
+        uint256 _exponent = 10 ** (_decimals + 2);
+        return (_value.mul(_percent)).div(_exponent);
     }
 
     function percent(
@@ -79,21 +81,6 @@ contract BaseSaleOpenEnded is Validee, AllowPurchases {
         uint _numerator  = numerator.mul(exponent);
         uint _quotient =  ((_numerator.div(denominator)).add(5)).div(10);
         return ( _quotient);
-    }
-
-    function divDecimals(
-        uint256 multiplier,
-        uint256 numerator,
-        uint256 precision
-    )
-    public
-    pure
-    returns (uint quotient)
-    {
-        uint decimals = 10 ** (precision);
-        uint _multiplier = multiplier.mul(decimals);
-        uint _quotient = (_multiplier.div(numerator)).mul(decimals);
-        return (_quotient / decimals);
     }
 
 }
