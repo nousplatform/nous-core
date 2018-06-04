@@ -7,6 +7,11 @@ module.exports = {
       gas: 4700000,
       gasPrice: 50000000000
     },
+    ganache: {
+      host: "localhost",
+      port: 7545,
+      network_id: "*"
+    },
     ropsten: {
       host: "192.168.88.13",
       port: 8545,
