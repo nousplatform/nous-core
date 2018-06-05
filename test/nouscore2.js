@@ -45,10 +45,9 @@ const TPLWalletDb = artifacts.require("TPLWalletDb.sol");
 const ProjectActionManager = artifacts.require("ProjectActionManager.sol");
 const ProjectConstructor = artifacts.require("ProjectConstructor.sol");
 
-
 const OpenEndedToken = artifacts.require("OpenEndedToken.sol");
 
-
+const SnapshotDb = artifacts.require("SnapshotDb.sol");
 
 const actions = [
   "ActionAddAction",
@@ -345,6 +344,32 @@ contract('NousCore', async function(accounts) {
     console.log("balance BWT ", user_1.balance);
 
     assert.equal(0, (await openEndedToken.totalInvestors()).toNumber(), "Investors counter ");
+    assert.equal(0,  user_1.balance, "Toatal balance BWT zero.");
+
+    console.log("---=========Create Snapshot=========-------");
+    let projectActionManager = ProjectActionManager.at(_projContr[1][3]);
+
+    let time =  new Date().getTime();
+    await projectActionManager.actionAddSnapshot(time, 12132321321321321, 0.05 * Math.pow(10, 18), {from: accounts[0]});
+
+    let snapshotDb = SnapshotDb.at(_projContr[1][0]);
+    console.log("Current Rate", (await snapshotDb.rate()).toNumber());
+
+    console.log("---=========Validate Security=========-------");
+
+    /*try {
+      await snapshotDb.createSnapshot(time, time, 0.05 * Math.pow(10, 18));
+    } catch (e) {
+      console.log("Validate sequrity")
+    }*/
+
+    /*try {
+       var res = await projectActionManager.actionAddSnapshot(time, time, 0.05 * Math.pow(10, 18), {from: accounts[1]});
+    } catch (e) {
+      console.log("Validate sequrity")
+    }*/
+
+
 
     //var dataSnapshotDb = [accounts[0]];
 

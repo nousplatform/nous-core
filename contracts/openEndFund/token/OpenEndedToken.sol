@@ -17,8 +17,6 @@ import {AllowPurchases} from "../../doug/ownership/AllowPurchases.sol";
  */
 contract OpenEndedToken is PurchaseToken, SaleToken, Net, InvestorsCounter {
 
-
-
     // @dev Constructor only nous token can mint.
     constructor(
         address _owner,

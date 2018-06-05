@@ -60,6 +60,7 @@ contract ActionsResolution is DougEnabled, LockedActionManager {
     onlyRole(ROLE_NOUS_PLATFORM)
     external
     {
+        return;
         address _sdb = getContractAddress("SnapshotDb");
         SnapshotDb(_sdb).addSnapshot(_timestamp, _hash, _rate);
     }

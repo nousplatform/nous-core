@@ -6,11 +6,11 @@ import "./Permissions.sol";
 
 contract LockedActionManager is Permissions {
 
-    bool locked;
+    bool locked = false;
 
     modifier isLocked()
     {
-        require(locked);
+        require(!locked);
         _;
     }
 
