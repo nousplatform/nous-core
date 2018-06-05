@@ -46,6 +46,7 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
         //require(res2, "Transfer exit fee error");
 
         _burn(msg.sender, _value);
+        afterRedeem();
     }
 
     function withdraw(address _withdrawAddr, uint _value)
@@ -58,4 +59,6 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
         require(res, "Transfer error");
         emit Withdraw(this, msg.sender, _value);
     }
+
+    function afterRedeem() internal {}
 }

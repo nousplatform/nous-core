@@ -15,7 +15,7 @@ import {AllowPurchases} from "../../doug/ownership/AllowPurchases.sol";
  * @dev Very simple ERC20 Token that can be minted.
  * It is meant to be used in a crowdsale contract.
  */
-contract OpenEndedToken is PurchaseToken, SaleToken/*, InvestorsCounter, Net */{
+contract OpenEndedToken is PurchaseToken, SaleToken, Net, InvestorsCounter {
 
 
 

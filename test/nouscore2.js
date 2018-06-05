@@ -194,7 +194,6 @@ contract('NousCore', async function(accounts) {
       assert.equal(templatesList[tplName].address, res, "Not Equal templates");
       console.log(`${tplName}: ${res}`);
     }
-    console.log("100 * Math.pow(10, 18)", 1 * Math.pow(10, 18));
 
     let initTokens = {
       entryFee: 1,
@@ -254,7 +253,7 @@ contract('NousCore', async function(accounts) {
     let projectType = web3.utils.toHex("Open-end Fund");
 
     for (let _item in obj) {
-      console.log("_item", _item);
+      //console.log("_item", _item);
       await ActionManagerInstance.deployTemplates(web3.utils.toHex(_item), getBytesCallData(_item, obj[_item].variables, "create"));
     }
 
@@ -321,15 +320,31 @@ contract('NousCore', async function(accounts) {
 
     console.log("balance BWT ", (await openEndedToken.balanceOf(user_1.address)).toNumber());
     console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_1.address)).toNumber());
+    console.log("NET Sale BWT ", (await openEndedToken.fundCup(nousTokenInstance.address)).toNumber());
 
     console.log("---=========redeem=========-------");
 
     await openEndedToken.redeem(nousTokenInstance.address, 10 * Math.pow(10, 18), "0x0", {from: user_1.address});
+    user_1.balance = (await openEndedToken.balanceOf(user_1.address)).toNumber();
 
-    console.log("balance BWT ", (await openEndedToken.balanceOf(user_1.address)).toNumber());
+    console.log("balance BWT ", user_1.balance);
+
     console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_1.address)).toNumber());
 
+    console.log("---=========NET=========-------");
+    console.log("NET Purchase  BWT ", (await openEndedToken.fundCup(nousTokenInstance.address)).toNumber());
 
+
+    console.log("---=========Total investors=========-------");
+
+    assert.equal(1, (await openEndedToken.totalInvestors()).toNumber());
+
+    console.log("---=========by ALL=========-------");
+    await openEndedToken.redeem(nousTokenInstance.address, user_1.balance, "0x0", {from: user_1.address});
+    user_1.balance = (await openEndedToken.balanceOf(user_1.address)).toNumber();
+    console.log("balance BWT ", user_1.balance);
+
+    assert.equal(0, (await openEndedToken.totalInvestors()).toNumber(), "Investors counter ");
 
     //var dataSnapshotDb = [accounts[0]];
 

@@ -1,26 +1,21 @@
 pragma solidity ^0.4.18;
 
 
-import "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
+import {StandardToken} from "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 import {SimpleMintableToken} from "./SimpleMintableToken.sol";
+import {PurchaseToken} from "./PurchaseToken.sol";
 
 
 //counter investor
-contract InvestorsCounter is StandardToken, SimpleMintableToken {
+contract InvestorsCounter is StandardToken, SimpleMintableToken, PurchaseToken {
 
-    mapping(address => uint256) public investors;
-    address[] public investorIndex;
+    mapping(address => bool) public investors;
+    uint256 public totalInvestors;
 
-    // @dev remove transaction
-    function removeInvestor(address _addr)
-    internal
-    {
-        if (investors[_addr] > 0) {
-            uint rowToDel = investors[_addr] - 1;
-            investors[_addr] = 0;
-            address lastRow = investorIndex[investorIndex.length - 1];
-            investorIndex[rowToDel] = lastRow;
-            investorIndex.length--;
+    function subtractInvestor(address _addr) private {
+        if (balances[_addr] == 0) {
+            investors[_addr] = false;
+            totalInvestors--;
         }
     }
 
@@ -29,8 +24,9 @@ contract InvestorsCounter is StandardToken, SimpleMintableToken {
     internal
     returns (bool)
     {
-        if (investors[_to] == 0) {
-            investors[_to] = investorIndex.push(_to);
+        if (investors[_to] == false) {
+            investors[_to] = true;
+            totalInvestors++;
         }
         return super.mint(_to, _amount);
     }
@@ -40,9 +36,7 @@ contract InvestorsCounter is StandardToken, SimpleMintableToken {
     public
     returns(bool)
     {
-        if (balances[_from] == 0) {
-            removeInvestor(_from);
-        }
+        subtractInvestor(_from);
         return super.transferFrom(_from, _to, _value);
     }
 
@@ -51,18 +45,14 @@ contract InvestorsCounter is StandardToken, SimpleMintableToken {
     public
     returns (bool)
     {
-        if (balances[msg.sender] == 0) {
-            removeInvestor(msg.sender);
-        }
+        subtractInvestor(msg.sender);
         return super.transfer(_to, _value);
     }
 
-    // @dev returned all investors
-    function countInvestors()
-    public
-    view
-    returns(uint256)
+    function afterRedeem()
+    internal
     {
-        return investorIndex.length;
+        subtractInvestor(msg.sender);
     }
+
 }
