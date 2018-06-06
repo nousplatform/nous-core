@@ -129,7 +129,7 @@ async function createAddActions(data) {
 }
 
 module.exports = async function(deployer) {
-  return;
+
   let instanceList = {
     //"name" : "instance"
   };

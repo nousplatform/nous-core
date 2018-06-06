@@ -346,10 +346,11 @@ contract('NousCore', async function(accounts) {
 
     assert.equal(1, (await openEndedToken.totalInvestors()).toNumber());
 
-    console.log("---=========by ALL=========-------");
+    console.log("---=========Redeem ALL=========-------");
     await openEndedToken.redeem(nousTokenInstance.address, user_1.balance, "0x0", {from: user_1.address});
     user_1.balance = (await openEndedToken.balanceOf(user_1.address)).toNumber();
-    console.log("balance BWT ", user_1.balance);
+    assert.equal(0, user_1.balance);
+    //console.log("balance BWT ", user_1.balance);
 
     assert.equal(0, (await openEndedToken.totalInvestors()).toNumber(), "Investors counter ");
     assert.equal(0,  user_1.balance, "Toatal balance BWT zero.");
@@ -357,9 +358,6 @@ contract('NousCore', async function(accounts) {
     console.log("---=========Create Snapshot=========-------");
 
     let projectActionManager = ProjectActionManager.at(_projContr[1][3]);
-    //console.log("await projectActionManager", projectActionManager.address);
-    //console.log(await projectActionManager.getContractAddress("SnapshotDb"));
-    //console.log("_projContr[1][0]", _projContr[1][0]);
 
     let time = new Date().getTime();
     await projectActionManager.actionAddSnapshot(time, 1212, 0.05 * Math.pow(10, 18), {from: accounts[0]});

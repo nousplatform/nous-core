@@ -12,7 +12,7 @@ import {Validee} from "../safety/Validee.sol";
 contract AllowPurchases is Validee {
   mapping(address => bool) public allowPurchases;
 
-  address[] allowPurchasesIndex;
+  address[] public allowPurchasesIndex;
 
   event AllowPurchasesAddressAdded(address addr);
   event AllowPurchasesAddressRemoved(address addr);
