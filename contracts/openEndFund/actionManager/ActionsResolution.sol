@@ -2,7 +2,7 @@ pragma solidity ^0.4.18;
 
 
 import {LockedActionManager} from "./LockedActionManager.sol";
-import {SnapshotDbInterface as SnapshotDb} from "../models/SnapshotDb.sol";
+import {SnapshotDb} from "../models/SnapshotDb.sol";
 import {WalletDbInterface as WalletDb} from "../models/WalletDb.sol";
 import {OpenEndedSaleDbInterface as OpenEndedSaleDb} from "../models/OpenEndedSaleDb.sol";
 import {DougEnabled} from "../../doug/safety/DougEnabled.sol";
@@ -21,11 +21,11 @@ contract ActionsResolution is DougEnabled, LockedActionManager {
     orRole(ROLE_FUND_OWNER, ROLE_FUND_MANAGER)
     external
     {
-        require(_symbolWallet == bytes32(0));
-        require(_addressWallet == bytes32(0));
+        require(_symbolWallet != bytes32(0));
+        require(_addressWallet != bytes32(0));
 
         address _wdb = getContractAddress("WalletDb");
-        WalletDb(_wdb).addWallet(_symbolWallet, _addressWallet);
+        require(WalletDb(_wdb).addWallet(_symbolWallet, _addressWallet), "Error added wallet");
     }
 
     /**
@@ -41,8 +41,11 @@ contract ActionsResolution is DougEnabled, LockedActionManager {
     onlyRole(ROLE_NOUS_PLATFORM)
     external
     {
+        require(_symbolWallet != bytes32(0));
+        require(_addressWallet != bytes32(0));
+
         address _wdb = getContractAddress("WalletDb");
-        WalletDb(_wdb).confirmWallet(_symbolWallet, _addressWallet);
+        require(WalletDb(_wdb).confirmWallet(_symbolWallet, _addressWallet));
     }
 
     /**
@@ -59,10 +62,10 @@ contract ActionsResolution is DougEnabled, LockedActionManager {
     isLocked
     onlyRole(ROLE_NOUS_PLATFORM)
     external
+    returns (bool)
     {
-        return;
         address _sdb = getContractAddress("SnapshotDb");
-        SnapshotDb(_sdb).addSnapshot(_timestamp, _hash, _rate);
+        return SnapshotDb(_sdb).addSnapshot(_timestamp, _hash, _rate);
     }
 
     /* Sale Actions */
@@ -86,14 +89,14 @@ contract ActionsResolution is DougEnabled, LockedActionManager {
         OpenEndedSaleDb(_sdb).setExitFee(_exitFee);
     }
 
-    function actionSetManagementFee(uint _managementFee)
+    function actionSetPlatformFee(uint _platformFee)
     external
     isLocked
-    orRole(ROLE_FUND_OWNER, ROLE_FUND_MANAGER)
+    onlyRole(ROLE_NOUS_PLATFORM)
     {
-        require(_managementFee > 0);
+        require(_platformFee > 0);
         address _sdb = getContractAddress("OpenEndedSaleDb");
-        OpenEndedSaleDb(_sdb).setManagementFee(_managementFee);
+        OpenEndedSaleDb(_sdb).setPlatformFee(_platformFee);
     }
 
 

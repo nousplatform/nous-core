@@ -9,13 +9,13 @@ contract DougEnabled {
     address DOUG;
 
     function getContractAddress(bytes32 _name)
-    internal
+    public
     view
     returns (address)
     {
         require(DOUG != 0x0);
         address _contract = ContractProvider(DOUG).contracts(_name);
-        require(_contract != 0x0);
+        require(_contract != 0x0, "Contract address empty");
         return _contract;
     }
 
@@ -23,7 +23,9 @@ contract DougEnabled {
     public
     returns (bool)
     {
-        require(DOUG == 0x0);
+        if(DOUG != 0x0 && _dougAddr != DOUG) {
+            return false;
+        }
         DOUG = _dougAddr;
         return true;
     }

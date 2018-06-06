@@ -5,8 +5,8 @@ import {ProjectActionManagerEnabled} from "../actionManager/ProjectActionManager
 
 
 interface WalletDbInterface {
-    function addWallet(bytes32 _symbol, bytes32 _addr) external;
-    function confirmWallet(bytes32 _symbol, bytes32 _addr) external;
+    function addWallet(bytes32 _symbol, bytes32 _addr) external returns(bool);
+    function confirmWallet(bytes32 _symbol, bytes32 _addr) external returns(bool);
 }
 
 contract WalletDb is ProjectActionManagerEnabled {
@@ -44,7 +44,8 @@ contract WalletDb is ProjectActionManagerEnabled {
         bytes32 _addr
     )
     external
-    isActionManager
+    isActionManager_
+    returns(bool)
     {
         require(isWallet(_symbol, _addr) == 0);
         wallets.push(
@@ -54,6 +55,7 @@ contract WalletDb is ProjectActionManagerEnabled {
                 confirmed: false
             })
         );
+        return true;
     }
 
     /**
@@ -64,11 +66,14 @@ contract WalletDb is ProjectActionManagerEnabled {
         bytes32 _addr
     )
     external
-    isActionManager
+    isActionManager_
+    returns (bool)
     {
+
         uint i = isWallet(_symbol, _addr);
         require(i > 0);
         wallets[i - 1].confirmed = true;
+        return true;
     }
 
 }

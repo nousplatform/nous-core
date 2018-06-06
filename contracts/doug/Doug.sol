@@ -32,10 +32,10 @@ contract Doug is DougDb {
             require(_names[i] != bytes32(0), "Contract name is empty.");
             require(_addrs[i] != 0x0, "Contract address is empty.");
 
-            _setDougAddress(_addrs[i]);
+            require(_setDougAddress(_addrs[i]), "Doug address is not set.");
             _addElement(_names[i], _addrs[i]);
 
-            emit AddContract(0x0, _names[i], _addrs[i]);
+            emit AddContract(msg.sender, _names[i], _addrs[i]);
         }
     }
 
@@ -55,7 +55,7 @@ contract Doug is DougDb {
         require(_name != bytes32(0), "Contract name is empty.");
         require(_addr != 0x0, "Contract address is empty.");
 
-        _setDougAddress(_addr);
+        require(_setDougAddress(_addr));
         _addElement(_name, _addr);
 
         emit AddContract(msg.sender, _name, _addr);

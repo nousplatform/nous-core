@@ -44,6 +44,8 @@ const TPLWalletDb = artifacts.require("TPLWalletDb.sol");
 
 const ProjectActionManager = artifacts.require("ProjectActionManager.sol");
 const ProjectConstructor = artifacts.require("ProjectConstructor.sol");
+const WalletDb = artifacts.require("WalletDb.sol");
+const OpenEndedSaleDb = artifacts.require("OpenEndedSaleDb.sol");
 
 const OpenEndedToken = artifacts.require("OpenEndedToken.sol");
 
@@ -237,6 +239,12 @@ contract('NousCore', async function(accounts) {
         ],
         "address": "0x0"
       },
+      "TPLWalletDb": {
+        "variables" : [
+          accounts[1]
+        ],
+        "address": "0x0"
+      },
       /*"TPLProjectConstructor": {
         "variables" : [
           accounts[1],
@@ -347,15 +355,55 @@ contract('NousCore', async function(accounts) {
     assert.equal(0,  user_1.balance, "Toatal balance BWT zero.");
 
     console.log("---=========Create Snapshot=========-------");
-    let projectActionManager = ProjectActionManager.at(_projContr[1][3]);
 
-    let time =  new Date().getTime();
-    await projectActionManager.actionAddSnapshot(time, 12132321321321321, 0.05 * Math.pow(10, 18), {from: accounts[0]});
+    let projectActionManager = ProjectActionManager.at(_projContr[1][3]);
+    //console.log("await projectActionManager", projectActionManager.address);
+    //console.log(await projectActionManager.getContractAddress("SnapshotDb"));
+    //console.log("_projContr[1][0]", _projContr[1][0]);
+
+    let time = new Date().getTime();
+    await projectActionManager.actionAddSnapshot(time, 1212, 0.05 * Math.pow(10, 18), {from: accounts[0]});
+
 
     let snapshotDb = SnapshotDb.at(_projContr[1][0]);
-    console.log("Current Rate", (await snapshotDb.rate()).toNumber());
+    //console.log("Current Rate",  (await snapshotDb.rate()).toNumber());
+    //console.log("rate open ended token ", (await openEndedToken.rate()).toNumber());
+    assert.equal(0.05 * Math.pow(10, 18), (await snapshotDb.rate()).toNumber());
 
-    console.log("---=========Validate Security=========-------");
+
+    console.log("---=========Add Wallet=========-------");
+    await projectActionManager.actionAddWallet(web3.utils.toHex("BTC"), "0x00000002234", {from: accounts[1]});
+
+    let walletAddr = await projectActionManager.getContractAddress("WalletDb");
+    let walletDb = WalletDb.at(walletAddr);
+    let addedWalet = await walletDb.wallets(0);
+    assert.equal(false, addedWalet[2], "added wallet not confirmed");
+    //console.log("walletDb.", await walletDb.wallets(0));
+
+    console.log("---=========Confirm Wallet=========-------");
+    //confirm wallet? only nous core
+    await projectActionManager.actionConfirmWallet(web3.utils.toHex("BTC"), "0x00000002234", {from: accounts[0]});
+    addedWalet = await walletDb.wallets(0);
+    assert.equal(true, addedWalet[2], "added wallet not confirmed");
+
+    console.log("---=========SetEntryFee=========-------");
+    await projectActionManager.actionSetEntryFee(0.1 * Math.pow(10, 18), {from: accounts[1]});
+
+    let openEndedSaleDbAddr = await projectActionManager.getContractAddress("OpenEndedSaleDb");
+    let openEndedSaleDb = OpenEndedSaleDb.at(openEndedSaleDbAddr);
+    assert.equal(0.1 * Math.pow(10, 18), (await openEndedSaleDb.params("entryFee")).toNumber());
+
+    console.log("---=========SetExitFee=========-------");
+    await projectActionManager.actionSetExitFee(0.2 * Math.pow(10, 18), {from: accounts[1]});
+    assert.equal(0.2 * Math.pow(10, 18), (await openEndedSaleDb.params("exitFee")).toNumber());
+
+
+    console.log("---=========SetPlatformFee=========-------");
+    await projectActionManager.actionSetPlatformFee(0.02 * Math.pow(10, 18), {from: accounts[0]});
+    assert.equal(0.02 * Math.pow(10, 18), (await openEndedSaleDb.params("platformFee")).toNumber());
+
+
+
 
     /*try {
       await snapshotDb.createSnapshot(time, time, 0.05 * Math.pow(10, 18));

@@ -7,16 +7,14 @@ import "zeppelin-solidity/contracts/math/SafeMath.sol";
 
 contract OpenEndedSaleDbInterface {
     mapping(bytes32 => uint256) public params;
-    function setEntryFee(uint _entryFee) external;
-    function setExitFee(uint _exitFee) external;
-    function setManagementFee(uint _managementFee) external;
+    function setEntryFee(uint _entryFee) external returns (bool);
+    function setExitFee(uint _exitFee) external returns (bool);
+    function setPlatformFee(uint _platformFee) external returns (bool);
 }
 
 contract OpenEndedSaleDb is ProjectActionManagerEnabled {
 
     mapping(bytes32 => uint256) public params;
-
-
 
     struct Decimal {
         uint256 numerator;
@@ -52,25 +50,30 @@ contract OpenEndedSaleDb is ProjectActionManagerEnabled {
 
     function setEntryFee(uint _entryFee)
     external
-    isActionManager
+    isActionManager_
+    returns (bool)
     {
-        require(_entryFee > 0);
         params["entryFee"] = _entryFee;
+        return true;
     }
 
+    //--
     function setExitFee(uint _exitFee)
     external
-    isActionManager
+    isActionManager_
+    returns (bool)
     {
-        require(_exitFee > 0);
         params["exitFee"] = _exitFee;
+        return true;
     }
 
-    function setManagementFee(uint _managementFee)
+    //--
+    function setPlatformFee(uint _platformFee)
     external
-    isActionManager
+    isActionManager_
+    returns (bool)
     {
-        require(_managementFee > 0);
-        params["managementFee"] = _managementFee;
+        params["platformFee"] = _platformFee;
+        return true;
     }
 }
