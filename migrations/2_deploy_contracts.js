@@ -128,8 +128,7 @@ async function createAddActions(data) {
   await actionManagerQuery("ActionAddActions", data);
 }
 
-module.exports = async function(deployer) {
-
+module.exports = async function(deployer, network, accounts) {
   let instanceList = {
     //"name" : "instance"
   };
@@ -145,11 +144,13 @@ module.exports = async function(deployer) {
   await deployer.deploy(ActionDb);
   contractList["ActionDb"] = ActionDb.address;
 
-  // let permInstance = await PermissionDb.new(OWNER);
+  if (network === "ganache") {
+    await deployer.deploy(PermissionDb, accounts[0]);
+  } else {
+    await deployer.deploy(PermissionDb, OWNER);
+  }
 
-  await deployer.deploy(PermissionDb, OWNER);
   contractList["PermissionDb"] = PermissionDb.address;
-  // let PermissionDBInst = await PermissionDb.deployed();
 
   await deployer.deploy(TemplatesDb);
   contractList["TemplatesDb"] = TemplatesDb.address;
