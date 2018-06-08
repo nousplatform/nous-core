@@ -19,7 +19,7 @@ module.exports = {
       host: "192.168.88.13",
       port: 8545,
       network_id: "3",
-      gas: 4700000, // Gas limit used for deploys
+      gas: 4800000, // Gas limit used for deploys
       gasPrice: 50000000000, // 20 gwei
       from: "0x719a22E179bb49a4596eFe3BD6F735b8f3b00AF1"
     },

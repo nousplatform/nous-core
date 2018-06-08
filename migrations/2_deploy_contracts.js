@@ -2,7 +2,7 @@ const Web3 = require("web3");
 const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 const fs = require("fs");
 
-var OWNER = "0x5F6C8081EB845aC363Be61bA4E5FF42eb3547Bb7";
+var OWNER = "0x719a22e179bb49a4596efe3bd6f735b8f3b00af1";
 
 const NOUSTOKEN = "0x16db3d98cf6babcfdfd4bc35d4e9da8f8a1ad983";
 
@@ -132,8 +132,10 @@ async function createAddActions(data) {
 
 module.exports = async function(deployer) {
 
+
   deployer.deploy(MathCalc);
   deployer.link(MathCalc, [TPLOpenEndedToken]);
+  return;
 
   let instanceList = {
     //"name" : "instance"

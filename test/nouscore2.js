@@ -141,8 +141,8 @@ contract('NousCore', async function(accounts) {
 
   beforeEach(async function () {
 
-    //deployer.deploy(MathCalc);
-    //deployer.link(MathCalc, [TPLOpenEndedToken]);
+    // deployer.deploy(MathCalc);
+    // deployer.autolink();
 
     nousTokenInstance = await NousTokenTest.new();
 
@@ -230,7 +230,7 @@ contract('NousCore', async function(accounts) {
       "TPLOpenEndedToken": {
         "variables" : [
           accounts[1],
-          nousTokenInstance.address,
+          [nousTokenInstance.address],
           "BWT TOKEN",
           "BWT",
           18,
@@ -319,14 +319,14 @@ contract('NousCore', async function(accounts) {
 
     console.log("entry fee from fund  ", (await openEndedToken.getDataParamsSaleDb(web3.utils.toHex("entryFee"))).toNumber());
 
-    console.log("calculatePercent entry fee  ", (await openEndedToken.calculatePercent(sum, initTokens['entryFee'] * Math.pow(10, 18), 18)).toNumber());
+    //console.log("calculatePercent entry fee  ", (await openEndedToken.calculatePercent(sum, initTokens['entryFee'] * Math.pow(10, 18), 18)).toNumber());
 
     console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_1.address)).toNumber());
     console.log("sum NSU", sum);
     console.log("rate open ended token ", rate = (await openEndedToken.rate()).toNumber());
 
 
-    console.log("Total sum rate  ", (await openEndedToken.percent(sum, rate, 18)).toNumber());
+    //console.log("Total sum rate  ", (await openEndedToken.percent(sum, rate, 18)).toNumber());
     console.log("maxFundCup ", (await openEndedToken.getDataParamsSaleDb(web3.utils.toHex("maxFundCup"))).toNumber());
 
     await nousTokenInstance.approveAndCall(openEndedToken.address, sum, "0x0", {from: user_1.address});
