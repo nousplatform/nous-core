@@ -6,6 +6,7 @@ import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import {AllowPurchases} from "../../doug/ownership/AllowPurchases.sol";
 import {SimpleMintableToken} from "./SimpleMintableToken.sol";
 import {BaseSaleOpenEnded} from "./BaseSaleOpenEnded.sol";
+import "../../lib/MathCalc.sol";
 //import "../../lib/MathPow.sol";
 
 
@@ -32,22 +33,19 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
         require(_value > 0);
 
         ERC20 nt = ERC20(msg.sender); //_tknAddress
-        uint256 _amount = nt.allowance(_sender, this);
 
         // how many coins we are allowed to spend
-        if (_amount >= _value) {
+        if (nt.allowance(_sender, this) >= _value) {
 
-            uint _entryFee = getDataParamsSaleDb("entryFee");
-            uint _amountEntryFee = calculatePercent(_value, _entryFee, decimals);// _value.mul(_entryFee).div(100);
+            uint _amountEntryFee = MathCalc.calculatePercent(_value, getDataParamsSaleDb("entryFee"), decimals);
 
-            uint _platformFee = getDataParamsSaleDb("platformFee");
-            uint _amountPlatformFee = calculatePercent(_value, _platformFee, decimals);
+            uint _amountPlatformFee = MathCalc.calculatePercent(_value, getDataParamsSaleDb("platformFee"), decimals);
 
             _value = _value.sub(_amountEntryFee).sub(_amountPlatformFee);
 
-            uint256 _totalAmount = percent(_value, rate(), decimals);
+            uint256 _totalAmount = MathCalc.percent(_value, rate(), decimals);
 
-            require(validateMaxFundCap(_totalAmount), "Max fund capital is ");
+            require(validateMaxFundCap(_totalAmount));
 
             if (nt.transferFrom(_sender, this, _value)) {
 
@@ -77,28 +75,5 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
         }
         return true;
     }
-
-    /*function (uint numerator, uint rate, uint precisionRate)
-    public
-    constant
-    returns(uint quotient)
-    {
-        uint decimals = 10 ** (precisionRate);
-        uint _numerator = numerator * decimals;
-        uint _quotient = (_numerator / rate) * decimals;
-        return ( _quotient / decimals);
-    }*/
-
-
-    /*function totalSum(uint numerator, uint rate, uint precisionRate)
-    public
-    constant
-    returns(uint quotient)
-    {
-        uint _decimals = 10 ** (precisionRate);
-        uint _numerator = numerator.mul(_decimals);
-        uint _quotient = (_numerator.div(rate)).mul(_decimals);
-        return (_quotient / _decimals);
-    }*/
 
 }

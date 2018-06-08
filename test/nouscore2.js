@@ -51,6 +51,8 @@ const OpenEndedToken = artifacts.require("OpenEndedToken.sol");
 
 const SnapshotDb = artifacts.require("SnapshotDb.sol");
 
+const MathCalc = artifacts.require("MathCalc.sol");
+
 const actions = [
   "ActionAddAction",
   "ActionAddActions",
@@ -138,6 +140,10 @@ contract('NousCore', async function(accounts) {
   }
 
   beforeEach(async function () {
+
+    //deployer.deploy(MathCalc);
+    //deployer.link(MathCalc, [TPLOpenEndedToken]);
+
     nousTokenInstance = await NousTokenTest.new();
 
     //deploy

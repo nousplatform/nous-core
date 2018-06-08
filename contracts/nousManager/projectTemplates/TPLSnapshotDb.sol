@@ -10,7 +10,7 @@ contract TPLSnapshotDb is BaseTemplate {
 
     bytes32 constant TYPE_PROJECT = "Open-end Fund";
     bytes32 constant CONTRACT_NAME = "SnapshotDb"; //----
-    bytes32 constant TPL_TYPE = "database"; //----
+    //bytes32 constant TPL_TYPE = "database"; //----
 
     function create(
         address _projectOwner

@@ -37,13 +37,13 @@ contract Net is SimpleMintableToken, PurchaseToken {
         super.redeem(_withdrawAddr, _value, _extraData);
     }
 
-    function getFromIndex(uint256 _index)
+    /*function getFromIndex(uint256 _index)
     public
     view
     returns (address, uint256)
     {
         return (indexTicker[_index], fundCup[indexTicker[_index]]);
-    }
+    }*/
 
     function totalNet()
     public

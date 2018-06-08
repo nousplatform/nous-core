@@ -10,7 +10,7 @@ contract TPLProjectConstructor is BaseTemplate {
 
     bytes32 constant public TYPE_PROJECT = "Open-end Fund";
     bytes32 constant public CONTRACT_NAME = "ProjectConstructor";
-    bytes32 constant public TPL_TYPE = "Constructor";
+    //bytes32 constant public TPL_TYPE = "Constructor";
 
     function create(
         address _projectOwner,

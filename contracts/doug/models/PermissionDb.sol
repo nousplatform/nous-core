@@ -51,8 +51,7 @@ contract PermissionDb is Validee {
         });
     }
 
-    function addUser(address _addr, bytes32 _name, bytes32 _role) external returns (bool) {
-        require(validate(), "Permission denied");
+    function addUser(address _addr, bytes32 _name, bytes32 _role) external validate_ returns (bool) {
         require(!isUser(_addr), "User exists");
         require(!roles[_role], "Special role not assign"); // if this role not special
 
@@ -70,10 +69,8 @@ contract PermissionDb is Validee {
         userList[_newOwner] = userList[msg.sender];
     }
 
-    function setOwned(address _addr, bool _owned) external returns (bool) {
-        require(validate(), "Permission denied");
+    function setOwned(address _addr, bool _owned) external validate_ returns (bool) {
         require(!roles[userList[_addr].role], "User is blocked");
-
         userList[_addr].owned = _owned;
         return true;
     }
@@ -84,8 +81,7 @@ contract PermissionDb is Validee {
     * @param _role Role to assign
     * @return bool
     */
-    function setRole(address _addr, bytes32 _role) external returns (bool) {
-        require(validate(), "Permission denied");
+    function setRole(address _addr, bytes32 _role) external validate_ returns (bool) {
         require(!roles[_role], "Special role not assign"); // if this role not special
         require(isUser(_addr), "User not exists");
 

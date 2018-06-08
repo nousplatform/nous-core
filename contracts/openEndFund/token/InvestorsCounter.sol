@@ -19,15 +19,19 @@ contract InvestorsCounter is StandardToken, SimpleMintableToken, PurchaseToken {
         }
     }
 
+    function addInvestor(address _addr) private {
+        if (investors[_addr] == false) {
+            investors[_addr] = true;
+            totalInvestors++;
+        }
+    }
+
     // @dev Override mint function
     function mint(address _to, uint256 _amount)
     internal
     returns (bool)
     {
-        if (investors[_to] == false) {
-            investors[_to] = true;
-            totalInvestors++;
-        }
+        addInvestor(_to);
         return super.mint(_to, _amount);
     }
 
@@ -37,6 +41,7 @@ contract InvestorsCounter is StandardToken, SimpleMintableToken, PurchaseToken {
     returns(bool)
     {
         subtractInvestor(_from);
+        addInvestor(_to);
         return super.transferFrom(_from, _to, _value);
     }
 
@@ -46,6 +51,7 @@ contract InvestorsCounter is StandardToken, SimpleMintableToken, PurchaseToken {
     returns (bool)
     {
         subtractInvestor(msg.sender);
+        addInvestor(_to);
         return super.transfer(_to, _value);
     }
 

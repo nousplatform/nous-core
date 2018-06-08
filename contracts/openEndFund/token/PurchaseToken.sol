@@ -5,6 +5,7 @@ import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "./BurnableToken.sol";
 import {BaseSaleOpenEnded} from "./BaseSaleOpenEnded.sol";
+import "../../lib/MathCalc.sol";
 //import {AllowPurchases} from "../../doug/ownership/AllowPurchases.sol";
 
 
@@ -23,20 +24,16 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
         require(allowPurchases[_withdrawAddr]);
         require(_value <= balances[msg.sender]);
 
-        uint _rate = rate();
-        uint256 _totalAmount = _value.div(_rate);
+        uint256 _totalAmount = _value.div(rate());
 
-        uint _exitFee = getDataParamsSaleDb("exitFee");
-        uint _amountEntryFee = calculatePercent(_totalAmount, _exitFee, decimals);// _value.mul(_entryFee).div(100);
+        uint _amountEntryFee = MathCalc.calculatePercent(_totalAmount, getDataParamsSaleDb("exitFee"), decimals);
 
-        uint _platformFee = getDataParamsSaleDb("platformFee");
-        uint _amountPlatformFee = calculatePercent(_totalAmount, _platformFee, decimals);
+        uint _amountPlatformFee = MathCalc.calculatePercent(_totalAmount, getDataParamsSaleDb("platformFee"), decimals);
 
         _totalAmount = _totalAmount.sub(_amountEntryFee).sub(_amountPlatformFee);
 
         //_withdraw token
-        bool res1 = ERC20(_withdrawAddr).transfer(msg.sender, _totalAmount);
-        require(res1, "Transfer error");
+        ERC20(_withdrawAddr).transfer(msg.sender, _totalAmount);
 
         emit Redeem(msg.sender, _withdrawAddr, _totalAmount);
 
@@ -55,8 +52,7 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
         require(msg.sender == wallet);
         require(allowPurchases[_withdrawAddr]);
 
-        bool res = ERC20(_withdrawAddr).transfer(msg.sender, _value);
-        require(res, "Transfer error");
+        ERC20(_withdrawAddr).transfer(msg.sender, _value);
         emit Withdraw(this, msg.sender, _value);
     }
 

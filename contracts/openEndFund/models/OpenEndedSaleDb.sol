@@ -7,6 +7,7 @@ import "zeppelin-solidity/contracts/math/SafeMath.sol";
 
 contract OpenEndedSaleDbInterface {
     mapping(bytes32 => uint256) public params;
+    mapping(bytes32 => uint256) public paramsAddr;
     function setEntryFee(uint _entryFee) external returns (bool);
     function setExitFee(uint _exitFee) external returns (bool);
     function setPlatformFee(uint _platformFee) external returns (bool);
@@ -16,10 +17,11 @@ contract OpenEndedSaleDb is ProjectActionManagerEnabled {
 
     mapping(bytes32 => uint256) public params;
 
-    struct Decimal {
-        uint256 numerator;
-        uint8 precision;
-    }
+    //mapping(bytes32 => uint256) public paramsAddr;
+
+    address public nousWallet;
+
+    address public  ownerWallet;
 
     constructor(
         uint256 _entryFee,
@@ -27,25 +29,27 @@ contract OpenEndedSaleDb is ProjectActionManagerEnabled {
         uint256 _initPrice,
         uint256 _maxFundCup,
         uint256 _maxInvestors,
-        uint256 _platformFee
+        uint256 _platformFee/*,
+        address _nousWallet,
+        address _ownerWallet*/
     )
     public
     {
         require(_entryFee > 0);
         require(_exitFee > 0);
-        //require(_initPrice > 0);
-        //require(_maxFundCup > 0);
-        //require(_maxInvestors > 0);
         require(_platformFee > 0);
+        //require(_nousWallet > 0x0);
+        //require(_ownerWallet > 0x0);
 
         params["entryFee"] = _entryFee;
         params["exitFee"] = _exitFee;
         params["initPrice"] = _initPrice;
-
         params["maxFundCup"] = _maxFundCup;
         params["maxInvestors"] = _maxInvestors;
         params["platformFee"] = _platformFee;
 
+        //paramsAddr["nousWallet"] = _nousWallet;
+        //paramsAddr["ownerWallet"] = _ownerWallet;
     }
 
     function setEntryFee(uint _entryFee)
@@ -76,4 +80,5 @@ contract OpenEndedSaleDb is ProjectActionManagerEnabled {
         params["platformFee"] = _platformFee;
         return true;
     }
+
 }

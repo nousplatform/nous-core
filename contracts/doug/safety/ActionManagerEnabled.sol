@@ -15,11 +15,11 @@ contract ActionManagerEnabled is DougEnabled {
         _;
     }
 
-    function isActionManager() internal constant returns (bool) {
+    /*function isActionManager() internal constant returns (bool) {
         if (DOUG != 0x0) {
             address am = getContractAddress("ActionManager");
             return msg.sender == am;
         }
         return false;
-    }
+    }*/
 }

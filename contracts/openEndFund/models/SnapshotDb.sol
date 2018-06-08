@@ -10,11 +10,12 @@ contract SnapshotDbInterface {
     //function rate() external constant returns(uint);
 }
 
-interface NetInterface {
-    function getFromIndex(uint256 _index) public view returns (address, uint256);
+contract NetInterface {
+    mapping(address => uint256) public fundCup;
+    address[] public indexTicker;
+    //function getFromIndex(uint256 _index) public view returns (address, uint256);
     function totalNet() public view returns (uint256);
 }
-
 
 contract SnapshotDb is ProjectActionManagerEnabled {
 
@@ -51,11 +52,11 @@ contract SnapshotDb is ProjectActionManagerEnabled {
         _sanpsh.rate = _rate;
 
         NetInterface _net = NetInterface(getContractAddress("OpenEndedToken"));
-        uint256 total = _net.totalNet();
-        for (uint i = 0; i < total; i++) {
-            address _netAddr;
-            uint256 _totalSum;
-            (_netAddr, _totalSum) = _net.getFromIndex(i);
+        uint _total = _net.totalNet();
+        for (uint i = 0; i < _total; i++) {
+            address _netAddr = _net.indexTicker(i);
+            uint256 _totalSum = _net.fundCup(_netAddr);
+
             _sanpsh.nets[i] = NetStr(_netAddr, _totalSum);
             _sanpsh.netSize = i+1;
         }

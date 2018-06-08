@@ -52,8 +52,7 @@ contract ActionDb is Validee {
         return true;
     }
 
-    function removeAction(bytes32 _name) public returns (bool) {
-        require(validate());
+    function removeAction(bytes32 _name) public validate_ returns (bool) {
         require(actions[_name] != 0x0);
         require(_name != "ActionAddActions");
         actions[_name] = 0x0;

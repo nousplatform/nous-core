@@ -10,7 +10,7 @@ contract TPLWalletDb is BaseTemplate {
 
     bytes32 constant public TYPE_PROJECT = "Open-end Fund";
     bytes32 constant public CONTRACT_NAME = "WalletDb";
-    bytes32 constant public TPL_TYPE = "database";
+    //bytes32 constant public TPL_TYPE = "database";
 
     function create(
         address _projectOwner

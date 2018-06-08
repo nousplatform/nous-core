@@ -15,7 +15,7 @@ contract DougEnabled {
     {
         require(DOUG != 0x0);
         address _contract = ContractProvider(DOUG).contracts(_name);
-        require(_contract != 0x0, "Contract address empty");
+        assert(_contract != 0x0 /*, "Contract address empty"*/);
         return _contract;
     }
 

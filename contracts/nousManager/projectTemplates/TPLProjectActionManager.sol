@@ -10,7 +10,7 @@ contract TPLProjectActionManager is BaseTemplate {
 
     bytes32 constant public TYPE_PROJECT = "Open-end Fund";
     bytes32 constant public CONTRACT_NAME = "ProjectActionManager";
-    bytes32 constant public TPL_TYPE = "ActionManager";
+    //bytes32 constant public TPL_TYPE = "ActionManager";
 
     function create(
         address _projectOwner,

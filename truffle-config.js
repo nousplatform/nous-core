@@ -4,14 +4,16 @@ module.exports = {
       host: "localhost",
       port: 8545,
       network_id: "*", // Match any network id
-      gas: 5700000,
+      gas: 4700000,
       gasPrice: 5000000000,
       from: "0x719a22e179bb49a4596efe3bd6f735b8f3b00af1"
     },
     ganache: {
       host: "localhost",
       port: 7545,
-      network_id: "*"
+      network_id: "*",
+      gas: 5700000,
+      gasPrice: 5000000000,
     },
     ropsten: {
       host: "192.168.88.13",
@@ -19,7 +21,7 @@ module.exports = {
       network_id: "3",
       gas: 4700000, // Gas limit used for deploys
       gasPrice: 50000000000, // 20 gwei
-      from: "0x26E196dbdE4d6cFA212fd5447B159Ad86cdB295f"
+      from: "0x719a22E179bb49a4596eFe3BD6F735b8f3b00AF1"
     },
     kovan: {
       host: "192.168.88.11",

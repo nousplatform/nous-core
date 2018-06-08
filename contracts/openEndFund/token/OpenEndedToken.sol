@@ -15,24 +15,24 @@ import {AllowPurchases} from "../../doug/ownership/AllowPurchases.sol";
  * @dev Very simple ERC20 Token that can be minted.
  * It is meant to be used in a crowdsale contract.
  */
-contract OpenEndedToken is PurchaseToken, SaleToken, Net, InvestorsCounter {
+contract OpenEndedToken is BaseSaleOpenEnded, PurchaseToken, SaleToken, Net, InvestorsCounter {
 
     // @dev Constructor only nous token can mint.
     constructor(
         address _owner,
-        address _nousToken,
+        address[] _addressToAllowPurchases,
         string _name,
         string _symbol,
         uint8 _decimals,
         address _nousWallet
     )
     public
-    BaseSaleOpenEnded(_owner)
-    AllowPurchases(_nousToken)
+    AllowPurchases(_addressToAllowPurchases)
     {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
+        wallet = _owner;
         nousWallet = _nousWallet;
     }
 

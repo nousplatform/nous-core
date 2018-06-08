@@ -10,7 +10,7 @@ contract TPLOpenEndedSaleDb is BaseTemplate {
 
     bytes32 constant public TYPE_PROJECT = "Open-end Fund";
     bytes32 constant public CONTRACT_NAME = "OpenEndedSaleDb";
-    bytes32 constant public TPL_TYPE = "db";
+    //bytes32 constant public TPL_TYPE = "db";
 
     function create(
         address _projectOwner,
@@ -19,7 +19,9 @@ contract TPLOpenEndedSaleDb is BaseTemplate {
         uint256 _initPrice,
         uint256 _maxFundCup,
         uint256 _maxInvestors,
-        uint256 _managementFee
+        uint256 _platformFee/*,
+        address _nousWallet,
+        address _ownerWallet*/
     )
     public
     isActionManager_
@@ -30,7 +32,9 @@ contract TPLOpenEndedSaleDb is BaseTemplate {
                 _initPrice,
                 _maxFundCup,
                 _maxInvestors,
-                _managementFee
+                _platformFee/*,
+                _nousWallet,
+                _ownerWallet*/
         );
         addProjectContract(_projectOwner, TYPE_PROJECT, CONTRACT_NAME, newContract);
     }

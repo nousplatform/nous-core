@@ -2,7 +2,7 @@ const Web3 = require("web3");
 const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 const fs = require("fs");
 
-var OWNER = "0x719a22E179bb49a4596eFe3BD6F735b8f3b00AF1";
+var OWNER = "0x5F6C8081EB845aC363Be61bA4E5FF42eb3547Bb7";
 
 const NOUSTOKEN = "0x16db3d98cf6babcfdfd4bc35d4e9da8f8a1ad983";
 
@@ -45,6 +45,8 @@ const TPLWalletDb = artifacts.require("TPLWalletDb.sol");
 
 const ProjectActionManager = artifacts.require("ProjectActionManager.sol");
 const ProjectConstructor = artifacts.require("ProjectConstructor.sol");
+
+const MathCalc = artifacts.require("MathCalc.sol");
 
 const actions = [
   "ActionAddAction",
@@ -129,6 +131,9 @@ async function createAddActions(data) {
 }
 
 module.exports = async function(deployer) {
+
+  deployer.deploy(MathCalc);
+  deployer.link(MathCalc, [TPLOpenEndedToken]);
 
   let instanceList = {
     //"name" : "instance"

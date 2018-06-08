@@ -42,8 +42,6 @@ contract ProjectDb is Validee {
         require(_contractName != bytes32(0));
         require(_contractAddr != address(0));
 
-        require(validate());
-
         tempContracts[_owner][_projectType].push(TmpTpl({
             name: _contractName,
             addr: _contractAddr
