@@ -407,6 +407,30 @@ contract('NousCore', async function(accounts) {
     assert.equal(0.02 * Math.pow(10, 18), (await openEndedSaleDb.params("platformFee")).toNumber());
 
 
+    console.log("---=========Second PROJECT =========-------");
+
+    for (let _item in obj) {
+      console.log("_item", _item);
+      await ActionManagerInstance.deployTemplates(web3.utils.toHex(_item), getBytesCallData(_item, obj[_item].variables, "create"));
+    }
+
+    _projContr = await instanceList["ProjectDb"].getProjectContracts(accounts[1], web3.utils.toHex(projectType));
+    console.log("_projContr", _projContr);
+    _projContr[0] = _projContr[0].splice(-5);
+    _projContr[1] = _projContr[1].splice(-5);
+
+    var obj2 = {"TPLProjectConstructor": {
+        "variables" : [
+          accounts[1],
+          "_fundName",
+          "_fundType",
+          _projContr[0],
+          _projContr[1],
+        ],
+        "address": "0x0"
+      }};
+
+    await ActionManagerInstance.deployTemplates(web3.utils.toHex("TPLProjectConstructor"), getBytesCallData("TPLProjectConstructor", obj2["TPLProjectConstructor"].variables, "create"));
 
 
     /*try {
