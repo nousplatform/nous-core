@@ -65,7 +65,7 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
     }
 
     function validateMaxFundCap(uint256 _totalAmount)
-    view
+    internal
     returns (bool)
     {
         uint maxFundCup = getDataParamsSaleDb("maxFundCup");
