@@ -366,7 +366,7 @@ contract('NousCore', async function(accounts) {
     let projectActionManager = ProjectActionManager.at(_projContr[1][3]);
 
     let time = new Date().getTime();
-    await projectActionManager.actionAddSnapshot(time, 1212, 0.05 * Math.pow(10, 18), {from: accounts[0]});
+    await projectActionManager.actionAddSnapshot(time, web3.utils.toHex("swswsw"), 0.05 * Math.pow(10, 18), {from: accounts[0]});
 
 
     let snapshotDb = SnapshotDb.at(_projContr[1][0]);

@@ -6,7 +6,7 @@ import {ProjectActionManagerEnabled} from "../actionManager/ProjectActionManager
 
 contract SnapshotDbInterface {
     uint256 public rate;
-    function addSnapshot(uint256 _timestamp, uint256 _hash, uint256 _rate) external returns(bool);
+    function addSnapshot(uint256 _timestamp, bytes32 _hash, uint256 _rate) external returns(bool);
     //function rate() external constant returns(uint);
 }
 
@@ -25,7 +25,7 @@ contract SnapshotDb is ProjectActionManagerEnabled {
     }
 
     struct Snapshot {
-        uint256 hash;
+        bytes32 hash;
         uint256 rate;
         mapping(uint => NetStr) nets;
         uint netSize;
@@ -37,7 +37,7 @@ contract SnapshotDb is ProjectActionManagerEnabled {
 
     function addSnapshot(
         uint256 _timestamp,
-        uint256 _hash,
+        bytes32 _hash,
         uint256 _rate
     )
     external

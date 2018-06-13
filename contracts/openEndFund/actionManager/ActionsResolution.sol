@@ -2,7 +2,7 @@ pragma solidity ^0.4.18;
 
 
 import {LockedActionManager} from "./LockedActionManager.sol";
-import {SnapshotDb} from "../models/SnapshotDb.sol";
+import {SnapshotDbInterface as SnapshotDb} from "../models/SnapshotDb.sol";
 import {WalletDbInterface as WalletDb} from "../models/WalletDb.sol";
 import {OpenEndedSaleDbInterface as OpenEndedSaleDb} from "../models/OpenEndedSaleDb.sol";
 import {DougEnabled} from "../../doug/safety/DougEnabled.sol";
@@ -56,7 +56,7 @@ contract ActionsResolution is DougEnabled, LockedActionManager {
     */
     function actionAddSnapshot(
         uint256 _timestamp,
-        uint256 _hash,
+        bytes32 _hash,
         uint256 _rate
     )
     isLocked
