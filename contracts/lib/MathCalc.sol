@@ -10,17 +10,6 @@ library MathCalc {
 
     function calculatePercent(
         uint256 _value,
-        uint256 _percent
-    )
-    public
-    pure
-    returns(uint256)
-    {
-        return _value.mul(_percent).div(100);
-    }
-
-    function calculatePercent(
-        uint256 _value,
         uint256 _percent,
         uint256 _decimals
     )
@@ -30,6 +19,19 @@ library MathCalc {
     {
         uint256 _exponent = 10 ** (_decimals + 2);
         return (_value.mul(_percent)).div(_exponent);
+    }
+
+    function calculateRedeem(
+        uint256 _value,
+        uint256 _percent,
+        uint256 _decimals
+    )
+    public
+    pure
+    returns(uint256)
+    {
+        uint256 _exponent = 10 ** _decimals;
+        return _value.mul(_percent).div(_exponent);
     }
 
     function percent(

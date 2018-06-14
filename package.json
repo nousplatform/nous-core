@@ -12,6 +12,8 @@
   "author": "Manchenko Valerii",
   "license": "ISC",
   "dependencies": {
+    "bignumber": "^1.1.0",
+    "bignumber.js": "^7.2.1",
     "moment": "^2.22.1",
     "web3": "^1.0.0-beta.34",
     "zeppelin-solidity": "^1.8.0"

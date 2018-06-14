@@ -37,13 +37,11 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
         // how many coins we are allowed to spend
         if (nt.allowance(_sender, this) >= _value) {
 
-            uint _amountEntryFee = MathCalc.calculatePercent(_value, getDataParamsSaleDb("entryFee"), decimals);
+            uint _amountEntryFee;
+            uint _amountPlatformFee;
+            (_amountEntryFee, _amountPlatformFee) = getFees(_value, "entryFee", "platformFee");
 
-            uint _amountPlatformFee = MathCalc.calculatePercent(_value, getDataParamsSaleDb("platformFee"), decimals);
-
-            _value = _value.sub(_amountEntryFee).sub(_amountPlatformFee);
-
-            uint256 _totalAmount = MathCalc.percent(_value, rate(), decimals);
+            uint256 _totalAmount = MathCalc.percent(_value.sub(_amountEntryFee).sub(_amountPlatformFee), rate(), decimals);
 
             require(validateMaxFundCap(_totalAmount));
 

@@ -1,7 +1,7 @@
 const Web3 = require("web3");
 const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 const fs = require('fs');
-var BN = web3.utils.BN;
+const BigNumber = require('bignumber.js');
 
 var OWNER = "0x719a22E179bb49a4596eFe3BD6F735b8f3b00AF1";
 OWNER = "0x863c777bc9c6ab7fca73c998eba43f272ec00b46";
@@ -202,15 +202,16 @@ contract('NousCore', async function(accounts) {
       console.log(`${tplName}: ${res}`);
     }
 
+    let decimals = 18;
+
     let initTokens = {
       entryFee: 1,
       exitFee: 1,
-      initPrice: 0.04,
-      maxFundCup: 100,
+      initPrice: 2,
+      maxFundCup: 10000000,
       maxInvestors: 0,
-      platformFee: 0.01
+      platformFee: 1
     };
-
 
     //STEP 1 To deploy
     var obj = {
@@ -223,7 +224,7 @@ contract('NousCore', async function(accounts) {
       "TPLOpenEndedSaleDb": {
         "variables" : [
           accounts[1],
-          ...Object.keys(initTokens).map(item => initTokens[item] * Math.pow(10, 18))
+          ...Object.keys(initTokens).map(item => new BigNumber(initTokens[item] * Math.pow(10, decimals)))
         ],
         "address": "0x0"
       },
@@ -233,8 +234,8 @@ contract('NousCore', async function(accounts) {
           [nousTokenInstance.address],
           "BWT TOKEN",
           "BWT",
-          18,
-          accounts[0]
+          decimals,
+          accounts[3]
         ],
         "address": "0x0"
       },
@@ -266,7 +267,7 @@ contract('NousCore', async function(accounts) {
     let projectType = web3.utils.toHex("Open-end Fund");
 
     for (let _item in obj) {
-      //console.log("_item", _item);
+      console.log("_item", obj[_item].variables);
       await ActionManagerInstance.deployTemplates(web3.utils.toHex(_item), getBytesCallData(_item, obj[_item].variables, "create"));
     }
 
@@ -286,63 +287,85 @@ contract('NousCore', async function(accounts) {
 
     await ActionManagerInstance.deployTemplates(web3.utils.toHex("TPLProjectConstructor"), getBytesCallData("TPLProjectConstructor", obj2["TPLProjectConstructor"].variables, "create"));
 
-    let initialBalances = [100, 2000, 150, 500];
+    let initialBalances = [100, 100, 150, 500];
     console.log("initialBalances", initialBalances);
 
-    const user_1 = { address: accounts[1], balance: 0 };
-    const user_2 = { address: accounts[2], balance: 0 };
-    const user_3 = { address: accounts[3], balance: 0 };
+    const user_1 = { address: accounts[1], balance: {nsu: 0, bwt:0} };
+    const user_2 = { address: accounts[5], balance: {nsu: 0, bwt:0} };
+    const user_3 = { address: accounts[3], balance: {nsu: 0, bwt:0} };
 
     await nousTokenInstance.mint(user_1.address, initialBalances[0], {
       from: accounts[0]
     });
-    user_1.balance = initialBalances[0] * Math.pow(10, 18);
+    user_1.balance.nsu = initialBalances[0] * Math.pow(10, decimals);
+    assert.equal(user_1.balance.nsu, (await nousTokenInstance.balanceOf(user_1.address)).toNumber(), "First balance");
+
     await nousTokenInstance.mint(user_2.address, initialBalances[1], {
       from: accounts[0]
     });
-    user_2.balance = initialBalances[1] * Math.pow(10, 18);
+    user_2.balance.nsu = initialBalances[1] * Math.pow(10, decimals);
+    assert.equal(user_2.balance.nsu, (await nousTokenInstance.balanceOf(user_2.address)).toNumber(), "Second balance");
+
     await nousTokenInstance.mint(user_3.address, initialBalances[2], {
       from: accounts[0]
     });
-    user_3.balance = initialBalances[2] * Math.pow(10, 18);
-
+    user_3.balance.nsu = initialBalances[2] * Math.pow(10, decimals);
+    assert.equal(user_3.balance.nsu, (await nousTokenInstance.balanceOf(user_3.address)).toNumber(), "Third balance");
 
     console.log("---=========Sale=========-------");
+
     let openEndedToken = OpenEndedToken.at(_projContr[1][2]);
     //console.log("total supplay", await openEndedToken.totalSupply());
     assert.equal(true, await openEndedToken.allowPurchases(nousTokenInstance.address), "allow purchases nsu tokens");
 
-    assert.equal(user_1.balance, (await nousTokenInstance.balanceOf(user_1.address, {from: accounts[0]})).toNumber(), "Owner is first mining user_1 1000");
+    assert.equal(user_2.balance.nsu, (await nousTokenInstance.balanceOf(user_2.address, {from: accounts[0]})).toNumber(), "Owner is first mining user_2 1000");
 
-    let sum = 1 * Math.pow(10, 18);
-    console.log("initTokens['entryFee']", initTokens['entryFee'] * Math.pow(10, 18));
+    let sum = user_2.balance.nsu;
+    user_2.balance.nsu -= sum;
 
-    console.log("entry fee from fund  ", (await openEndedToken.getDataParamsSaleDb(web3.utils.toHex("entryFee"))).toNumber());
-
-    //console.log("calculatePercent entry fee  ", (await openEndedToken.calculatePercent(sum, initTokens['entryFee'] * Math.pow(10, 18), 18)).toNumber());
-
-    console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_1.address)).toNumber());
-    console.log("sum NSU", sum);
-    console.log("rate open ended token ", rate = (await openEndedToken.rate()).toNumber());
+    let exponent = 10 * Math.pow(10, decimals+2),
+    entryFee = (await openEndedToken.getDataParamsSaleDb(web3.utils.toHex("entryFee"))).toNumber();
+    console.log("entryFee", entryFee);
 
 
-    //console.log("Total sum rate  ", (await openEndedToken.percent(sum, rate, 18)).toNumber());
-    console.log("maxFundCup ", (await openEndedToken.getDataParamsSaleDb(web3.utils.toHex("maxFundCup"))).toNumber());
+    let platformFee = (await openEndedToken.getDataParamsSaleDb(web3.utils.toHex("platformFee"))).toNumber();
 
-    await nousTokenInstance.approveAndCall(openEndedToken.address, sum, "0x0", {from: user_1.address});
+    let entryFeeSumExpected = (entryFee*sum)/exponent;
+    let platformFeeSumExpected = (platformFee*sum)/exponent;
+    let rate = (await openEndedToken.rate()).toNumber();
 
-    console.log("balance BWT ", (await openEndedToken.balanceOf(user_1.address)).toNumber());
-    console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_1.address)).toNumber());
-    console.log("NET Sale BWT ", (await openEndedToken.fundCup(nousTokenInstance.address)).toNumber());
+    console.log("entryFeeSumExpected ",entryFeeSumExpected);
+    console.log("platformFeeSumExpected ",platformFeeSumExpected);
+
+    console.log("rate  ",rate);
+
+
+    //console.log("calculatePercent entry fee  ", (await openEndedToken.calculatePercent(sum, initTokens['entryFee'] * Math.pow(10, decimals), decimals)).toNumber());
+
+    console.log("balance NSU 1", (await nousTokenInstance.balanceOf(user_2.address)).toNumber());
+    console.log("sum to transfer NSU", sum);
+
+    let totalSummFeeBWT = rate * sum;
+    let totalSummBWT = totalSummFeeBWT - entryFee - platformFee;
+    //console.log("Total sum rate  ", (await openEndedToken.percent(sum, rate, decimals)).toNumber());
+    //console.log("maxFundCup ", (await openEndedToken.getDataParamsSaleDb(web3.utils.toHex("maxFundCup"))).toNumber());
+
+    await nousTokenInstance.approveAndCall(openEndedToken.address, sum, "0x0", {from: user_2.address});
+    console.log("approveAndCall");
+    console.log("balance NSU 2 ", (await nousTokenInstance.balanceOf(user_2.address)).toNumber());
+    console.log("balance BWT 2", (await openEndedToken.balanceOf(user_2.address)).toNumber());
+    //assert.equal(totalSummBWT, (await openEndedToken.balanceOf(user_2.address)).toNumber(), "total summ BWT");
+
+    console.log("NETSale BWT ", (await openEndedToken.fundCup(nousTokenInstance.address)).toNumber());
 
     console.log("---=========redeem=========-------");
 
-    await openEndedToken.redeem(nousTokenInstance.address, 10 * Math.pow(10, 18), "0x0", {from: user_1.address});
-    user_1.balance = (await openEndedToken.balanceOf(user_1.address)).toNumber();
+    await openEndedToken.redeem(nousTokenInstance.address, 10 * Math.pow(10, decimals), "0x0", {from: user_2.address});
+    user_2.balance.bwt = (await openEndedToken.balanceOf(user_2.address)).toNumber();
 
-    console.log("balance BWT ", user_1.balance);
+    //console.log("balance BWT ", user_2.balance);
 
-    console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_1.address)).toNumber());
+    console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_2.address)).toNumber());
 
     console.log("---=========NET=========-------");
     console.log("NET Purchase  BWT ", (await openEndedToken.fundCup(nousTokenInstance.address)).toNumber());
@@ -353,26 +376,27 @@ contract('NousCore', async function(accounts) {
     assert.equal(1, (await openEndedToken.totalInvestors()).toNumber());
 
     console.log("---=========Redeem ALL=========-------");
-    await openEndedToken.redeem(nousTokenInstance.address, user_1.balance, "0x0", {from: user_1.address});
-    user_1.balance = (await openEndedToken.balanceOf(user_1.address)).toNumber();
-    assert.equal(0, user_1.balance);
-    //console.log("balance BWT ", user_1.balance);
+    await openEndedToken.redeem(nousTokenInstance.address, user_2.balance.bwt, "0x0", {from: user_2.address});
+    user_2.balance.bwt = (await openEndedToken.balanceOf(user_2.address)).toNumber();
+
+    //console.log("balance BWT ", user_2.balance);
+    console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_2.address)).toNumber());
 
     assert.equal(0, (await openEndedToken.totalInvestors()).toNumber(), "Investors counter ");
-    assert.equal(0,  user_1.balance, "Toatal balance BWT zero.");
+    assert.equal(0,  user_2.balance.bwt, "Toatal balance BWT zero.");
 
     console.log("---=========Create Snapshot=========-------");
 
     let projectActionManager = ProjectActionManager.at(_projContr[1][3]);
 
     let time = new Date().getTime();
-    await projectActionManager.actionAddSnapshot(time, web3.utils.toHex("swswsw"), 0.05 * Math.pow(10, 18), {from: accounts[0]});
+    await projectActionManager.actionAddSnapshot(time, web3.utils.toHex("swswsw"), 0.05 * Math.pow(10, decimals), {from: accounts[0]});
 
 
     let snapshotDb = SnapshotDb.at(_projContr[1][0]);
     //console.log("Current Rate",  (await snapshotDb.rate()).toNumber());
     //console.log("rate open ended token ", (await openEndedToken.rate()).toNumber());
-    assert.equal(0.05 * Math.pow(10, 18), (await snapshotDb.rate()).toNumber());
+    assert.equal(0.05 * Math.pow(10, decimals), (await snapshotDb.rate()).toNumber());
 
 
     console.log("---=========Add Wallet=========-------");
@@ -391,20 +415,20 @@ contract('NousCore', async function(accounts) {
     assert.equal(true, addedWalet[2], "added wallet not confirmed");
 
     console.log("---=========SetEntryFee=========-------");
-    await projectActionManager.actionSetEntryFee(0.1 * Math.pow(10, 18), {from: accounts[1]});
+    await projectActionManager.actionSetEntryFee(0.1 * Math.pow(10, decimals), {from: accounts[1]});
 
     let openEndedSaleDbAddr = await projectActionManager.getContractAddress("OpenEndedSaleDb");
     let openEndedSaleDb = OpenEndedSaleDb.at(openEndedSaleDbAddr);
-    assert.equal(0.1 * Math.pow(10, 18), (await openEndedSaleDb.params("entryFee")).toNumber());
+    assert.equal(0.1 * Math.pow(10, decimals), (await openEndedSaleDb.params("entryFee")).toNumber());
 
     console.log("---=========SetExitFee=========-------");
-    await projectActionManager.actionSetExitFee(0.2 * Math.pow(10, 18), {from: accounts[1]});
-    assert.equal(0.2 * Math.pow(10, 18), (await openEndedSaleDb.params("exitFee")).toNumber());
+    await projectActionManager.actionSetExitFee(0.2 * Math.pow(10, decimals), {from: accounts[1]});
+    assert.equal(0.2 * Math.pow(10, decimals), (await openEndedSaleDb.params("exitFee")).toNumber());
 
 
     console.log("---=========SetPlatformFee=========-------");
-    await projectActionManager.actionSetPlatformFee(0.02 * Math.pow(10, 18), {from: accounts[0]});
-    assert.equal(0.02 * Math.pow(10, 18), (await openEndedSaleDb.params("platformFee")).toNumber());
+    await projectActionManager.actionSetPlatformFee(0.02 * Math.pow(10, decimals), {from: accounts[0]});
+    assert.equal(0.02 * Math.pow(10, decimals), (await openEndedSaleDb.params("platformFee")).toNumber());
 
 
     console.log("---=========Second PROJECT =========-------");
@@ -434,13 +458,13 @@ contract('NousCore', async function(accounts) {
 
 
     /*try {
-      await snapshotDb.createSnapshot(time, time, 0.05 * Math.pow(10, 18));
+      await snapshotDb.createSnapshot(time, time, 0.05 * Math.pow(10, decimals));
     } catch (e) {
       console.log("Validate sequrity")
     }*/
 
     /*try {
-       var res = await projectActionManager.actionAddSnapshot(time, time, 0.05 * Math.pow(10, 18), {from: accounts[1]});
+       var res = await projectActionManager.actionAddSnapshot(time, time, 0.05 * Math.pow(10, decimals), {from: accounts[1]});
     } catch (e) {
       console.log("Validate sequrity")
     }*/
