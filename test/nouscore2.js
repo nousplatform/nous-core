@@ -439,7 +439,7 @@ contract('NousCore', async function(accounts) {
     }
 
     _projContr = await instanceList["ProjectDb"].getProjectContracts(accounts[1], web3.utils.toHex(projectType));
-    console.log("_projContr", _projContr);
+    //console.log("_projContr", _projContr);
     _projContr[0] = _projContr[0].splice(-5);
     _projContr[1] = _projContr[1].splice(-5);
 
@@ -455,6 +455,38 @@ contract('NousCore', async function(accounts) {
       }};
 
     await ActionManagerInstance.deployTemplates(web3.utils.toHex("TPLProjectConstructor"), getBytesCallData("TPLProjectConstructor", obj2["TPLProjectConstructor"].variables, "create"));
+
+    console.log("---========= owner Add Manager =========-------");
+    await projectActionManager.ownerAddManager(accounts[4], {from: accounts[1]});
+
+    try {
+      await projectActionManager.ownerAddManager(accounts[4], {from: accounts[0]});
+    } catch (e) {
+      console.log("Validate sequrity")
+    }
+
+    console.log("---========= Lock Actions =========-------");
+    await projectActionManager.actionsLock({from: accounts[1]});
+
+    try {
+      console.log("try call from manager");
+      await projectActionManager.actionSetExitFee(0.3 * Math.pow(10, decimals), {from: accounts[5]});
+    } catch (e) {
+      console.log("Is locked true");
+    }
+
+    try {
+      console.log("Try unlock from nous platform");
+      await projectActionManager.actionsUnlock({from: accounts[0]});
+    } catch (e) {
+      console.log("Not unlocking true");
+    }
+
+
+
+
+
+
 
 
     /*try {
