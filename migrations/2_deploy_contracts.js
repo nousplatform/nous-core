@@ -133,9 +133,10 @@ async function createAddActions(data) {
 module.exports = async function(deployer, network, accounts) {
 
 
+
   deployer.deploy(MathCalc);
   deployer.link(MathCalc, [TPLOpenEndedToken]);
-  //return;
+  return;
 
   let instanceList = {
     //"name" : "instance"

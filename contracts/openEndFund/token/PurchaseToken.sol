@@ -16,7 +16,6 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
     event Redeem(address indexed from, address indexed to, uint256 value);
     event Withdraw(address indexed from, address indexed to, uint256 value);
 
-    function redeemTest() {}
 
     // @dev withdraw Token
     function redeem(address _withdrawAddr, uint256 _value, bytes _extraData)
@@ -58,5 +57,5 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
         emit Withdraw(this, msg.sender, _value);
     }
 
-    function afterRedeem() internal {}
+    function afterRedeem() internal;
 }
