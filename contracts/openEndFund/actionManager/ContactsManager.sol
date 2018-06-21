@@ -8,7 +8,7 @@ import {DougInterface as Doug} from "../../doug/Doug.sol";
 
 contract ContactsManager is DougEnabled, LockedActionManager {
 
-    bool allowed;
+    bool public allowed;
 
     modifier ownerAllowed()
     {
@@ -35,7 +35,7 @@ contract ContactsManager is DougEnabled, LockedActionManager {
         allowed = false;
     }
 
-    function ActionAddContract(
+    function actionAddContract(
         bytes32 _name,
         address _addr
     )
@@ -49,7 +49,7 @@ contract ContactsManager is DougEnabled, LockedActionManager {
         Doug(DOUG).addContract(_name, _addr);
     }
 
-    function ActionRemoveContract(bytes32 _name)
+    function actionRemoveContract(bytes32 _name)
     isLocked
     ownerAllowed
     onlyRole(ROLE_NOUS_PLATFORM)

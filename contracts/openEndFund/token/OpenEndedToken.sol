@@ -9,6 +9,19 @@ import {SaleToken} from "./SaleToken.sol";
 import {BaseSaleOpenEnded} from "./BaseSaleOpenEnded.sol";
 import {AllowPurchases} from "../../doug/ownership/AllowPurchases.sol";
 
+interface OpenEndedTokenInterface {
+
+    function airdropToken(
+        address _accountHolder,
+        uint256 _amountOf
+    )
+    public;
+
+    function addAddressToAllowPurchases()
+    public
+    returns(bool success);
+
+}
 
 /**
  * @title SampleCrowdsaleToken
