@@ -139,6 +139,7 @@ contract('NousCore', async function(accounts) {
 
   let fundOwner = accounts[1];
   let nousPlatform = accounts[0];
+  let openEndedToken;
 
   let initTokens = {
     entryFee: 1,
@@ -273,7 +274,7 @@ contract('NousCore', async function(accounts) {
       }};
 
     await ActionManagerInstance.deployTemplates(web3.utils.toHex("TPLProjectConstructor"), getBytesCallData("TPLProjectConstructor", configTpls2["TPLProjectConstructor"].variables, "create"));
-
+    //projectActionManager = ProjectActionManager.at(_projContr[1][3]);
 
   });
 
@@ -307,7 +308,7 @@ contract('NousCore', async function(accounts) {
 
     //console.log("---=========Sale=========-------");
 
-    let openEndedToken = OpenEndedToken.at(_projContr[1][2]);
+    openEndedToken = OpenEndedToken.at(_projContr[1][2]);
     //console.log("total supplay", await openEndedToken.totalSupply());
     assert.equal(true, await openEndedToken.allowPurchases(nousTokenInstance.address), "allow purchases nsu tokens");
 
@@ -456,12 +457,9 @@ contract('NousCore', async function(accounts) {
 
     await projectActionManager.actionSetExitFee(0.3 * Math.pow(10, decimals), {from: fundOwner});
 
-  })
-  ;
-
+  });
 
   it("Validate Add Remove Contracts", async function() {
-
 
     assert.isFalse(await projectActionManager.allowed(), 'on deploy allowed is false');
 
@@ -472,9 +470,19 @@ contract('NousCore', async function(accounts) {
     await projectActionManager.ownerDisallow({from: fundOwner});
 
     assert.isFalse(await projectActionManager.allowed(), 'owner allow changes contracts');
+  });
 
+  it("Validate airdrop tokens", async function() {
+    let amountOf = 1 * Math.pow(10, decimals);
 
+    await projectActionManager.actionAirdropToken(amountOf, {from: nousPlatform});
 
+    let balance = (await openEndedToken.balanceOf(fundOwner)).toNumber();
+    assert.equal(balance, amountOf, "Valid balance")
 
   })
+
+
+
+
 })

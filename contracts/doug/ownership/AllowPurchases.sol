@@ -1,7 +1,7 @@
 pragma solidity ^0.4.21;
 
 
-import {Validee} from "../safety/Validee.sol";
+import {ProjectActionManagerEnabled} from "../../openEndFund/actionManager/ProjectActionManagerEnabled.sol";
 
 
 /**
@@ -9,7 +9,7 @@ import {Validee} from "../safety/Validee.sol";
  * @dev The AllowPurchases contract has a whitelist of addresses, and provides basic authorization control functions.
  * @dev This simplifies the implementation of "user permissions".
  */
-contract AllowPurchases is Validee {
+contract AllowPurchases is ProjectActionManagerEnabled {
   mapping(address => bool) public allowPurchases;
 
   address[] public allowPurchasesIndex;
@@ -41,7 +41,7 @@ contract AllowPurchases is Validee {
    */
   function addAddressToAllowPurchases(address _addr)
   public
-  validate_
+  isActionManager_
   returns(bool success)
   {
     if (!allowPurchases[_addr]) {

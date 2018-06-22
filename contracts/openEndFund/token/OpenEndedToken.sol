@@ -9,18 +9,11 @@ import {SaleToken} from "./SaleToken.sol";
 import {BaseSaleOpenEnded} from "./BaseSaleOpenEnded.sol";
 import {AllowPurchases} from "../../doug/ownership/AllowPurchases.sol";
 
-interface OpenEndedTokenInterface {
+contract OpenEndedTokenInterface {
 
-    function airdropToken(
-        address _accountHolder,
-        uint256 _amountOf
-    )
-    public;
+    function airdropToken(uint256 _amountOf) external;
 
-    function addAddressToAllowPurchases()
-    public
-    returns(bool success);
-
+    function addAddressToAllowPurchases(address _addr) external returns(bool success);
 }
 
 /**

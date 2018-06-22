@@ -63,19 +63,17 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
     }
 
     /**
-    * @notice Delivery tokens to client
-    * @param _accountHolder user address
+    * @notice Delivery tokens to owner
     * @param _amountOf balance to send out
     */
     function airdropToken(
-        address _accountHolder,
         uint256 _amountOf
     )
-    public
-    validate_
+    external
+    isActionManager_
     {
         require(validateMaxFundCap(_amountOf));
-        mint(_accountHolder, _amountOf);
+        mint(wallet, _amountOf);
     }
 
     function validateMaxFundCap(uint256 _totalAmount)
