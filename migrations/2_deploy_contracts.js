@@ -136,7 +136,7 @@ module.exports = async function(deployer, network, accounts) {
 
   deployer.deploy(MathCalc);
   deployer.link(MathCalc, [TPLOpenEndedToken]);
-  return;
+  //return;
 
   let instanceList = {
     //"name" : "instance"
@@ -150,16 +150,24 @@ module.exports = async function(deployer, network, accounts) {
 
   contractList["ActionManager"] = NousActionManager.address;
 
+  await deployer.deploy(PermissionDb, OWNER);
+  contractList["PermissionDb"] = PermissionDb.address;
+
   await deployer.deploy(ActionDb);
   contractList["ActionDb"] = ActionDb.address;
 
-  if (network === "ganache") {
-    await deployer.deploy(PermissionDb, accounts[0]);
-  } else {
+  // if (network === "ganache" || network === "development") {
+  //   await deployer.deploy(PermissionDb, accounts[0]);
+  // } else {
+  //   await deployer.deploy(PermissionDb, OWNER);
+  // }
+  /*try {
     await deployer.deploy(PermissionDb, OWNER);
-  }
+  } catch (e) {
+    console.log("e", e);
+  }*/
 
-  contractList["PermissionDb"] = PermissionDb.address;
+
 
   await deployer.deploy(TemplatesDb);
   contractList["TemplatesDb"] = TemplatesDb.address;

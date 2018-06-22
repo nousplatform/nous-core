@@ -478,7 +478,7 @@ contract('NousCore', async function(accounts) {
     await projectActionManager.actionAirdropToken(amountOf, {from: nousPlatform});
 
     let balance = (await openEndedToken.balanceOf(fundOwner)).toNumber();
-    assert.equal(balance, amountOf, "Valid balance")
+    assert.equal(balance, amountOf, "Valid balance");
 
   })
 
