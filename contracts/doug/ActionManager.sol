@@ -21,7 +21,7 @@ contract ActionManager is DougEnabled {
 
     address internal activeAction = 0x0;
 
-    bool locked;
+    bool public locked;
 
     function execute(bytes32 actionName, bytes data) public returns (bool) {
         // return true;
@@ -69,6 +69,7 @@ contract ActionManager is DougEnabled {
         require(msg.sender == activeAction);
         require(!locked);
         locked = true;
+        return true;
     }
 
     // Unlock action manager
@@ -76,6 +77,7 @@ contract ActionManager is DougEnabled {
         require(msg.sender == activeAction);
         require(locked);
         locked = false;
+        return true;
     }
 
     // Validate can be called by a contract like the bank to check if the

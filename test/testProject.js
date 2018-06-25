@@ -463,13 +463,35 @@ contract('NousCore', async function(accounts) {
 
     assert.isFalse(await projectActionManager.allowed(), 'on deploy allowed is false');
 
+    // allow
     await projectActionManager.ownerAllow({from: fundOwner});
 
     assert.isTrue(await projectActionManager.allowed(), 'owner allow changes contracts');
 
-    await projectActionManager.ownerDisallow({from: fundOwner});
+    // add contract is allowed
+    await ActionManagerInstance.deployTemplates(web3.utils.toHex("TPLSnapshotDb"), getBytesCallData("TPLSnapshotDb", configTpls["TPLSnapshotDb"].variables, "create"));
+    _projContr = await instanceList["ProjectDb"].getProjectContracts(fundOwner, web3.utils.toHex(projectType));
 
+    let addr = _projContr[1].pop();
+    await projectActionManager.actionAddContract(web3.utils.toHex("SnapshotDb"), addr, {from: nousPlatform});
+
+    assert.equal(addr, await projectActionManager.getContractAddress(web3.utils.toHex("SnapshotDb")), "address is not equal");
+
+    //add contract not allowed
+    await projectActionManager.ownerDisallow({from: fundOwner});
     assert.isFalse(await projectActionManager.allowed(), 'owner allow changes contracts');
+
+    await ActionManagerInstance.deployTemplates(web3.utils.toHex("TPLSnapshotDb"), getBytesCallData("TPLSnapshotDb", configTpls["TPLSnapshotDb"].variables, "create"));
+    _projContr = await instanceList["ProjectDb"].getProjectContracts(fundOwner, web3.utils.toHex(projectType));
+    addr = _projContr[1].pop();
+
+    try {
+      await projectActionManager.actionAddContract(web3.utils.toHex("SnapshotDb"), addr, {from: nousPlatform});
+      assert.throw("Is not true. May be exception");
+    } catch (e) {
+
+    }
+
   });
 
   it("Validate airdrop tokens", async function() {
@@ -480,7 +502,9 @@ contract('NousCore', async function(accounts) {
     let balance = (await openEndedToken.balanceOf(fundOwner)).toNumber();
     assert.equal(balance, amountOf, "Valid balance");
 
-  })
+  });
+
+
 
 
 

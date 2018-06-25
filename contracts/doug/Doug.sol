@@ -29,10 +29,10 @@ contract Doug is DougDb {
     public
     {
         for (uint i; i < _names.length; i++) {
-            require(_names[i] != bytes32(0), "Contract name is empty.");
-            require(_addrs[i] != 0x0, "Contract address is empty.");
+            require(_names[i] != bytes32(0)/*, "Contract name is empty."*/);
+            require(_addrs[i] != 0x0/*, "Contract address is empty."*/);
 
-            require(_setDougAddress(_addrs[i]), "Doug address is not set.");
+            require(_setDougAddress(_addrs[i])/*, "Doug address is not set."*/);
             _addElement(_names[i], _addrs[i]);
 
             emit AddContract(msg.sender, _names[i], _addrs[i]);
@@ -52,8 +52,8 @@ contract Doug is DougDb {
     public
     onlyActionManager
     {
-        require(_name != bytes32(0), "Contract name is empty.");
-        require(_addr != 0x0, "Contract address is empty.");
+        require(_name != bytes32(0)/*, "Contract name is empty."*/);
+        require(_addr != 0x0/*, "Contract address is empty."*/);
 
         require(_setDougAddress(_addr));
         _addElement(_name, _addr);
@@ -66,8 +66,8 @@ contract Doug is DougDb {
     external
     onlyActionManager
     {
-        require(_name != bytes32(0), "Contract name is empty.");
-        require(contracts[_name] != 0x0, "Contract address is empty.");
+        require(_name != bytes32(0)/*, "Contract name is empty."*/);
+        require(contracts[_name] != 0x0/*, "Contract address is empty."*/);
 
         address _removeContract = contracts[_name];
         DougEnabled(_removeContract).remove();

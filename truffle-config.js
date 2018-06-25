@@ -8,7 +8,7 @@ module.exports = {
       gasPrice: 5000000000,
       //from: "0x719a22e179bb49a4596efe3bd6f735b8f3b00af1"
     },
-    ganache: {
+    ganashe: {
       host: "localhost",
       port: 7545,
       network_id: "*",
