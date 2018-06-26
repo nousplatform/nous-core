@@ -141,13 +141,17 @@ contract('NousCore', async function(accounts) {
   let nousPlatform = accounts[0];
   let openEndedToken;
 
+  const user_1 = {address: fundOwner, balance: {nsu: 0, bwt: 0}};
+  const user_2 = {address: accounts[5], balance: {nsu: 0, bwt: 0}};
+  const user_3 = {address: accounts[3], balance: {nsu: 0, bwt: 0}};
+
   let initTokens = {
     entryFee: 0,
     exitFee: 0,
-    initPrice: 2,
-    maxFundCup: 10000000,
+    initPrice: 2 * Math.pow(10, (decimals)),
+    maxFundCup: 10000000 * Math.pow(10, (decimals)),
     maxInvestors: 0,
-    platformFee: 1
+    platformFee: 2 * Math.pow(10, (decimals-2)) // 0.02
   };
 
   let _projContr;
@@ -161,7 +165,6 @@ contract('NousCore', async function(accounts) {
 
     // deployer.deploy(MathCalc);
     // deployer.autolink();
-
 
     //deploy
     ActionManagerInstance = instanceList["ActionManager"] = await NousActionManager.new();
@@ -188,7 +191,7 @@ contract('NousCore', async function(accounts) {
     }
 
     let _actionNames = Object.keys(actionsList).map(item => web3.utils.toHex(item));
-    let _actionAddr =  Object.keys(actionsList).map(item => actionsList[item].address);
+    let _actionAddr = Object.keys(actionsList).map(item => actionsList[item].address);
 
     await createAddActions([_actionNames, _actionAddr]);
 
@@ -216,20 +219,20 @@ contract('NousCore', async function(accounts) {
 
     configTpls = {
       "TPLSnapshotDb": {
-        "variables" : [
+        "variables": [
           fundOwner
         ],
         "address": "0x0"
       },
       "TPLOpenEndedSaleDb": {
-        "variables" : [
+        "variables": [
           fundOwner,
-          ...Object.keys(initTokens).map(item => new BigNumber(initTokens[item] * Math.pow(10, decimals)))
+          ...Object.keys(initTokens).map(item => new BigNumber(initTokens[item]))
         ],
         "address": "0x0"
       },
       "TPLOpenEndedToken": {
-        "variables" : [
+        "variables": [
           fundOwner,
           [nousTokenInstance.address],
           "BWT TOKEN",
@@ -240,14 +243,14 @@ contract('NousCore', async function(accounts) {
         "address": "0x0"
       },
       "TPLProjectActionManager": {
-        "variables" : [
+        "variables": [
           fundOwner,
           nousPlatform,
         ],
         "address": "0x0"
       },
       "TPLWalletDb": {
-        "variables" : [
+        "variables": [
           fundOwner
         ],
         "address": "0x0"
@@ -262,8 +265,9 @@ contract('NousCore', async function(accounts) {
 
     let _projContr = await instanceList["ProjectDb"].getProjectContracts(fundOwner, web3.utils.toHex(projectType));
     //console.log("_projContr", _projContr);
-    configTpls2 = {"TPLProjectConstructor": {
-        "variables" : [
+    configTpls2 = {
+      "TPLProjectConstructor": {
+        "variables": [
           fundOwner,
           "_fundName",
           "_fundType",
@@ -271,21 +275,13 @@ contract('NousCore', async function(accounts) {
           _projContr[1],
         ],
         "address": "0x0"
-      }};
+      }
+    };
 
     await ActionManagerInstance.deployTemplates(web3.utils.toHex("TPLProjectConstructor"), getBytesCallData("TPLProjectConstructor", configTpls2["TPLProjectConstructor"].variables, "create"));
     //projectActionManager = ProjectActionManager.at(_projContr[1][3]);
 
-  });
-
-  it("Test Project tokens", async function() {
-    _projContr = await instanceList["ProjectDb"].getProjectContracts(fundOwner, web3.utils.toHex(projectType));
-
     let initialBalances = [100, 100, 150, 500];
-
-    const user_1 = { address: fundOwner, balance: {nsu: 0, bwt:0} };
-    const user_2 = { address: accounts[5], balance: {nsu: 0, bwt:0} };
-    const user_3 = { address: accounts[3], balance: {nsu: 0, bwt:0} };
 
     await nousTokenInstance.mint(user_1.address, initialBalances[0], {
       from: nousPlatform
@@ -306,22 +302,41 @@ contract('NousCore', async function(accounts) {
     user_3.balance.nsu = initialBalances[2] * Math.pow(10, decimals);
     assert.equal(user_3.balance.nsu, (await nousTokenInstance.balanceOf(user_3.address)).toNumber(), "Third balance");
 
-    //console.log("---=========Sale=========-------");
+    _projContr = await instanceList["ProjectDb"].getProjectContracts(fundOwner, web3.utils.toHex(projectType));
 
     openEndedToken = OpenEndedToken.at(_projContr[1][2]);
-    //console.log("total supplay", await openEndedToken.totalSupply());
+
+  });
+
+  it("Allow purchases", async function () {
     assert.equal(true, await openEndedToken.allowPurchases(nousTokenInstance.address), "allow purchases nsu tokens");
+  });
 
-    assert.equal(user_2.balance.nsu, (await nousTokenInstance.balanceOf(user_2.address, {from: nousPlatform})).toNumber(), "Owner is first mining user_2 1000");
 
+  it("Sale tokens", async function () {
     let sum = user_2.balance.nsu;
     user_2.balance.nsu -= sum;
 
     await nousTokenInstance.approveAndCall(openEndedToken.address, sum, "0x0", {from: user_2.address});
 
     assert.equal((await nousTokenInstance.balanceOf(user_2.address)).toNumber(), 0, "All balance is equal 0");
-    assert.equal((await openEndedToken.balanceOf(user_2.address)).toNumber(), 49000000000000000000, "All balance is equal 0");
-    assert.equal((await openEndedToken.fundCup(nousTokenInstance.address)).toNumber(), 49000000000000000000, "Net is equal balance user")
+    assert.equal((await openEndedToken.balanceOf(user_2.address)).toNumber(), 50000000000000000000, "All balance is equal 0");
+    assert.equal((await openEndedToken.fundCup(nousTokenInstance.address)).toNumber(), 50000000000000000000, "Net is equal balance user");
+
+    assert.equal((await openEndedToken.balanceOf(nousPlatform)).toNumber(), 0, "All balance is equal 0");
+
+  });
+
+  it("platform fee", async function() {
+    console.log("2", (await openEndedToken.getFee(1 * Math.pow(10, (decimals)), "platformFee")).toNumber());
+
+  });
+
+  it("Test Project tokens", async function () {
+
+
+    // let sum = user_2.balance.nsu;
+    // user_2.balance.nsu -= sum;
 
 
     //let exponent = 10 * Math.pow(10, decimals+2),
@@ -338,175 +353,29 @@ contract('NousCore', async function(accounts) {
 
     //console.log("---=========redeem=========-------");
 
-    await openEndedToken.redeem(nousTokenInstance.address, 10 * Math.pow(10, decimals), "0x0", {from: user_2.address});
-    user_2.balance.bwt = (await openEndedToken.balanceOf(user_2.address)).toNumber();
-
-    //console.log("balance BWT ", user_2.balance);
-
-    console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_2.address)).toNumber());
-
-    console.log("---=========NET=========-------");
-    console.log("NET Purchase  BWT ", (await openEndedToken.fundCup(nousTokenInstance.address)).toNumber());
-
-
-    console.log("---=========Total investors=========-------");
-
-    assert.equal(1, (await openEndedToken.totalInvestors()).toNumber());
-
-    console.log("---=========Redeem ALL=========-------");
-    await openEndedToken.redeem(nousTokenInstance.address, user_2.balance.bwt, "0x0", {from: user_2.address});
-    user_2.balance.bwt = (await openEndedToken.balanceOf(user_2.address)).toNumber();
-
-    //console.log("balance BWT ", user_2.balance);
-    console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_2.address)).toNumber());
-
-    assert.equal(0, (await openEndedToken.totalInvestors()).toNumber(), "Investors counter ");
-    assert.equal(0,  user_2.balance.bwt, "Toatal balance BWT zero.");
+    // await openEndedToken.redeem(nousTokenInstance.address, 10 * Math.pow(10, decimals), "0x0", {from: user_2.address});
+    // user_2.balance.bwt = (await openEndedToken.balanceOf(user_2.address)).toNumber();
+    //
+    // //console.log("balance BWT ", user_2.balance);
+    //
+    // console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_2.address)).toNumber());
+    //
+    // console.log("---=========NET=========-------");
+    // console.log("NET Purchase  BWT ", (await openEndedToken.fundCup(nousTokenInstance.address)).toNumber());
+    //
+    //
+    // console.log("---=========Total investors=========-------");
+    //
+    // assert.equal(1, (await openEndedToken.totalInvestors()).toNumber());
+    //
+    // console.log("---=========Redeem ALL=========-------");
+    // await openEndedToken.redeem(nousTokenInstance.address, user_2.balance.bwt, "0x0", {from: user_2.address});
+    // user_2.balance.bwt = (await openEndedToken.balanceOf(user_2.address)).toNumber();
+    //
+    // //console.log("balance BWT ", user_2.balance);
+    // console.log("balance NSU ", (await nousTokenInstance.balanceOf(user_2.address)).toNumber());
+    //
+    // assert.equal(0, (await openEndedToken.totalInvestors()).toNumber(), "Investors counter ");
+    // assert.equal(0,  user_2.balance.bwt, "Toatal balance BWT zero.");
   });
-
-  it("Create Snapshot", async function() {
-    projectActionManager = ProjectActionManager.at(_projContr[1][3]);
-    let rete = 0.05 * Math.pow(10, decimals);
-
-    let time = new Date().getTime();
-    await projectActionManager.actionAddSnapshot(time, web3.utils.toHex("swswsw"), rete, {from: nousPlatform});
-
-    let snapshotDb = SnapshotDb.at(_projContr[1][0]);
-    //console.log("Current Rate",  (await snapshotDb.rate()).toNumber());
-    //console.log("rate open ended token ", (await openEndedToken.rate()).toNumber());
-    assert.equal(rete, (await snapshotDb.rate()).toNumber());
-  });
-
-  it("Confirm Wallet", async function() {
-    let walletTicker = web3.utils.toHex("BTC");
-    let walletAddress = "0x00000002234";
-
-    await projectActionManager.actionAddWallet(walletTicker, walletAddress, {from: accounts[1]});
-
-    let walletAddr = await projectActionManager.getContractAddress("WalletDb");
-    let walletDb = WalletDb.at(walletAddr);
-    let addedWalet = await walletDb.wallets(0);
-    assert.equal(false, addedWalet[2], "added wallet not confirmed");
-
-    await projectActionManager.actionConfirmWallet(walletTicker, walletAddress, {from: accounts[0]});
-    addedWalet = await walletDb.wallets(0);
-    assert.equal(true, addedWalet[2], "added wallet not confirmed");
-  });
-
-  it("SetEntryFee", async function() {
-    let newEntryFee = 0.1 * Math.pow(10, decimals);
-    await projectActionManager.actionSetEntryFee(newEntryFee, {from: fundOwner});
-
-    let openEndedSaleDbAddr = await projectActionManager.getContractAddress("OpenEndedSaleDb");
-    openEndedSaleDb = OpenEndedSaleDb.at(openEndedSaleDbAddr);
-    assert.equal(newEntryFee, (await openEndedSaleDb.params("entryFee")).toNumber());
-  });
-
-  it("Set Exit Fee", async function() {
-    let newExitFee = 0.2 * Math.pow(10, decimals);
-    await projectActionManager.actionSetExitFee(newExitFee, {from: fundOwner});
-    assert.equal(newExitFee, (await openEndedSaleDb.params("exitFee")).toNumber());
-  });
-
-  it("Set Platform Fee", async function() {
-    let newPlatformFee = 0.02 * Math.pow(10, decimals);
-    await projectActionManager.actionSetPlatformFee(newPlatformFee, {from: nousPlatform});
-    assert.equal(newPlatformFee, (await openEndedSaleDb.params("platformFee")).toNumber());
-  });
-
-  it("Owner Add Remove Manager", async function() {
-    //add manager
-    await projectActionManager.ownerAddManager(accounts[4], {from: fundOwner});
-
-    let newExitFee = 0.3 * Math.pow(10, decimals);
-    await projectActionManager.actionSetExitFee(newExitFee, {from: accounts[4]});
-    assert.equal(newExitFee, (await openEndedSaleDb.params("exitFee")).toNumber());
-
-    try {
-      await projectActionManager.ownerAddManager(accounts[4], {from: nousPlatform});
-      assert.isNotOk('everything', 'this will fail');
-    } catch (e) { }
-
-    //delete manager
-    await projectActionManager.ownerRemoveManager(accounts[4], {from: fundOwner});
-    newExitFee = 0.4 * Math.pow(10, decimals);
-    try{
-      await projectActionManager.actionSetExitFee(newExitFee, {from: accounts[4]});
-      assert.isNotOk("", 'manager not permission changes params');
-    } catch (e) { }
-
-  });
-
-
-  it("Lock Unlock Actions", async function() {
-    await projectActionManager.actionsLock({from: fundOwner});
-
-    try {
-      await projectActionManager.actionSetExitFee(0.3 * Math.pow(10, decimals), {from: fundOwner});
-      assert.isNotOk("action set fees", "should be an exception");
-    } catch (e) { }
-
-    try {
-      await projectActionManager.actionsUnlock({from: nousPlatform});
-      assert.isNotOk("unlock action", "should be an exception. Nous platform cant unlocked action");
-    } catch (e) {
-      //console.log("Not unlocking true");
-    }
-
-    await projectActionManager.actionsUnlock({from: fundOwner});
-
-    await projectActionManager.actionSetExitFee(0.3 * Math.pow(10, decimals), {from: fundOwner});
-
-  });
-
-  it("Validate Add Remove Contracts", async function() {
-
-    assert.isFalse(await projectActionManager.allowed(), 'on deploy allowed is false');
-
-    // allow
-    await projectActionManager.ownerAllow({from: fundOwner});
-
-    assert.isTrue(await projectActionManager.allowed(), 'owner allow changes contracts');
-
-    // add contract is allowed
-    await ActionManagerInstance.deployTemplates(web3.utils.toHex("TPLSnapshotDb"), getBytesCallData("TPLSnapshotDb", configTpls["TPLSnapshotDb"].variables, "create"));
-    _projContr = await instanceList["ProjectDb"].getProjectContracts(fundOwner, web3.utils.toHex(projectType));
-
-    let addr = _projContr[1].pop();
-    await projectActionManager.actionAddContract(web3.utils.toHex("SnapshotDb"), addr, {from: nousPlatform});
-
-    assert.equal(addr, await projectActionManager.getContractAddress(web3.utils.toHex("SnapshotDb")), "address is not equal");
-
-    //add contract not allowed
-    await projectActionManager.ownerDisallow({from: fundOwner});
-    assert.isFalse(await projectActionManager.allowed(), 'owner allow changes contracts');
-
-    await ActionManagerInstance.deployTemplates(web3.utils.toHex("TPLSnapshotDb"), getBytesCallData("TPLSnapshotDb", configTpls["TPLSnapshotDb"].variables, "create"));
-    _projContr = await instanceList["ProjectDb"].getProjectContracts(fundOwner, web3.utils.toHex(projectType));
-    addr = _projContr[1].pop();
-
-    try {
-      await projectActionManager.actionAddContract(web3.utils.toHex("SnapshotDb"), addr, {from: nousPlatform});
-      assert.throw("Is not true. May be exception");
-    } catch (e) {
-
-    }
-
-  });
-
-  it("Validate airdrop tokens", async function() {
-    let amountOf = 1 * Math.pow(10, decimals);
-
-    await projectActionManager.actionAirdropToken(amountOf, {from: nousPlatform});
-
-    let balance = (await openEndedToken.balanceOf(fundOwner)).toNumber();
-    assert.equal(balance, amountOf, "Valid balance");
-
-  });
-
-
-
-
-
-
-})
+});

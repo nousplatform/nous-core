@@ -27,10 +27,8 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
 
         uint256 _totalAmount = MathCalc.calculateRedeem(_value, rate(), decimals);
 
-        uint _amountExitFee;
-        uint _amountPlatformFee;
-
-        (_amountExitFee, _amountPlatformFee) = getFees(_totalAmount, "exitFee", "platformFee");
+        uint _amountExitFee = getFee(_totalAmount, "exitFee");
+        uint _amountPlatformFee = getFee(_totalAmount, "exitFee");
 
         _totalAmount = _totalAmount.sub(_amountExitFee).sub(_amountPlatformFee);
 
@@ -40,8 +38,13 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
         emit Redeem(msg.sender, _withdrawAddr, _totalAmount);
 
         //fee token
-        ERC20(_withdrawAddr).transfer(wallet, _amountExitFee);
-        ERC20(_withdrawAddr).transfer(nousWallet, _amountPlatformFee);
+        if (_amountExitFee > 0) {
+            ERC20(_withdrawAddr).transfer(wallet, _amountExitFee);
+        }
+
+        if (_amountPlatformFee > 0) {
+            ERC20(_withdrawAddr).transfer(nousWallet, _amountPlatformFee);
+        }
 
         _burn(msg.sender, _value);
         afterRedeem();

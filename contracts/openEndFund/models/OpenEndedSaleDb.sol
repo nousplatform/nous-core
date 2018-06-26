@@ -29,17 +29,12 @@ contract OpenEndedSaleDb is ProjectActionManagerEnabled {
         uint256 _initPrice,
         uint256 _maxFundCup,
         uint256 _maxInvestors,
-        uint256 _platformFee/*,
-        address _nousWallet,
-        address _ownerWallet*/
+        uint256 _platformFee
     )
     public
     {
-        require(_entryFee > 0);
-        require(_exitFee > 0);
         require(_platformFee > 0);
-        //require(_nousWallet > 0x0);
-        //require(_ownerWallet > 0x0);
+        require(_initPrice > 0);
 
         params["entryFee"] = _entryFee;
         params["exitFee"] = _exitFee;
@@ -47,9 +42,6 @@ contract OpenEndedSaleDb is ProjectActionManagerEnabled {
         params["maxFundCup"] = _maxFundCup;
         params["maxInvestors"] = _maxInvestors;
         params["platformFee"] = _platformFee;
-
-        //paramsAddr["nousWallet"] = _nousWallet;
-        //paramsAddr["ownerWallet"] = _ownerWallet;
     }
 
     function setEntryFee(uint _entryFee)

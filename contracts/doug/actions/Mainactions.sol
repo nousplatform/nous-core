@@ -99,6 +99,17 @@ contract ActionUnlockActions is Action("owner") {
 }
 
 // The set user permission action.
+contract ActionAddUser is Action("owner") {
+    function execute(address _addr, bytes32 _name, bytes32 _role)
+    external
+    isActionManager_
+    {
+        address _permissionDb = getContractAddress("PermissionDb");
+        require(PermissionDb(_permissionDb).addUser(_addr, _name, _role));
+    }
+}
+
+// The set user permission action.
 contract ActionSetUserRole is Action("owner") {
     function execute(address _addr, bytes32 _role)
     external
@@ -109,16 +120,6 @@ contract ActionSetUserRole is Action("owner") {
     }
 }
 
-// The set user permission action.
-contract ActionAddUser is Action("owner") {
-    function execute(address _addr, bytes32 _name, bytes32 _role)
-    external
-    isActionManager_
-    {
-        address _permissionDb = getContractAddress("PermissionDb");
-        require(PermissionDb(_permissionDb).addUser(_addr, _name, _role));
-    }
-}
 
 // The set action permission. This is the permission level required to run the action.
 contract ActionSetActionPermission is Action("owner") {

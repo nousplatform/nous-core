@@ -44,17 +44,17 @@ contract BaseSaleOpenEnded is AllowPurchases {
         return OpenEndedSaleDb(getContractAddress("OpenEndedSaleDb")).params(_rowName);
     }
 
-    function getFees(
+    function getFee(
         uint256 _totalAmount,
-        bytes32 _firstFeeName,
-        bytes32 _secondFeeName
+        bytes32 _firstFeeName
     )
-    internal
+    public
     view
-    returns (uint256 _amountEntryFee, uint256 _amountPlatformFee)
+    returns (uint256)
     {
-        _amountEntryFee = MathCalc.calculatePercent(_totalAmount, getDataParamsSaleDb(_firstFeeName), decimals);
-        _amountPlatformFee = MathCalc.calculatePercent(_totalAmount, getDataParamsSaleDb(_secondFeeName), decimals);
+        uint256 fee = getDataParamsSaleDb(_firstFeeName);
+        if (fee > 0) {
+            return MathCalc.calculatePercent(_totalAmount, fee, decimals);
+        }
     }
-
 }

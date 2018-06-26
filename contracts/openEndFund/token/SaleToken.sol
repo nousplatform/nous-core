@@ -37,9 +37,8 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
         // how many coins we are allowed to spend
         if (nt.allowance(_sender, this) >= _value) {
 
-            uint _amountEntryFee;
-            uint _amountPlatformFee;
-            (_amountEntryFee, _amountPlatformFee) = getFees(_value, "entryFee", "platformFee");
+            uint256 _amountEntryFee = getFee(_totalAmount, "entryFee");
+            uint256 _amountPlatformFee = getFee(_totalAmount, "platformFee");
 
             uint256 _totalAmount = MathCalc.percent(_value.sub(_amountEntryFee).sub(_amountPlatformFee), rate(), decimals);
 
@@ -47,11 +46,15 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
 
             if (nt.transferFrom(_sender, this, _value)) {
 
-                // transfer amount fee to wallet
-                nt.transfer(wallet, _amountEntryFee);
+                if (_amountEntryFee > 0) {
+                    // transfer amount fee to wallet
+                    nt.transfer(wallet, _amountEntryFee);
+                }
 
-                // transfer amount fee to wallet for nous platform
-                nt.transfer(nousWallet, _amountPlatformFee);
+                if (_amountPlatformFee > 0) {
+                    // transfer amount fee to wallet for nous platform
+                    nt.transfer(nousWallet, _amountPlatformFee);
+                }
 
                 // mining token
                 mint(_sender, _totalAmount);

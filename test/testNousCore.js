@@ -300,7 +300,10 @@ contract('NousCore', async function(accounts) {
     assert.isFalse(await ActionManagerInstance.locked(), "Not locked");
   });
 
+  //todo доделать
   it("Test Action add user", async function() {
+    await actionManagerQuery("ActionAddUser", [accounts[5], web3.utils.toHex("test"), web3.utils.toHex("managerFunds")]);
+
 
   })
 

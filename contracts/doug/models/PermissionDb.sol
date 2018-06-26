@@ -53,7 +53,7 @@ contract PermissionDb is Validee {
 
     function addUser(address _addr, bytes32 _name, bytes32 _role) external validate_ returns (bool) {
         require(!isUser(_addr), "User exists");
-        require(!roles[_role], "Special role not assign"); // if this role not special
+        //require(!roles[_role], "Special role not assign"); // if this role not special
 
         _addUser(_addr, _name, _role, false);
         return true;
