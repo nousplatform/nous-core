@@ -28,7 +28,7 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
         uint256 _totalAmount = MathCalc.calculateRedeem(_value, rate(), decimals);
 
         uint _amountExitFee = getFee(_totalAmount, "exitFee");
-        uint _amountPlatformFee = getFee(_totalAmount, "exitFee");
+        uint _amountPlatformFee = getFee(_totalAmount, "platformFee");
 
         _totalAmount = _totalAmount.sub(_amountExitFee).sub(_amountPlatformFee);
 

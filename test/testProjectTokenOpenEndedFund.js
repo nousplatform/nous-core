@@ -139,19 +139,21 @@ contract('NousCore', async function(accounts) {
 
   let fundOwner = accounts[1];
   let nousPlatform = accounts[0];
+  let nousWallet = accounts[9];
   let openEndedToken;
 
-  const user_1 = {address: fundOwner, balance: {nsu: 0, bwt: 0}};
+  const user_1 = {address: accounts[2], balance: {nsu: 0, bwt: 0}};
   const user_2 = {address: accounts[5], balance: {nsu: 0, bwt: 0}};
   const user_3 = {address: accounts[3], balance: {nsu: 0, bwt: 0}};
+  const nousPlatformWallet = {address: nousWallet, balance: {nsu: 0, bwt: 0}};
 
   let initTokens = {
     entryFee: 0,
-    exitFee: 0,
+    exitFee: 0, ///1 * Math.pow(10, (decimals-2)),
     initPrice: 2 * Math.pow(10, (decimals)),
     maxFundCup: 10000000 * Math.pow(10, (decimals)),
     maxInvestors: 0,
-    platformFee: 2 * Math.pow(10, (decimals-2)) // 0.02
+    platformFee: 1 * Math.pow(10, (decimals-2)) // 0.02
   };
 
   let _projContr;
@@ -238,14 +240,14 @@ contract('NousCore', async function(accounts) {
           "BWT TOKEN",
           "BWT",
           decimals,
-          accounts[3]
+          nousWallet
         ],
         "address": "0x0"
       },
       "TPLProjectActionManager": {
         "variables": [
           fundOwner,
-          nousPlatform,
+          nousPlatformWallet.address,
         ],
         "address": "0x0"
       },
@@ -313,26 +315,84 @@ contract('NousCore', async function(accounts) {
   });
 
 
+  let sumToBy = Math.pow(10, (decimals+2));
+
   it("Sale tokens", async function () {
-    let sum = user_2.balance.nsu;
-    user_2.balance.nsu -= sum;
 
-    await nousTokenInstance.approveAndCall(openEndedToken.address, sum, "0x0", {from: user_2.address});
+    let bigSum = new BigNumber(sumToBy);
 
-    assert.equal((await nousTokenInstance.balanceOf(user_2.address)).toNumber(), 0, "All balance is equal 0");
-    assert.equal((await openEndedToken.balanceOf(user_2.address)).toNumber(), 50000000000000000000, "All balance is equal 0");
-    assert.equal((await openEndedToken.fundCup(nousTokenInstance.address)).toNumber(), 50000000000000000000, "Net is equal balance user");
+    user_2.balance.nsu -= sumToBy;
 
-    assert.equal((await openEndedToken.balanceOf(nousPlatform)).toNumber(), 0, "All balance is equal 0");
+    // check balance NSU
+    await nousTokenInstance.approveAndCall(openEndedToken.address, bigSum.toString(), "0x0", {from: user_2.address});
+    assert.equal(user_2.balance.nsu, (await nousTokenInstance.balanceOf(user_2.address)).toNumber(), "NSU tokens not equal");
+
+    // check entry fee
+    let entryFee = (initTokens.entryFee * sumToBy) / Math.pow(10, (decimals+2));
+    assert.equal(entryFee, (await openEndedToken.getFee(bigSum.toString(), "entryFee")).toNumber(), "Entry fee is not correct");
+
+    // check platform fee
+    let platformFee = (initTokens.platformFee * sumToBy) / Math.pow(10, (decimals+2));
+    assert.equal(platformFee, (await openEndedToken.getFee(bigSum.toString(), "platformFee")).toString(), "Platform fee is not correct");
+    nousPlatformWallet.balance.nsu += platformFee;
+
+    // check sum amount bwt
+    let sum = (sumToBy - platformFee - entryFee);
+    user_2.balance.bwt = (new BigNumber((sum * Math.pow(10, (decimals))) / initTokens.initPrice)).toString();
+    assert.equal(user_2.balance.bwt, (await openEndedToken.balanceOf(user_2.address)).toNumber(),  "All balance is equal 0");
+
+    //check balance owner wallet
+    assert.equal(entryFee, (await nousTokenInstance.balanceOf(fundOwner)).toNumber(), "Entree fee not equal balance owner fund");
+
+    //check balance nous platform
+
+    assert.equal(nousPlatformWallet.balance.nsu, (await nousTokenInstance.balanceOf(nousPlatformWallet.address)).toNumber(), "Platform fee not equal balance nousPlatform");
 
   });
 
-  it("platform fee", async function() {
-    console.log("2", (await openEndedToken.getFee(1 * Math.pow(10, (decimals)), "platformFee")).toNumber());
+  let sumR = Math.pow(10, (decimals+1));
+
+  it("Redeem tokens", async function() {
+
+    //console.log("(await nousTokenInstance.balanceOf(user_2.address)).toNumber()", (await nousTokenInstance.balanceOf(user_2.address)).toNumber());
+
+    let bigSum = new BigNumber(sumToBy);
+    await nousTokenInstance.approveAndCall(openEndedToken.address, bigSum.toString(), "0x0", {from: user_2.address});
+    user_2.balance.nsu -= sumToBy;
+
+
+    let bigSumR = new BigNumber(sumR);
+    user_2.balance.bwt -= sumR;
+
+    // check balance NSU
+    await openEndedToken.redeem(nousTokenInstance.address, bigSumR.toString(), "0x0", {from: user_2.address});
+    assert.equal(user_2.balance.bwt, (await openEndedToken.balanceOf(user_2.address)).toNumber(), "Balance not equal expected");
+
+    let amount = (sumR * initTokens.initPrice) / Math.pow(10, (decimals));
+
+    // check platform fee
+    let platformFee = (initTokens.platformFee * amount) / Math.pow(10, (decimals+2));
+
+    // platform fee
+    nousPlatformWallet.balance.nsu += platformFee;
+    assert.equal(nousPlatformWallet.balance.nsu, (await nousTokenInstance.balanceOf(nousPlatformWallet.address)).toNumber(), "Balance my be equal");
+
+    //exit fee
+    let exitFee = (initTokens.exitFee * amount) / Math.pow(10, (decimals+2));
+    assert.equal(exitFee, (await nousTokenInstance.balanceOf(fundOwner)).toNumber(), "exit fee not equal");
+
+    //validate balance
+    user_2.balance.nsu += amount - platformFee - exitFee;
+
+    assert.equal(user_2.balance.nsu, (await nousTokenInstance.balanceOf(user_2.address)).toNumber(), "not correct balance nsu");
 
   });
 
-  it("Test Project tokens", async function () {
+
+
+
+
+  /*it("Test Project tokens", async function () {
 
 
     // let sum = user_2.balance.nsu;
@@ -377,5 +437,5 @@ contract('NousCore', async function(accounts) {
     //
     // assert.equal(0, (await openEndedToken.totalInvestors()).toNumber(), "Investors counter ");
     // assert.equal(0,  user_2.balance.bwt, "Toatal balance BWT zero.");
-  });
+  });*/
 });

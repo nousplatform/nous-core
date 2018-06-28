@@ -46,13 +46,13 @@ contract BaseSaleOpenEnded is AllowPurchases {
 
     function getFee(
         uint256 _totalAmount,
-        bytes32 _firstFeeName
+        bytes32 _paramName
     )
     public
     view
     returns (uint256)
     {
-        uint256 fee = getDataParamsSaleDb(_firstFeeName);
+        uint256 fee = getDataParamsSaleDb(_paramName);
         if (fee > 0) {
             return MathCalc.calculatePercent(_totalAmount, fee, decimals);
         }

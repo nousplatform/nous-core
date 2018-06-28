@@ -320,21 +320,8 @@ contract('NousCore', async function(accounts) {
     await nousTokenInstance.approveAndCall(openEndedToken.address, sum, "0x0", {from: user_2.address});
 
     assert.equal((await nousTokenInstance.balanceOf(user_2.address)).toNumber(), 0, "All balance is equal 0");
-    assert.equal((await openEndedToken.balanceOf(user_2.address)).toNumber(), 49000000000000000000, "All balance is equal 0");
-    assert.equal((await openEndedToken.fundCup(nousTokenInstance.address)).toNumber(), 49000000000000000000, "Net is equal balance user")
-
-
-    //let exponent = 10 * Math.pow(10, decimals+2),
-    // entryFee = (await openEndedToken.getDataParamsSaleDb(web3.utils.toHex("entryFee"))).toNumber();
-    //
-    // let platformFee = (await openEndedToken.getDataParamsSaleDb(web3.utils.toHex("platformFee"))).toNumber();
-    //
-    // let entryFeeSumExpected = (entryFee*sum)/exponent;
-    // let platformFeeSumExpected = (platformFee*sum)/exponent;
-    // let rate = (await openEndedToken.rate()).toNumber();
-    //
-    // let totalSummFeeBWT = rate * sum;
-    // let totalSummBWT = totalSummFeeBWT - entryFee - platformFee;
+    assert.equal((await openEndedToken.balanceOf(user_2.address)).toNumber(), 49500000000000000000, "All balance is equal 0");
+    assert.equal((await openEndedToken.fundCup(nousTokenInstance.address)).toNumber(), 49500000000000000000, "Net is equal balance user")
 
     //console.log("---=========redeem=========-------");
 

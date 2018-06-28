@@ -37,8 +37,8 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
         // how many coins we are allowed to spend
         if (nt.allowance(_sender, this) >= _value) {
 
-            uint256 _amountEntryFee = getFee(_totalAmount, "entryFee");
-            uint256 _amountPlatformFee = getFee(_totalAmount, "platformFee");
+            uint256 _amountEntryFee = getFee(_value, "entryFee");
+            uint256 _amountPlatformFee = getFee(_value, "platformFee");
 
             uint256 _totalAmount = MathCalc.percent(_value.sub(_amountEntryFee).sub(_amountPlatformFee), rate(), decimals);
 
@@ -87,7 +87,7 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
         uint maxFundCup = getDataParamsSaleDb("maxFundCup");
 
         if (maxFundCup > 0) {
-            return maxFundCup >= _totalAmount;
+            return maxFundCup >= totalSupply_.add(_totalAmount);
         }
         return true;
     }
