@@ -152,10 +152,10 @@ module.exports = async function(deployer, network, accounts) {
   contractList["PermissionDb"] = permissionDb.address;
 
   let templatesDb = await TemplatesDb.new();
-  contractList["PermissionDb"] = templatesDb.address;
+  contractList["TemplatesDb"] = templatesDb.address;
 
   let projectDb = await ProjectDb.new();
-  contractList["PermissionDb"] = projectDb.address;
+  contractList["ProjectDb"] = projectDb.address;
 
 
 
