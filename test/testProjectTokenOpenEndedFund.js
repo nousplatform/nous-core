@@ -34,11 +34,9 @@ const TPLOpenEndedToken = artifacts.require("TPLOpenEndedToken.sol");
 const TPLProjectActionManager = artifacts.require("TPLProjectActionManager.sol");
 const TPLProjectConstructor = artifacts.require("TPLProjectConstructor.sol");
 const TPLSnapshotDb = artifacts.require("TPLSnapshotDb.sol");
-const TPLWalletDb = artifacts.require("TPLWalletDb.sol");
 
 const ProjectActionManager = artifacts.require("ProjectActionManager.sol");
 const ProjectConstructor = artifacts.require("ProjectConstructor.sol");
-const WalletDb = artifacts.require("WalletDb.sol");
 const OpenEndedSaleDb = artifacts.require("OpenEndedSaleDb.sol");
 
 const OpenEndedToken = artifacts.require("OpenEndedToken.sol");
@@ -67,8 +65,7 @@ const tpls = [
   "TPLOpenEndedToken",
   "TPLProjectActionManager",
   "TPLProjectConstructor",
-  "TPLSnapshotDb",
-  "TPLWalletDb",
+  "TPLSnapshotDb"
 ];
 
 let actionsList = {};
@@ -250,12 +247,6 @@ contract('NousCore', async function(accounts) {
           nousPlatformWallet.address,
         ],
         "address": "0x0"
-      },
-      "TPLWalletDb": {
-        "variables": [
-          fundOwner
-        ],
-        "address": "0x0"
       }
     }
 
@@ -387,6 +378,8 @@ contract('NousCore', async function(accounts) {
     assert.equal(user_2.balance.nsu, (await nousTokenInstance.balanceOf(user_2.address)).toNumber(), "not correct balance nsu");
 
   });
+
+
 
 
 

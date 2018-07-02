@@ -3,50 +3,11 @@ pragma solidity ^0.4.18;
 
 import {LockedActionManager} from "./LockedActionManager.sol";
 import {SnapshotDbInterface as SnapshotDb} from "../models/SnapshotDb.sol";
-import {WalletDbInterface as WalletDb} from "../models/WalletDb.sol";
 import {OpenEndedSaleDbInterface as OpenEndedSaleDb} from "../models/OpenEndedSaleDb.sol";
 import {DougEnabled} from "../../doug/safety/DougEnabled.sol";
 
 
 contract ActionsResolution is DougEnabled, LockedActionManager {
-
-    /**
-    * @notice Action Add Wallet
-    */
-    function actionAddWallet(
-        bytes32 _symbolWallet,
-        bytes32 _addressWallet
-    )
-    isLocked
-    orRole(ROLE_FUND_OWNER, ROLE_FUND_MANAGER)
-    external
-    {
-        require(_symbolWallet != bytes32(0));
-        require(_addressWallet != bytes32(0));
-
-        address _wdb = getContractAddress("WalletDb");
-        require(WalletDb(_wdb).addWallet(_symbolWallet, _addressWallet), "Error added wallet");
-    }
-
-    /**
-    * @notice Wallet can only confirm the Nousplatform
-    * @param _symbolWallet symbol
-    * @param _addressWallet wallet address
-    */
-    function actionConfirmWallet(
-        bytes32 _symbolWallet,
-        bytes32 _addressWallet
-    )
-    isLocked
-    onlyRole(ROLE_NOUS_PLATFORM)
-    external
-    {
-        require(_symbolWallet != bytes32(0));
-        require(_addressWallet != bytes32(0));
-
-        address _wdb = getContractAddress("WalletDb");
-        require(WalletDb(_wdb).confirmWallet(_symbolWallet, _addressWallet));
-    }
 
     /**
     * @notice Add Snapshot can only confirm the Nousplatform

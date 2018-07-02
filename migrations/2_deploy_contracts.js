@@ -36,12 +36,9 @@ const ActionAddTemplates = artifacts.require("ActionAddTemplates.sol");
 // templates
 const TPLOpenEndedSaleDb = artifacts.require("TPLOpenEndedSaleDb.sol");
 const TPLOpenEndedToken = artifacts.require("TPLOpenEndedToken.sol");
-const TPLProjectActionManager = artifacts.require(
-  "TPLProjectActionManager.sol"
-);
+const TPLProjectActionManager = artifacts.require("TPLProjectActionManager.sol");
 const TPLProjectConstructor = artifacts.require("TPLProjectConstructor.sol");
 const TPLSnapshotDb = artifacts.require("TPLSnapshotDb.sol");
-const TPLWalletDb = artifacts.require("TPLWalletDb.sol");
 
 const ProjectActionManager = artifacts.require("ProjectActionManager.sol");
 const ProjectConstructor = artifacts.require("ProjectConstructor.sol");
@@ -68,8 +65,7 @@ const tpls = [
   "TPLOpenEndedToken",
   "TPLProjectActionManager",
   "TPLProjectConstructor",
-  "TPLSnapshotDb",
-  "TPLWalletDb"
+  "TPLSnapshotDb"
 ];
 
 let contractList = {};
@@ -121,6 +117,7 @@ function getBytesCallData(actionName, data, functionName) {
 async function actionManagerQuery(actionName, data) {
   let bytes = getBytesCallData(actionName, data);
   console.log("bytes", bytes);
+  console.log("actionName", actionName);
 
   await ActionManagerInstance.execute(actionName, bytes);
 }
@@ -132,11 +129,9 @@ async function createAddActions(data) {
 
 module.exports = async function(deployer, network, accounts) {
 
-
-
   deployer.deploy(MathCalc);
   deployer.link(MathCalc, [TPLOpenEndedToken]);
-  return;
+  //return;
 
   let instanceList = {
     //"name" : "instance"
@@ -145,35 +140,43 @@ module.exports = async function(deployer, network, accounts) {
   console.log("-----=====DEPLOY NOUS CONTRACT=====-----");
   //deploy
 
+
   await deployer.deploy(NousActionManager);
   ActionManagerInstance = await NousActionManager.deployed();
-
   contractList["ActionManager"] = NousActionManager.address;
 
-  await deployer.deploy(PermissionDb, OWNER);
-  contractList["PermissionDb"] = PermissionDb.address;
+  let actionDb = await ActionDb.new();
+  contractList["ActionDb"] = actionDb.address;
 
-  await deployer.deploy(ActionDb);
-  contractList["ActionDb"] = ActionDb.address;
+  let permissionDb = await PermissionDb.new(OWNER);
+  contractList["PermissionDb"] = permissionDb.address;
 
-  // if (network === "ganache" || network === "development") {
+  let templatesDb = await TemplatesDb.new();
+  contractList["PermissionDb"] = templatesDb.address;
+
+  let projectDb = await ProjectDb.new();
+  contractList["PermissionDb"] = projectDb.address;
+
+
+
+  // if (network === "ganashe" || network === "development") {
   //   await deployer.deploy(PermissionDb, accounts[0]);
   // } else {
   //   await deployer.deploy(PermissionDb, OWNER);
   // }
+  // contractList["PermissionDb"] = PermissionDb.address;
+
   /*try {
     await deployer.deploy(PermissionDb, OWNER);
   } catch (e) {
     console.log("e", e);
   }*/
 
-
-
-  await deployer.deploy(TemplatesDb);
-  contractList["TemplatesDb"] = TemplatesDb.address;
-
-  await deployer.deploy(ProjectDb);
-  contractList["ProjectDb"] = ProjectDb.address;
+  // await deployer.deploy(TemplatesDb);
+  // contractList["TemplatesDb"] = TemplatesDb.address;
+  //
+  // await deployer.deploy(ProjectDb);
+  // contractList["ProjectDb"] = ProjectDb.address;
 
   console.log("-----==========ADD FUND CONTRACT TO DOUG==========-----");
   //Contracts Doug Contract
