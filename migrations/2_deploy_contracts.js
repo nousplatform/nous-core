@@ -140,90 +140,77 @@ module.exports = async function(deployer, network, accounts) {
   console.log("-----=====DEPLOY NOUS CONTRACT=====-----");
   //deploy
 
-
-  await deployer.deploy(NousActionManager);
-  ActionManagerInstance = await NousActionManager.deployed();
-  contractList["ActionManager"] = NousActionManager.address;
-
-  let actionDb = await ActionDb.new();
-  contractList["ActionDb"] = actionDb.address;
-
-  let permissionDb = await PermissionDb.new(OWNER);
-  contractList["PermissionDb"] = permissionDb.address;
-
-  let templatesDb = await TemplatesDb.new();
-  contractList["TemplatesDb"] = templatesDb.address;
-
-  let projectDb = await ProjectDb.new();
-  contractList["ProjectDb"] = projectDb.address;
-
-
-
-  // if (network === "ganashe" || network === "development") {
-  //   await deployer.deploy(PermissionDb, accounts[0]);
-  // } else {
-  //   await deployer.deploy(PermissionDb, OWNER);
-  // }
-  // contractList["PermissionDb"] = PermissionDb.address;
-
-  /*try {
-    await deployer.deploy(PermissionDb, OWNER);
-  } catch (e) {
-    console.log("e", e);
-  }*/
-
-  // await deployer.deploy(TemplatesDb);
-  // contractList["TemplatesDb"] = TemplatesDb.address;
-  //
-  // await deployer.deploy(ProjectDb);
-  // contractList["ProjectDb"] = ProjectDb.address;
-
-  console.log("-----==========ADD FUND CONTRACT TO DOUG==========-----");
-  //Contracts Doug Contract
-  await deployer.deploy(
-    NousCore,
-    //NousTokenTest.address,
-    NOUSTOKEN,
-    Object.keys(contractList),
-    Object.keys(contractList).map(_name => contractList[_name])
-  );
-
-  console.log(
-    "-----==========DEPLOY ACTIONS FOR ACTION MANAGER==========-----"
-  );
-
-  for (let item in actions) {
-    let actionName = actions[item];
-
-    actionsList[actionName] = await eval(`${actionName}.new()`);
-    console.log(`${actionName}: `, actionsList[actionName].address);
+  if (network == "ganashe") {
+    OWNER = accounts[0];
   }
 
-  let _actionNames = Object.keys(actionsList).map(item =>
-    web3.utils.toHex(item)
-  );
-  let _actionAddr = Object.keys(actionsList).map(
-    item => actionsList[item].address
-  );
+  await Promise.all([
+    deployer.deploy(NousActionManager),
+    deployer.deploy(PermissionDb, OWNER),
+    deployer.deploy(ActionDb),
+    deployer.deploy(ProjectDb),
+    deployer.deploy(TemplatesDb)
+  ]).then(async () => {
+    ActionManagerInstance = await NousActionManager.deployed();
+    contractList["ActionManager"] = NousActionManager.address;
 
-  await createAddActions([_actionNames, _actionAddr]);
+    contractList["PermissionDb"] = PermissionDb.address;
+    contractList["ActionDb"] = ActionDb.address;
+    contractList["ProjectDb"] = ProjectDb.address;
+    contractList["TemplatesDb"] = TemplatesDb.address;
 
-  console.log("-----==========CREATE DEPLOY TEMPLATES==========-----");
-  for (let item in tpls) {
-    let tplName = tpls[item];
-    templatesList[tplName] = await eval(`${tplName}.new()`);
-    console.log(`${tplName}: `, templatesList[tplName].address);
-  }
+    console.log("-----==========ADD FUND CONTRACT TO DOUG==========-----");
+    //Contracts Doug Contract
 
-  console.log("-----==========ADD TEMPLATES==========-----");
-  let _tplNames = Object.keys(templatesList).map(item =>
-    web3.utils.toHex(item)
-  );
-  let _tplAddrs = Object.keys(templatesList).map(
-    item => templatesList[item].address
-  );
-  let dataTpl = [_tplNames, _tplAddrs];
-  await actionManagerQuery("ActionAddTemplates", dataTpl);
+    return deployer.deploy(
+      NousCore,
+      //NousTokenTest.address,
+      NOUSTOKEN,
+      Object.keys(contractList),
+      Object.keys(contractList).map(_name => contractList[_name])
+    ).then(async () => {
+      console.log(
+        "-----==========DEPLOY ACTIONS FOR ACTION MANAGER==========-----"
+      );
+
+      for (let item in actions) {
+        let actionName = actions[item];
+
+        actionsList[actionName] = await eval(`${actionName}.new()`);
+        console.log(`${actionName}: `, actionsList[actionName].address);
+      }
+
+      let _actionNames = Object.keys(actionsList).map(item =>
+        web3.utils.toHex(item)
+      );
+      let _actionAddr = Object.keys(actionsList).map(
+        item => actionsList[item].address
+      );
+
+      await createAddActions([_actionNames, _actionAddr]);
+
+      console.log("-----==========CREATE DEPLOY TEMPLATES==========-----");
+      for (let item in tpls) {
+        let tplName = tpls[item];
+        templatesList[tplName] = await eval(`${tplName}.new()`);
+        console.log(`${tplName}: `, templatesList[tplName].address);
+      }
+
+      console.log("-----==========ADD TEMPLATES==========-----");
+      let _tplNames = Object.keys(templatesList).map(item =>
+        web3.utils.toHex(item)
+      );
+      let _tplAddrs = Object.keys(templatesList).map(
+        item => templatesList[item].address
+      );
+      let dataTpl = [_tplNames, _tplAddrs];
+      await actionManagerQuery("ActionAddTemplates", dataTpl);
+    });
+  });
+
+
+
+
 
   console.log("\n");
   console.log("-----==========CONTRACT NOUS CORE==========-----");

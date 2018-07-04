@@ -9,6 +9,7 @@ import {SaleToken} from "./SaleToken.sol";
 import {BaseSaleOpenEnded} from "./BaseSaleOpenEnded.sol";
 import {AllowPurchases} from "../../doug/ownership/AllowPurchases.sol";
 
+
 contract OpenEndedTokenInterface {
 
     function airdropToken(uint256 _amountOf) external;
@@ -21,7 +22,7 @@ contract OpenEndedTokenInterface {
  * @dev Very simple ERC20 Token that can be minted.
  * It is meant to be used in a crowdsale contract.
  */
-contract OpenEndedToken is BaseSaleOpenEnded, PurchaseToken, SaleToken, Net, InvestorsCounter {
+contract OpenEndedToken is BaseSaleOpenEnded, /*PurchaseToken, SaleToken,*/ Net, InvestorsCounter {
 
     // @dev Constructor only nous token can mint.
     constructor(

@@ -13,9 +13,8 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
 
     using SafeMath for uint256;
 
-    event Redeem(address indexed from, address indexed to, uint256 value);
+    event Redeem(address _tokenProvider, uint256 _amountProviderWithFee, address _spender);
     event Withdraw(address indexed from, address indexed to, uint256 value);
-
 
     // @dev withdraw Token
     function redeem(address _withdrawAddr, uint256 _value, bytes _extraData)
@@ -30,12 +29,8 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
         uint _amountExitFee = getFee(_totalAmount, "exitFee");
         uint _amountPlatformFee = getFee(_totalAmount, "platformFee");
 
-        _totalAmount = _totalAmount.sub(_amountExitFee).sub(_amountPlatformFee);
-
         //_withdraw token
-        ERC20(_withdrawAddr).transfer(msg.sender, _totalAmount);
-
-        emit Redeem(msg.sender, _withdrawAddr, _totalAmount);
+        ERC20(_withdrawAddr).transfer(msg.sender, _totalAmount.sub(_amountExitFee).sub(_amountPlatformFee));
 
         //fee token
         if (_amountExitFee > 0) {
@@ -47,9 +42,12 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
         }
 
         _burn(msg.sender, _value);
-        afterRedeem();
+
+        afterRedeem(_withdrawAddr, _totalAmount, msg.sender);
+
     }
 
+    // withdraw token to owner wallet
     function withdraw(address _withdrawAddr, uint _value)
     public
     {
@@ -60,5 +58,14 @@ contract PurchaseToken is BurnableToken, BaseSaleOpenEnded {
         emit Withdraw(this, msg.sender, _value);
     }
 
-    function afterRedeem() internal;
+    // hook for redeem token
+    function afterRedeem(
+        address _tokenProvider,
+        uint256 _amountProviderWithFee,
+        address _spender
+    )
+    internal
+    {
+        emit Redeem(_tokenProvider, _amountProviderWithFee, _spender);
+    }
 }

@@ -2,12 +2,12 @@ pragma solidity ^0.4.18;
 
 
 import {StandardToken} from "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
-import {SimpleMintableToken} from "./SimpleMintableToken.sol";
+import {SaleToken} from "./SaleToken.sol";
 import {PurchaseToken} from "./PurchaseToken.sol";
 
 
 //counter investor
-contract InvestorsCounter is StandardToken, SimpleMintableToken, PurchaseToken {
+contract InvestorsCounter is StandardToken, SaleToken, PurchaseToken {
 
     mapping(address => bool) public investors;
     uint256 public totalInvestors;
@@ -24,15 +24,6 @@ contract InvestorsCounter is StandardToken, SimpleMintableToken, PurchaseToken {
             investors[_addr] = true;
             totalInvestors++;
         }
-    }
-
-    // @dev Override mint function
-    function mint(address _to, uint256 _amount)
-    internal
-    returns (bool)
-    {
-        addInvestor(_to);
-        return super.mint(_to, _amount);
     }
 
     // @dev Override transfer from function
@@ -55,10 +46,27 @@ contract InvestorsCounter is StandardToken, SimpleMintableToken, PurchaseToken {
         return super.transfer(_to, _value);
     }
 
-    function afterRedeem()
+    function afterSale(
+        address _tokenProvider,
+        uint256 _amountProviderWithFee,
+        address _spender
+    )
     internal
     {
-        subtractInvestor(msg.sender);
+        addInvestor(_spender);
+        super.afterSale(_tokenProvider, _amountProviderWithFee, _spender);
     }
+
+    function afterRedeem(
+        address _tokenProvider,
+        uint256 _amountProviderWithFee,
+        address _spender
+    )
+    internal
+    {
+        subtractInvestor(_spender);
+        super.afterRedeem(_tokenProvider, _amountProviderWithFee, _spender);
+    }
+
 
 }

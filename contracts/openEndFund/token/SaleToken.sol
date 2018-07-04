@@ -14,6 +14,8 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
 
     using SafeMath for uint256;
 
+    event Sale(address _tokenProvider, uint256 _amountProviderWithFee, address _spender);
+
     /**
     * Get notify in token contracts, only nous token
     * @param _sender Sender coins
@@ -59,10 +61,23 @@ contract SaleToken is SimpleMintableToken, BaseSaleOpenEnded {
                 // mining token
                 mint(_sender, _totalAmount);
 
+                afterSale(msg.sender, _value, _sender);
+
                 return true;
             }
         }
         return false;
+    }
+
+    // hook after sale token
+    function afterSale(
+        address _tokenProvider,
+        uint256 _amountProviderWithFee,
+        address _spender
+    )
+    internal
+    {
+        emit Sale(_tokenProvider, _amountProviderWithFee, _spender);
     }
 
     /**

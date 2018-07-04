@@ -2,39 +2,42 @@ pragma solidity ^0.4.18;
 
 
 import {PurchaseToken} from "./PurchaseToken.sol";
-import {SimpleMintableToken} from "./SimpleMintableToken.sol";
+import {SaleToken} from "./SaleToken.sol";
+import "zeppelin-solidity/contracts/math/SafeMath.sol";
 
-contract Net is SimpleMintableToken, PurchaseToken {
+
+contract Net is SaleToken, PurchaseToken {
+
+    using SafeMath for uint256;
 
     mapping (address => uint256) public fundCup;
     address[] public indexTicker;
 
     // @dev Override mint function
-    function mint(
-        address _to,
-        uint256 _amount
+    function afterSale(
+        address _tokenProvider,
+        uint256 _amountProviderWithFee,
+        address _spender
     )
     internal
-    returns (bool)
     {
-        if (fundCup[msg.sender] == 0) {
-            indexTicker.push(msg.sender);
+        if (fundCup[_tokenProvider] == 0) {
+            indexTicker.push(_tokenProvider);
         }
 
-        fundCup[msg.sender] += _amount;
-        super.mint(_to, _amount);
+        fundCup[_tokenProvider] += _amountProviderWithFee;
+        super.afterSale(_tokenProvider, _amountProviderWithFee, _spender);
     }
 
-    function redeem(
-        address _withdrawAddr,
-        uint256 _value,
-        bytes _extraData
+    function afterRedeem(
+        address _tokenProvider,
+        uint256 _amountProviderWithFee,
+        address _spender
     )
-    public
-    returns (bool)
+    internal
     {
-        fundCup[_withdrawAddr] -= _value;
-        super.redeem(_withdrawAddr, _value, _extraData);
+        fundCup[_tokenProvider] -= _amountProviderWithFee;
+        super.afterRedeem(_tokenProvider, _amountProviderWithFee, _spender);
     }
 
     function totalNet()
