@@ -25,7 +25,7 @@ contract Net is SaleToken, PurchaseToken {
             indexTicker.push(_tokenProvider);
         }
 
-        fundCup[_tokenProvider] += _amountProviderWithFee;
+        fundCup[_tokenProvider] += fundCup[_tokenProvider].add(_amountProviderWithFee);
         super.afterSale(_tokenProvider, _amountProviderWithFee, _spender);
     }
 
@@ -36,7 +36,7 @@ contract Net is SaleToken, PurchaseToken {
     )
     internal
     {
-        fundCup[_tokenProvider] -= _amountProviderWithFee;
+        fundCup[_tokenProvider] = fundCup[_tokenProvider].sub(_amountProviderWithFee);
         super.afterRedeem(_tokenProvider, _amountProviderWithFee, _spender);
     }
 

@@ -37,7 +37,7 @@ contract BaseSaleOpenEnded is AllowPurchases {
     }
 
     function getDataParamsSaleDb(bytes32 _rowName)
-    public
+    internal
     view
     returns (uint256)
     {
@@ -48,7 +48,7 @@ contract BaseSaleOpenEnded is AllowPurchases {
         uint256 _totalAmount,
         bytes32 _paramName
     )
-    public
+    internal
     view
     returns (uint256)
     {

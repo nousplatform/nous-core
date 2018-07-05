@@ -26,7 +26,8 @@ module.exports = {
       },
       gas: 4800000, // Gas limit used for deploys
       gasPrice: 50000000000, // 20 gwei
-      network_id: 3
+      network_id: 3,
+      //from: "0x719a22E179bb49a4596eFe3BD6F735b8f3b00AF1"
     },
     ropsten: {
       host: "192.168.88.13",
