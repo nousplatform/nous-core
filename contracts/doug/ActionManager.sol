@@ -23,7 +23,10 @@ contract ActionManager is DougEnabled {
 
     bool public locked;
 
-    function execute(bytes32 actionName, bytes data) public returns (bool) {
+    function execute(bytes32 actionName, bytes data)
+    public
+    returns (bool)
+    {
         // return true;
         address actionDb = getContractAddress("ActionDb");
 

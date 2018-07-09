@@ -9,10 +9,12 @@ interface PermissionDbInterface {
     function setOwned(address _addr, bool _owned) external returns (bool);
     function setRole(address _addr, bytes32 _role) external returns (bool);
     function addUser(address _addr, bytes32 _name, bytes32 _role) external returns (bool);
+    function removeUser(address _userAddr) external returns (bool);
     //getters
     function count() external view returns(uint256);
     function getUserFromIndex(uint256 _index) external view returns(address _account, bytes32 _name, bytes32 _role, bool _owned);
     function getUser(address _addr) external view returns(bytes32 _name, bytes32 _role, bool _owned);
+
 }
 
 
@@ -39,7 +41,14 @@ contract PermissionDb is Validee {
         roles["owner"] = true;
     }
 
-    function _addUser(address _userAddr, bytes32 _name, bytes32 _role, bool _owned) internal {
+    function _addUser(
+        address _userAddr,
+        bytes32 _name,
+        bytes32 _role,
+        bool _owned
+    )
+    internal
+    {
         // if role is not special
         require(!roles[_name]);
 
@@ -51,7 +60,11 @@ contract PermissionDb is Validee {
         });
     }
 
-    function addUser(address _addr, bytes32 _name, bytes32 _role) external validate_ returns (bool) {
+    function addUser(address _addr, bytes32 _name, bytes32 _role)
+    external
+    validate_
+    returns (bool)
+    {
         require(!isUser(_addr), "User exists");
         //require(!roles[_role], "Special role not assign"); // if this role not special
 
@@ -59,17 +72,41 @@ contract PermissionDb is Validee {
         return true;
     }
 
+    function removeUser(address _userAddr)
+    external
+    validate_
+    returns (bool)
+    {
+        require(isUser(_userAddr), "User not exists");
+
+        for (uint _i  = 0; _i < userIndexes.length; _i++) {
+            if (_userAddr == userIndexes[_i]) break;
+        }
+
+        address keyToMove = userIndexes[userIndexes.length - 1];
+        userList[_userAddr] = User(bytes32(0), bytes32(0), false, 0);
+        userIndexes[_i] = keyToMove;
+        userIndexes.length--;
+        return true;
+    }
+
     /**
     * @notice TODO Function works directly
     */
-    function transferOwnership(address _newOwner) public {
+    function transferOwnership(address _newOwner)
+    public
+    {
         require(isUser(msg.sender));
         uint _index = userList[msg.sender].index;
         userIndexes[_index] = _newOwner;
         userList[_newOwner] = userList[msg.sender];
     }
 
-    function setOwned(address _addr, bool _owned) external validate_ returns (bool) {
+    function setOwned(address _addr, bool _owned)
+    external
+    validate_
+    returns (bool)
+    {
         require(!roles[userList[_addr].role], "User is blocked");
         userList[_addr].owned = _owned;
         return true;
@@ -81,7 +118,11 @@ contract PermissionDb is Validee {
     * @param _role Role to assign
     * @return bool
     */
-    function setRole(address _addr, bytes32 _role) external validate_ returns (bool) {
+    function setRole(address _addr, bytes32 _role)
+    external
+    validate_
+    returns (bool)
+    {
         require(!roles[_role], "Special role not assign"); // if this role not special
         require(isUser(_addr), "User not exists");
 
@@ -89,16 +130,28 @@ contract PermissionDb is Validee {
         return true;
     }
 
-    function isUser(address _account) internal view returns(bool) {
+    function isUser(address _account)
+    internal
+    view
+    returns(bool)
+    {
         if (userIndexes.length == 0) return false;
         return userIndexes[userList[_account].index] == _account;
     }
 
-    function count() external view returns(uint256) {
+    function count()
+    external
+    view
+    returns(uint256)
+    {
         return userIndexes.length;
     }
 
-    function getUserFromIndex(uint256 _index) external view returns(address _account, bytes32 _name, bytes32 _role, bool _owned) {
+    function getUserFromIndex(uint256 _index)
+    external
+    view
+    returns(address _account, bytes32 _name, bytes32 _role, bool _owned)
+    {
         require(isUser(userIndexes[_index]));
         User memory _user = userList[userIndexes[_index]];
         return (userIndexes[_index], _user.name, _user.role, _user.owned);

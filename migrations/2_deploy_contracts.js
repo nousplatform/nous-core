@@ -140,7 +140,7 @@ module.exports = async function(deployer, network, accounts) {
   console.log("-----=====DEPLOY NOUS CONTRACT=====-----");
   //deploy
 
-  if (network == "ganashe") {
+  if (network == "ganache") {
     OWNER = accounts[0];
   }
 

@@ -110,6 +110,17 @@ contract ActionAddUser is Action("owner") {
 }
 
 // The set user permission action.
+contract ActionRemoveUser is Action("owner") {
+    function execute(address _addr)
+    external
+    isActionManager_
+    {
+        address _permissionDb = getContractAddress("PermissionDb");
+        require(PermissionDb(_permissionDb).removeUser(_addr));
+    }
+}
+
+// The set user permission action.
 contract ActionSetUserRole is Action("owner") {
     function execute(address _addr, bytes32 _role)
     external
@@ -150,6 +161,16 @@ contract ActionAddContract is Action("owner") {
 // Remove contract.
 contract ActionRemoveContract is Action("owner") {
 
+    function execute(bytes32 name)
+    external
+    isActionManager_
+    {
+        Doug d = Doug(DOUG);
+        d.removeContract(name);
+    }
+}
+
+contract ActionAddSnapshot is Action("owner") {
     function execute(bytes32 name)
     external
     isActionManager_

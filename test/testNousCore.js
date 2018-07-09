@@ -25,6 +25,7 @@ const ActionAddUser = artifacts.require("ActionAddUser.sol");
 const ActionAddActions = artifacts.require("ActionAddActions.sol");
 const ActionAddContract = artifacts.require("ActionAddContract.sol");
 const ActionRemoveContract = artifacts.require("ActionRemoveContract.sol");
+const ActionRemoveUser = artifacts.require("ActionRemoveUser.sol");
 
 const ActionAddTemplates = artifacts.require("ActionAddTemplates.sol");
 
@@ -34,7 +35,6 @@ const TPLOpenEndedToken = artifacts.require("TPLOpenEndedToken.sol");
 const TPLProjectActionManager = artifacts.require("TPLProjectActionManager.sol");
 const TPLProjectConstructor = artifacts.require("TPLProjectConstructor.sol");
 const TPLSnapshotDb = artifacts.require("TPLSnapshotDb.sol");
-const TPLWalletDb = artifacts.require("TPLWalletDb.sol");
 
 const actions = [
   "ActionAddAction",
@@ -47,6 +47,7 @@ const actions = [
   "ActionSetActionPermission",
   "ActionAddContract",
   "ActionRemoveContract",
+  "ActionRemoveUser",
 
   "ActionAddTemplates",
 ];
@@ -57,8 +58,7 @@ const tpls = [
   "TPLOpenEndedToken",
   "TPLProjectActionManager",
   "TPLProjectConstructor",
-  "TPLSnapshotDb",
-  "TPLWalletDb",
+  "TPLSnapshotDb"
 ];
 
 let actionsList = {};
@@ -236,12 +236,7 @@ contract('NousCore', async function(accounts) {
         ],
         "address": "0x0"
       },
-      "TPLWalletDb": {
-        "variables": [
-          fundOwner
-        ],
-        "address": "0x0"
-      }
+
     }
 
 
@@ -302,12 +297,35 @@ contract('NousCore', async function(accounts) {
 
   //todo доделать
   it("Test Action add user", async function() {
-    await actionManagerQuery("ActionAddUser", [accounts[5], web3.utils.toHex("test"), web3.utils.toHex("managerFunds")]);
+    await actionManagerQuery("ActionAddUser", [accounts[5], web3.utils.toHex("test"), web3.utils.toHex("manager")]);
+    await actionManagerQuery("ActionSetActionPermission", [ web3.utils.toHex("ActionAddUser"),  web3.utils.toHex("manager"), true]);
 
+    await actionManagerQuery("ActionAddUser", [accounts[6], web3.utils.toHex("test2"), web3.utils.toHex("manager")], {from: accounts[5]});
+    await actionManagerQuery("ActionAddUser", [accounts[7], web3.utils.toHex("test2"), web3.utils.toHex("manager")], {from: accounts[6]});
 
-  })
+    try {
+      await actionManagerQuery("ActionAddUser", [accounts[8], web3.utils.toHex("test2"), web3.utils.toHex("manager")], {from: accounts[9]});
+      assert.isNotOk("user do not have permission");
+    } catch (e) {
 
-  it("Test Action set user role", async function() {
+    }
 
+    await actionManagerQuery("ActionRemoveUser", [accounts[7]]);
+
+    try {
+      await actionManagerQuery("ActionAddUser", [accounts[8], web3.utils.toHex("test2"), web3.utils.toHex("manager")], {from: accounts[7]});
+      assert.isNotOk("user do not have permission");
+    } catch (e) {
+
+    }
+
+    await actionManagerQuery("ActionSetActionPermission", [ web3.utils.toHex("ActionAddUser"),  web3.utils.toHex("manager"), false]);
+
+    try {
+      await actionManagerQuery("ActionAddUser", [accounts[6], web3.utils.toHex("test2"), web3.utils.toHex("manager")], {from: accounts[5]});
+      assert.isNotOk("Manager not add user after bun role");
+    } catch (e) {
+
+    }
   })
 })
