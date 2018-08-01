@@ -23,6 +23,10 @@ contract InvestorsCounter is StandardToken, SaleToken, PurchaseToken {
         if (investors[_addr] == false) {
             investors[_addr] = true;
             totalInvestors++;
+            uint maxInvestors = getDataParamsSaleDb("maxInvestors");
+            if (maxInvestors > 0) {
+                require(totalInvestors <= maxInvestors);
+            }
         }
     }
 
